@@ -2,7 +2,14 @@
 
 **Web front-end** toolkit based on [TypeScript][1]
 
+[![NPM Dependency](https://david-dm.org/EasyWebApp/web-utility.svg)][2]
+[![Build Status](https://travis-ci.com/EasyWebApp/web-utility.svg?branch=v2)][3]
+
+[![NPM](https://nodei.co/npm/web-utility.png?downloads=true&downloadRank=true&stars=true)][4]
+
 ## Usage
+
+[API document](https://web-cell.dev/web-utility/)
 
 ### Message Channel
 
@@ -79,3 +86,6 @@ Promise.all([loaded, documentReady]).then(() =>
 ```
 
 [1]: https://www.typescriptlang.org/
+[2]: https://david-dm.org/EasyWebApp/web-utility
+[3]: https://travis-ci.com/EasyWebApp/web-utility
+[4]: https://nodei.co/npm/web-utility/

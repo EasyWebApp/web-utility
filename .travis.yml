@@ -1,0 +1,23 @@
+branches:
+    only:
+        - master
+
+language: node_js
+node_js:
+    - lts/*
+cache:
+    directories:
+        - node_modules
+
+install:
+    - npm install
+script:
+    - npm run build
+    - echo '' > docs/.nojekyll
+deploy:
+    provider: pages
+    on:
+        branch: master
+    skip_cleanup: true
+    local_dir: docs/
+    token: ${TOKEN}
