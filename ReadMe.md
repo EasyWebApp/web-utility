@@ -3,7 +3,7 @@
 **Web front-end** toolkit based on [TypeScript][1]
 
 [![NPM Dependency](https://david-dm.org/EasyWebApp/web-utility.svg)][2]
-[![Build Status](https://travis-ci.com/EasyWebApp/web-utility.svg?branch=v2)][3]
+[![Build Status](https://travis-ci.com/EasyWebApp/web-utility.svg)][3]
 
 [![NPM](https://nodei.co/npm/web-utility.png?downloads=true&downloadRank=true&stars=true)][4]
 

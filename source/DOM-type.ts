@@ -24,6 +24,7 @@ export interface BaseFieldProps extends HTMLProps {
     required?: boolean;
     disabled?: boolean;
     placeholder?: string;
+    autofocus?: boolean;
     onFocus?: (event: FocusEvent) => any;
     onBlur?: (event: FocusEvent) => any;
     onInput?: (event: InputEvent) => any;

@@ -11,6 +11,29 @@ export function differ(target: object, source: object) {
     return data;
 }
 
+export type GroupKey = string | number;
+export type Iteratee<T> = GroupKey | ((item: T) => GroupKey | GroupKey[]);
+export interface Group<T> {
+    [key: string]: T[];
+    [key: number]: T[];
+}
+
+export function groupBy<T>(list: T[], iteratee: Iteratee<T>) {
+    const data: Group<T> = {};
+
+    for (const item of list) {
+        let keys =
+            iteratee instanceof Function ? iteratee(item) : item[iteratee];
+
+        if (!(keys instanceof Array)) keys = [keys];
+
+        for (const key of new Set<GroupKey>(keys))
+            (data[key] = data[key] || []).push(item);
+    }
+
+    return data;
+}
+
 export function parseJSON(value: string) {
     try {
         return JSON.parse(value);

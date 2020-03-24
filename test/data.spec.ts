@@ -1,10 +1,33 @@
-import { differ, parseTextTable } from '../source/data';
+import { differ, groupBy, parseTextTable } from '../source/data';
 
 describe('Data', () => {
     it('should return an Object with Diffed Data', () => {
-        expect(differ({ a: 1, b: 2 }, { b: 2, c: 3 })).toStrictEqual(
+        expect(differ({ a: 1, b: 2 }, { b: 2, c: 3 })).toEqual(
             expect.objectContaining({ c: 3 })
         );
+    });
+
+    describe('Group by', () => {
+        it('should handle single Group Key', () => {
+            expect(groupBy([{ a: 1 }, { a: 2 }], 'a')).toEqual(
+                expect.objectContaining({
+                    '1': [{ a: 1 }],
+                    '2': [{ a: 2 }]
+                })
+            );
+        });
+
+        it('should handle multiple Group Keys', () => {
+            expect(
+                groupBy([{ a: [1, 2] }, { a: [2, 3] }], ({ a }) => a)
+            ).toEqual(
+                expect.objectContaining({
+                    '1': [{ a: [1, 2] }],
+                    '2': [{ a: [1, 2] }, { a: [2, 3] }],
+                    '3': [{ a: [2, 3] }]
+                })
+            );
+        });
     });
 
     describe('Text Table parser', () => {
