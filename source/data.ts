@@ -22,12 +22,12 @@ export function groupBy<T>(list: T[], iteratee: Iteratee<T>) {
     const data: Group<T> = {};
 
     for (const item of list) {
-        let keys =
+        let keys: GroupKey | GroupKey[] =
             iteratee instanceof Function ? iteratee(item) : item[iteratee];
 
         if (!(keys instanceof Array)) keys = [keys];
 
-        for (const key of new Set<GroupKey>(keys))
+        for (const key of new Set<GroupKey>(keys.filter(key => key != null)))
             (data[key] = data[key] || []).push(item);
     }
 

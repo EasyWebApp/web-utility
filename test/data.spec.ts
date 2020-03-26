@@ -19,7 +19,7 @@ describe('Data', () => {
 
         it('should handle multiple Group Keys', () => {
             expect(
-                groupBy([{ a: [1, 2] }, { a: [2, 3] }], ({ a }) => a)
+                groupBy([{ a: [1, 2] }, { a: [2, 3] }, { b: 4 }], ({ a }) => a)
             ).toEqual(
                 expect.objectContaining({
                     '1': [{ a: [1, 2] }],
