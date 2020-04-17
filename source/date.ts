@@ -1,11 +1,21 @@
+export const Second = 1000;
+export const Minute = Second * 60;
+export const Quarter = Minute * 15;
+export const Hour = Quarter * 4;
+export const Day = Hour * 24;
+export const Week = Day * 7;
+export const Year = Day * 365;
+export const Month = Year / 12;
+export const Season = Month * 3;
+
 const TimeUnit = new Map([
-    ['s', 1000],
-    ['m', 60],
-    ['H', 60],
-    ['D', 24],
-    ['W', 7],
-    ['M', 30 / 7],
-    ['Y', 12]
+    ['s', Second],
+    ['m', Minute],
+    ['H', Hour],
+    ['D', Day],
+    ['W', Week],
+    ['M', Month],
+    ['Y', Year]
 ]);
 
 export type TimeData = number | string | Date;
@@ -15,17 +25,15 @@ export function diffTime(
     start: TimeData = new Date(),
     map = TimeUnit
 ) {
-    let distance = +new Date(end) - +start,
-        unit = 'ms';
+    const distance = +new Date(end) - +start;
 
-    for (const [code, scale] of map) {
-        const rest = distance / scale;
+    for (const [unit, base] of [...map].reverse()) {
+        const rest = distance / base;
 
-        if (Math.abs(rest) > 1) (distance = rest), (unit = code);
-        else break;
+        if (Math.abs(rest) >= 1) return { distance: +rest.toFixed(0), unit };
     }
 
-    return { distance: +distance.toFixed(0), unit };
+    return { distance, unit: 'ms' };
 }
 
 const unitISO = ['Y', 'M', 'D', 'H', 'm', 's', 'ms'],
@@ -51,4 +59,18 @@ export function formatDate(
     return template.replace(patternISO, section =>
         temp[section[0]].padStart(section.length, '0')
     );
+}
+
+export function changeMonth(date: TimeData, delta: number) {
+    date = new Date(date);
+
+    const month = date.getMonth() + delta;
+
+    date.setFullYear(date.getFullYear() + Math.floor(month / 12));
+
+    delta = month % 12;
+
+    date.setMonth(delta < 0 ? 12 + delta : delta);
+
+    return date;
 }

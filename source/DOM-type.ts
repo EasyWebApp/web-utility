@@ -1,6 +1,7 @@
 export interface HTMLProps {
     id?: string;
     className?: string;
+    style?: Record<string, string | number>;
     title?: string;
     tabIndex?: number;
     onClick?: (event: MouseEvent) => any;
@@ -29,7 +30,6 @@ export interface BaseFieldProps extends HTMLProps {
     onBlur?: (event: FocusEvent) => any;
     onInput?: (event: InputEvent) => any;
     onChange?: (event: Event) => any;
-    [key: string]: any;
 }
 
 export type HTMLField = HTMLInputElement &

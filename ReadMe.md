@@ -11,6 +11,16 @@
 
 [API document](https://web-cell.dev/web-utility/)
 
+### CSS Animation
+
+1. [Simple hover](https://github.com/EasyWebApp/BootCell/blob/a41bbc1/source/Prompt/Tooltip.tsx#L38-L43)
+
+2. [Switch with `await`](https://github.com/EasyWebApp/BootCell/blob/a41bbc1/source/Content/TabList.tsx#L77-85)
+
+3. [Toggle with Inline Styles](https://github.com/EasyWebApp/BootCell/blob/a41bbc1/source/Content/Collapse.tsx#L19-L38)
+
+4. [Work with Existed Classes](https://github.com/EasyWebApp/BootCell/blob/a41bbc1/source/Content/Carousel.tsx#L82-L99)
+
 ### Message Channel
 
 `index.ts`

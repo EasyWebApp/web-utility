@@ -21,9 +21,9 @@ export function promisify<T extends Event>(scope: string, element: Element) {
 
 export type MessageGlobal = Window | Worker;
 
-export function createMessageServer(handlers: {
-    [key: string]: (data: any) => any | Promise<any>;
-}) {
+export function createMessageServer(
+    handlers: Record<string, (data: any) => any | Promise<any>>
+) {
     async function server({
         data: { type, id, ...data },
         source,

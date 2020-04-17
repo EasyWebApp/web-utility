@@ -1,3 +1,7 @@
+export function isEmpty(value: any) {
+    return !(value != null) || (!value && isNaN(value)) || value + '' === '';
+}
+
 export function uniqueID() {
     return (Date.now() + parseInt((Math.random() + '').slice(2))).toString(36);
 }
@@ -13,13 +17,9 @@ export function differ(target: object, source: object) {
 
 export type GroupKey = string | number;
 export type Iteratee<T> = GroupKey | ((item: T) => GroupKey | GroupKey[]);
-export interface Group<T> {
-    [key: string]: T[];
-    [key: number]: T[];
-}
 
 export function groupBy<T>(list: T[], iteratee: Iteratee<T>) {
-    const data: Group<T> = {};
+    const data: Record<string | number, T[]> = {};
 
     for (const item of list) {
         let keys: GroupKey | GroupKey[] =

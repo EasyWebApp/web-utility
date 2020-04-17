@@ -1,6 +1,23 @@
-import { differ, groupBy, parseTextTable } from '../source/data';
+import { isEmpty, differ, groupBy, parseTextTable } from '../source/data';
 
 describe('Data', () => {
+    it('should detect Meaningless Null Values', () => {
+        expect(
+            [0, false, '', null, undefined, NaN, [], {}].map(isEmpty)
+        ).toEqual(
+            expect.arrayContaining([
+                false,
+                false,
+                true,
+                true,
+                true,
+                true,
+                true,
+                true
+            ])
+        );
+    });
+
     it('should return an Object with Diffed Data', () => {
         expect(differ({ a: 1, b: 2 }, { b: 2, c: 3 })).toEqual(
             expect.objectContaining({ c: 3 })

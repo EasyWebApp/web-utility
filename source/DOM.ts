@@ -1,3 +1,4 @@
+import { URLData } from './URL';
 import { HTMLField } from './DOM-type';
 import { parseJSON } from './data';
 
@@ -64,13 +65,9 @@ export function watchVisible(
     );
 }
 
-export interface FormJSON {
-    [key: string]: string | number | (string | boolean)[];
-}
-
 export function formToJSON(
     form: HTMLFormElement | HTMLFieldSetElement
-): FormJSON {
+): URLData {
     const data = {};
 
     for (const field of form.elements) {

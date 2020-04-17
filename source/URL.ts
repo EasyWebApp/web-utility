@@ -1,16 +1,13 @@
-import { parseJSON } from './data';
+import { parseJSON, isEmpty } from './data';
 
 export function isXDomain(URI: string) {
     return new URL(URI, document.baseURI).origin !== self.location.origin;
 }
 
 export type JSONValue = number | boolean | string | null;
+export type URLData = Record<string, JSONValue | JSONValue[]>;
 
-export interface URLData {
-    [key: string]: JSONValue | JSONValue[];
-}
-
-export function parseURLData(raw = window.location.search) {
+export function parseURLData(raw = window.location.search): URLData {
     const data = new URLSearchParams(/(?:\?|#)?(\S+)/.exec(raw)[1]);
 
     return Object.fromEntries(
@@ -19,6 +16,19 @@ export function parseURLData(raw = window.location.search) {
 
             return [key, list.length < 2 ? list[0] : list];
         })
+    );
+}
+
+export function buildURLData(map: string[][] | Record<string, any>) {
+    if (!(map instanceof Array)) map = Object.entries(map);
+
+    return new URLSearchParams(
+        (map as any[][])
+            .map(
+                ([key, value]) =>
+                    !isEmpty(value) && [key, value.toJSON?.() || value + '']
+            )
+            .filter(Boolean)
     );
 }
 
