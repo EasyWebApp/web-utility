@@ -1,4 +1,10 @@
-import { isEmpty, differ, groupBy, parseTextTable } from '../source/data';
+import {
+    isEmpty,
+    byteLength,
+    differ,
+    groupBy,
+    parseTextTable
+} from '../source/data';
 
 describe('Data', () => {
     it('should detect Meaningless Null Values', () => {
@@ -16,6 +22,12 @@ describe('Data', () => {
                 true
             ])
         );
+    });
+
+    it('should calculate the Byte Length of a String', () => {
+        expect(byteLength('123')).toBe(3);
+
+        expect(byteLength('xＸ中')).toBe(5);
     });
 
     it('should return an Object with Diffed Data', () => {

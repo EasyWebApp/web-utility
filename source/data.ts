@@ -2,12 +2,19 @@ export function isEmpty(value: any) {
     return !(value != null) || (!value && isNaN(value)) || value + '' === '';
 }
 
+export function byteLength(raw: string) {
+    return raw.replace(/[^\u0021-\u007e\uff61-\uffef]/g, 'xx').length;
+}
+
 export function uniqueID() {
     return (Date.now() + parseInt((Math.random() + '').slice(2))).toString(36);
 }
 
-export function differ(target: object, source: object) {
-    const data = {};
+export function differ<T>(
+    target: Record<string, T>,
+    source: Record<string, T>
+) {
+    const data: Record<string, T> = {};
 
     for (const key in source)
         if (!(target[key] != null)) data[key] = source[key];
@@ -18,7 +25,10 @@ export function differ(target: object, source: object) {
 export type GroupKey = string | number;
 export type Iteratee<T> = GroupKey | ((item: T) => GroupKey | GroupKey[]);
 
-export function groupBy<T>(list: T[], iteratee: Iteratee<T>) {
+export function groupBy<T extends Record<string, any>>(
+    list: T[],
+    iteratee: Iteratee<T>
+) {
     const data: Record<string | number, T[]> = {};
 
     for (const item of list) {

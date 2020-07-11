@@ -18,6 +18,12 @@ describe('DOM', () => {
 
             <fieldset name="test">
                 <input type="text" name="example" value="sample" />
+
+                <select name="other" size="3">
+                    <option>1</option>
+                    <option selected>2</option>
+                    <option>3</option>
+                </select>
             </fieldset>
         </form>`;
 
@@ -28,7 +34,7 @@ describe('DOM', () => {
                 switch: true,
                 list: [1, 3],
                 array: [2, 3],
-                test: { example: 'sample' }
+                test: { example: 'sample', other: 2 }
             })
         );
     });

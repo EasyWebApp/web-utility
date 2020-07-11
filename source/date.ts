@@ -51,7 +51,7 @@ export function formatDate(
         .toJSON()
         .split(/\D/)
         .reduce((temp, section, index) => {
-            temp[unitISO[index]] = section;
+            temp[unitISO[index]] = section.replace(/^0+/, '');
 
             return temp;
         }, {});

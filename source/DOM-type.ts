@@ -4,6 +4,7 @@ export interface HTMLProps {
     style?: Record<string, string | number>;
     title?: string;
     tabIndex?: number;
+    innerHTML?: string;
     onClick?: (event: MouseEvent) => any;
     [key: string]: any;
 }

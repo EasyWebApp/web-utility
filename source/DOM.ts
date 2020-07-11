@@ -1,6 +1,6 @@
 import { URLData } from './URL';
 import { HTMLField } from './DOM-type';
-import { parseJSON } from './data';
+import { parseJSON, isEmpty } from './data';
 
 const sandbox = document.createElement('template'),
     fragment = document.createDocumentFragment();
@@ -42,6 +42,16 @@ export function insertToCursor(...nodes: Node[]) {
 
     range.deleteContents();
     range.insertNode(fragment);
+}
+
+export function scrollTo(selector: string, root?: Element) {
+    const [_, ID] = /^#(.+)/.exec(selector) || [];
+
+    if (ID === 'top') window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
+    else
+        (root || document)
+            .querySelector(ID ? `[id="${ID}"]` : selector)
+            ?.scrollIntoView({ behavior: 'smooth' });
 }
 
 export function watchVisible(
@@ -106,7 +116,11 @@ export function formToJSON(
         }
 
         if (name in data) data[name] = [].concat(data[name], value);
-        else data[name] = value;
+        else
+            data[name] =
+                !(value instanceof Array) || !isEmpty(value[1])
+                    ? value
+                    : value[0];
     }
 
     return data;
