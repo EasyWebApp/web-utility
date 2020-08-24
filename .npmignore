@@ -1,4 +1,5 @@
 test/
 docs/
 .cache/
+.vscode/
 .travis.yml

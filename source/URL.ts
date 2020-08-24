@@ -8,7 +8,8 @@ export type JSONValue = number | boolean | string | null;
 export type URLData = Record<string, JSONValue | JSONValue[]>;
 
 export function parseURLData(raw = window.location.search): URLData {
-    const data = new URLSearchParams(/(?:\?|#)?(\S+)/.exec(raw)[1]);
+    const list = raw.split(/\?|#/);
+    const data = new URLSearchParams(list[1] || list[0]);
 
     return Object.fromEntries(
         [...data.keys()].map(key => {

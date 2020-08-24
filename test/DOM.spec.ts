@@ -1,6 +1,39 @@
-import { formToJSON } from '../source/DOM';
+import 'intersection-observer';
+import { watchScroll, formToJSON } from '../source/DOM';
 
 describe('DOM', () => {
+    it('should find all depth-matched Heading Elements in a container', () => {
+        document.body.innerHTML = `
+            <h1 id="h1">Level 1</h1>
+            <section>
+                <h2 id="h2.1">Level 2</h2>
+                <p>test</p>
+                <h3 id="h3.1">Level 3</h3>
+                <p>example</p>
+            </section>
+            <section>
+                <h2 id="h2.2">Level 2</h2>
+                <p>test</p>
+                <h3 id="h3.2">Level 3</h3>
+                <p>example</p>
+            </section>
+        `;
+
+        expect(watchScroll(document.body, () => {})).toEqual([
+            { level: 1, id: 'h1', text: 'Level 1' },
+            { level: 2, id: 'h2.1', text: 'Level 2' },
+            { level: 3, id: 'h3.1', text: 'Level 3' },
+            { level: 2, id: 'h2.2', text: 'Level 2' },
+            { level: 3, id: 'h3.2', text: 'Level 3' }
+        ]);
+
+        expect(watchScroll(document.body, () => {}, 2)).toEqual([
+            { level: 1, id: 'h1', text: 'Level 1' },
+            { level: 2, id: 'h2.1', text: 'Level 2' },
+            { level: 2, id: 'h2.2', text: 'Level 2' }
+        ]);
+    });
+
     it('should convert a Form to JSON', () => {
         document.body.innerHTML = `
         <form>

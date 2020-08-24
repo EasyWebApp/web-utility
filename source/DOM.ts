@@ -54,6 +54,48 @@ export function scrollTo(selector: string, root?: Element) {
             ?.scrollIntoView({ behavior: 'smooth' });
 }
 
+interface ScrollEvent {
+    target: HTMLHeadingElement;
+    links: (HTMLAnchorElement | HTMLAreaElement)[];
+}
+
+export function watchScroll(
+    box: HTMLElement,
+    handler: (event: ScrollEvent) => any,
+    depth = 6
+) {
+    return Array.from(
+        box.querySelectorAll<HTMLHeadingElement>(
+            Array.from(new Array(depth), (_, index) => `h${++index}`) + ''
+        ),
+        header => {
+            new IntersectionObserver(([item]) => {
+                if (!item.isIntersecting) return;
+
+                const target = item.target as HTMLHeadingElement;
+
+                handler({
+                    target,
+                    links: [
+                        ...target.ownerDocument.querySelectorAll<
+                            HTMLAnchorElement | HTMLAreaElement
+                        >(`[href="#${target.id}"]`)
+                    ]
+                });
+            }).observe(header);
+
+            if (!header.id.trim())
+                header.id = header.textContent.trim().replace(/\W+/g, '-');
+
+            return {
+                level: +header.tagName[1],
+                id: header.id,
+                text: header.textContent.trim()
+            };
+        }
+    );
+}
+
 export function watchVisible(
     root: Element,
     handler: (visible: boolean) => any
@@ -75,10 +117,10 @@ export function watchVisible(
     );
 }
 
-export function formToJSON(
+export function formToJSON<T = URLData>(
     form: HTMLFormElement | HTMLFieldSetElement
-): URLData {
-    const data = {};
+) {
+    const data = {} as T;
 
     for (const field of form.elements) {
         let {

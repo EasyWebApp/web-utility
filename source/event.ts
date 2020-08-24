@@ -59,3 +59,21 @@ export function createMessageClient(target: Window | Worker, origin = '*') {
             target.postMessage({ id: UID, type, ...data }, origin);
         });
 }
+
+export function serviceWorkerUpdate(registration: ServiceWorkerRegistration) {
+    return new Promise<ServiceWorker>(resolve => {
+        if (registration.waiting) return resolve(registration.waiting);
+
+        registration.onupdatefound = () =>
+            registration.installing?.addEventListener(
+                'statechange',
+                function () {
+                    if (
+                        this.state === 'installed' &&
+                        navigator.serviceWorker.controller
+                    )
+                        resolve(this);
+                }
+            );
+    });
+}
