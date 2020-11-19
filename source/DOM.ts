@@ -22,6 +22,35 @@ export function* walkDOM(root: Node): Generator<Node> {
     for (const node of children) yield* walkDOM(node);
 }
 
+interface CSSOptions
+    extends Pick<
+        HTMLLinkElement,
+        'title' | 'media' | 'crossOrigin' | 'integrity'
+    > {
+    alternate?: boolean;
+}
+
+export function importCSS(
+    URI: string,
+    { alternate, ...options }: CSSOptions = {} as CSSOptions
+) {
+    if ([...document.styleSheets].find(({ href }) => href === URI))
+        throw Error(`${URI} has been loaded`);
+
+    const link = document.createElement('link');
+
+    return new Promise((resolve, reject) => {
+        (link.onload = resolve), (link.onerror = reject);
+
+        Object.assign(link, options);
+
+        (link.rel = (alternate ? 'alternate ' : '') + 'stylesheet'),
+            (link.href = URI);
+
+        document.head.append(link);
+    });
+}
+
 export function insertToCursor(...nodes: Node[]) {
     fragment.append(...nodes);
 
@@ -117,27 +146,25 @@ export function watchVisible(
     );
 }
 
-export function formToJSON<T = URLData>(
+export function formToJSON<T = URLData<File>>(
     form: HTMLFormElement | HTMLFieldSetElement
 ) {
     const data = {} as T;
 
     for (const field of form.elements) {
         let {
-            tagName,
             type,
             name,
             value: v,
             checked,
             defaultValue,
-            selectedOptions
+            selectedOptions,
+            files
         } = field as HTMLField;
 
         if (!name) continue;
 
-        tagName = tagName.toLowerCase();
-
-        const box = tagName !== 'fieldset' && field.closest('fieldset');
+        const box = type !== 'fieldset' && field.closest('fieldset');
 
         if (box && box !== form) continue;
 
@@ -147,14 +174,17 @@ export function formToJSON<T = URLData>(
 
         let value: any = parseJSON(v);
 
-        switch (tagName) {
-            case 'select':
+        switch (type) {
+            case 'select-multiple':
                 value = Array.from(selectedOptions, ({ value }) =>
                     parseJSON(value)
                 );
                 break;
             case 'fieldset':
                 value = formToJSON(field as HTMLFieldSetElement);
+                break;
+            case 'file':
+                value = files && [...files];
         }
 
         if (name in data) data[name] = [].concat(data[name], value);

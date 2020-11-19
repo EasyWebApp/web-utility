@@ -58,6 +58,8 @@ describe('DOM', () => {
                     <option>3</option>
                 </select>
             </fieldset>
+
+            <input type="file" name="files" />
         </form>`;
 
         const data = formToJSON(document.forms[0]);
@@ -67,7 +69,8 @@ describe('DOM', () => {
                 switch: true,
                 list: [1, 3],
                 array: [2, 3],
-                test: { example: 'sample', other: 2 }
+                test: { example: 'sample', other: 2 },
+                files: undefined
             })
         );
     });

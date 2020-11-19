@@ -5,7 +5,9 @@ export function isXDomain(URI: string) {
 }
 
 export type JSONValue = number | boolean | string | null;
-export type URLData = Record<string, JSONValue | JSONValue[]>;
+export interface URLData<E = unknown> {
+    [key: string]: JSONValue | JSONValue[] | URLData | URLData[] | E;
+}
 
 export function parseURLData(raw = window.location.search): URLData {
     const list = raw.split(/\?|#/);

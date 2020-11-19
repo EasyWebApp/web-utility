@@ -40,7 +40,7 @@ const unitISO = ['Y', 'M', 'D', 'H', 'm', 's', 'ms'],
     patternISO = /[YMDHms]+/g;
 
 export function formatDate(
-    time: number | string | Date = new Date(),
+    time: TimeData = new Date(),
     template = 'YYYY-MM-DD HH:mm:ss'
 ) {
     time = time instanceof Date ? time : new Date(time);

@@ -1,11 +1,22 @@
 export interface HTMLProps {
     id?: string;
     className?: string;
-    style?: Record<string, string | number>;
+    style?: Partial<Omit<CSSStyleDeclaration, 'length' | 'parentRule'>>;
     title?: string;
     tabIndex?: number;
     innerHTML?: string;
     onClick?: (event: MouseEvent) => any;
+    onDblClick?: (event: MouseEvent) => any;
+    onMouseDown?: (event: MouseEvent) => any;
+    onMouseMove?: (event: MouseEvent) => any;
+    onMouseUp?: (event: MouseEvent) => any;
+    onMouseEnter?: (event: MouseEvent) => any;
+    onMouseLeave?: (event: MouseEvent) => any;
+    onMouseOver?: (event: MouseEvent) => any;
+    onMouseOut?: (event: MouseEvent) => any;
+    onKeyDown?: (event: KeyboardEvent) => any;
+    onKeyPress?: (event: KeyboardEvent) => any;
+    onKeyUp?: (event: KeyboardEvent) => any;
     [key: string]: any;
 }
 
@@ -28,7 +39,9 @@ export interface BaseFieldProps extends HTMLProps {
     placeholder?: string;
     autofocus?: boolean;
     onFocus?: (event: FocusEvent) => any;
+    onFocusIn?: (event: FocusEvent) => any;
     onBlur?: (event: FocusEvent) => any;
+    onFocusOut?: (event: FocusEvent) => any;
     onInput?: (event: InputEvent) => any;
     onChange?: (event: Event) => any;
 }
