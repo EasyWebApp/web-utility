@@ -1,4 +1,4 @@
-import { promisify } from '../source';
+import { promisify } from '../source/event';
 
 describe('Event', () => {
     it('should convert an End Event to a Promise resolve', async () => {

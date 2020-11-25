@@ -34,18 +34,20 @@ export function importCSS(
     URI: string,
     { alternate, ...options }: CSSOptions = {} as CSSOptions
 ) {
-    if ([...document.styleSheets].find(({ href }) => href === URI))
-        throw Error(`${URI} has been loaded`);
+    const style = [...document.styleSheets].find(({ href }) => href === URI);
+
+    if (style) return Promise.resolve(style);
 
     const link = document.createElement('link');
 
-    return new Promise((resolve, reject) => {
-        (link.onload = resolve), (link.onerror = reject);
+    return new Promise<CSSStyleSheet>((resolve, reject) => {
+        link.onload = () => resolve(link.sheet);
+        link.onerror = (_1, _2, _3, _4, error) => reject(error);
 
         Object.assign(link, options);
 
-        (link.rel = (alternate ? 'alternate ' : '') + 'stylesheet'),
-            (link.href = URI);
+        link.rel = (alternate ? 'alternate ' : '') + 'stylesheet';
+        link.href = URI;
 
         document.head.append(link);
     });

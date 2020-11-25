@@ -7,19 +7,35 @@
 
 [![NPM](https://nodei.co/npm/web-utility.png?downloads=true&downloadRank=true&stars=true)][4]
 
+## Installation
+
+```Shell
+npm install web-utility
+```
+
+`index.html`
+
+```HTML
+<head>
+    <script src="https://polyfill.app/api/polyfill?features=regenerator-runtime,url,scroll-behavior,intersection-observer"></script>
+</head>
+```
+
 ## Usage
 
 [API document](https://web-cell.dev/web-utility/)
 
 ### CSS Animation
 
-1. [Simple hover](https://github.com/EasyWebApp/BootCell/blob/a41bbc1/source/Prompt/Tooltip.tsx#L38-L43)
+1. [Watch Swipe](https://github.com/EasyWebApp/BootCell/blob/11c5d6f/source%2FMedia%2FCarousel.tsx#L200-L214)
 
-2. [Switch with `await`](https://github.com/EasyWebApp/BootCell/blob/a41bbc1/source/Content/TabList.tsx#L77-85)
+2. [Simple Hover](https://github.com/EasyWebApp/BootCell/blob/a41bbc1/source/Prompt/Tooltip.tsx#L38-L43)
 
-3. [Toggle with Inline Styles](https://github.com/EasyWebApp/BootCell/blob/a41bbc1/source/Content/Collapse.tsx#L19-L38)
+3. [Switch with `await`](https://github.com/EasyWebApp/BootCell/blob/a41bbc1/source/Content/TabList.tsx#L77-85)
 
-4. [Work with Existed Classes](https://github.com/EasyWebApp/BootCell/blob/a41bbc1/source/Content/Carousel.tsx#L82-L99)
+4. [Toggle with Inline Styles](https://github.com/EasyWebApp/BootCell/blob/a41bbc1/source/Content/Collapse.tsx#L19-L38)
+
+5. [Work with Existed Classes](https://github.com/EasyWebApp/BootCell/blob/a41bbc1/source/Content/Carousel.tsx#L82-L99)
 
 ### Message Channel
 
