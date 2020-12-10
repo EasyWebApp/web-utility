@@ -1,7 +1,23 @@
 import 'intersection-observer';
-import { watchScroll, formToJSON } from '../source/DOM';
+import { getVisibleText, watchScroll, formToJSON } from '../source/DOM';
 
 describe('DOM', () => {
+    it('should get all the text of Visible elements', () => {
+        document.body.innerHTML = `
+            <a>
+                <i class="icon" aria-hidden="true"></i>
+                test
+                <span style="display: none">current</span>
+            </a>`;
+
+        const { firstElementChild: link } = document.body;
+
+        link.getBoundingClientRect = () =>
+            ({ width: 48, height: 16 } as DOMRect);
+
+        expect(getVisibleText(link)).toBe('test');
+    });
+
     it('should find all depth-matched Heading Elements in a container', () => {
         document.body.innerHTML = `
             <h1 id="h1">Level 1</h1>

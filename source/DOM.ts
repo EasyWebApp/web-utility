@@ -22,6 +22,22 @@ export function* walkDOM(root: Node): Generator<Node> {
     for (const node of children) yield* walkDOM(node);
 }
 
+export function getVisibleText(root: Element) {
+    var text = '';
+
+    for (const { nodeType, parentElement, nodeValue } of walkDOM(root))
+        if (
+            nodeType === Node.TEXT_NODE &&
+            parentElement.getAttribute('aria-hidden') !== 'true'
+        ) {
+            const { width, height } = parentElement.getBoundingClientRect();
+
+            if (width && height) text += nodeValue.trim();
+        }
+
+    return text;
+}
+
 interface CSSOptions
     extends Pick<
         HTMLLinkElement,
