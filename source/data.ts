@@ -1,3 +1,5 @@
+export type Constructor<T> = new (...args: any[]) => T;
+
 export function isEmpty(value: any) {
     return !(value != null) || (!value && isNaN(value)) || value + '' === '';
 }

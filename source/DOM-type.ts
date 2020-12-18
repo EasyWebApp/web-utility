@@ -31,17 +31,27 @@ export interface UIEventHandlers {
     onResize?: (Event: UIEvent) => any;
 }
 
+export interface FormEventHandlers {
+    onFocus?: (event: FocusEvent) => any;
+    onFocusIn?: (event: FocusEvent) => any;
+    onBlur?: (event: FocusEvent) => any;
+    onFocusOut?: (event: FocusEvent) => any;
+    onInput?: (event: InputEvent) => any;
+    onChange?: (event: Event) => any;
+}
+
 export interface HTMLProps
     extends KeyboardEventHandlers,
         MouseEventHandlers,
         TouchEventHandlers,
-        UIEventHandlers {
-    id?: string;
-    className?: string;
+        UIEventHandlers,
+        Partial<
+            Pick<
+                HTMLElement,
+                'id' | 'className' | 'title' | 'tabIndex' | 'innerHTML'
+            >
+        > {
     style?: Partial<Omit<CSSStyleDeclaration, 'length' | 'parentRule'>>;
-    title?: string;
-    tabIndex?: number;
-    innerHTML?: string;
     [key: string]: any;
 }
 
@@ -50,26 +60,23 @@ export interface HTMLHyperLinkProps extends HTMLProps {
     target?: '_self' | '_parent' | '_top' | '_blank';
 }
 
-export interface TableCellProps {
-    colSpan?: number;
-    rowSpan?: number;
-}
+export type TableCellProps = Partial<
+    Pick<HTMLTableCellElement, 'colSpan' | 'rowSpan'>
+>;
 
-export interface BaseFieldProps extends HTMLProps {
-    name?: string;
-    defaultValue?: string;
-    value?: string;
-    required?: boolean;
-    disabled?: boolean;
-    placeholder?: string;
-    autofocus?: boolean;
-    onFocus?: (event: FocusEvent) => any;
-    onFocusIn?: (event: FocusEvent) => any;
-    onBlur?: (event: FocusEvent) => any;
-    onFocusOut?: (event: FocusEvent) => any;
-    onInput?: (event: InputEvent) => any;
-    onChange?: (event: Event) => any;
-}
+type HTMLFieldProps = Partial<
+    Pick<
+        HTMLInputElement,
+        | 'name'
+        | 'defaultValue'
+        | 'value'
+        | 'required'
+        | 'disabled'
+        | 'placeholder'
+        | 'autofocus'
+    >
+>;
+export type BaseFieldProps = HTMLProps & HTMLFieldProps & FormEventHandlers;
 
 export type HTMLField = HTMLInputElement &
     HTMLTextAreaElement &
@@ -83,7 +90,7 @@ export interface CustomElement extends HTMLElement {
     /**
      * Called every time the element is inserted into the DOM
      */
-    connectedCallback(): void;
+    connectedCallback?(): void;
     /**
      * Called every time the element is removed from the DOM.
      */
@@ -109,7 +116,18 @@ export interface CustomElement extends HTMLElement {
 /**
  * @see https://web.dev/more-capable-form-controls/#lifecycle-callbacks
  */
-export interface CustomFormElement extends CustomElement {
+export interface CustomFormElement
+    extends CustomElement,
+        Omit<HTMLFieldProps, 'autofocus'>,
+        Pick<
+            HTMLInputElement,
+            | 'form'
+            | 'validity'
+            | 'validationMessage'
+            | 'willValidate'
+            | 'checkValidity'
+            | 'reportValidity'
+        > {
     /**
      * Called when the browser associates the element with a form element,
      * or disassociates the element from a form element.
