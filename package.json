@@ -1,6 +1,6 @@
 {
     "name": "web-utility",
-    "version": "2.1.1",
+    "version": "2.2.0",
     "license": "LGPL-3.0",
     "author": "shiy2008@gmail.com",
     "description": "Web front-end toolkit based on TypeScript",
@@ -24,6 +24,7 @@
     "main": "dist/web-utility.umd.js",
     "module": "dist/web-utility.js",
     "devDependencies": {
+        "@peculiar/webcrypto": "^1.1.4",
         "@types/jest": "^26.0.19",
         "@types/node": "^14.14.14",
         "husky": "^4.3.6",

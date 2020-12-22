@@ -1,4 +1,4 @@
-import 'intersection-observer';
+import './polyfill';
 import { getVisibleText, watchScroll, formToJSON } from '../source/DOM';
 
 describe('DOM', () => {

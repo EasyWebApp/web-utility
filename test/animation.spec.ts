@@ -1,3 +1,4 @@
+import './polyfill';
 import { PageVector, durationOf } from '../source/animation';
 
 describe('Animation', () => {

@@ -18,6 +18,7 @@ npm install web-utility
 ```HTML
 <head>
     <script src="https://polyfill.app/api/polyfill?features=regenerator-runtime,url,scroll-behavior,intersection-observer"></script>
+    <script src="https://cdn.jsdelivr.net/npm/fast-text-encoding@1.0.3/text.min.js"></script>
 </head>
 ```
 
@@ -27,7 +28,7 @@ npm install web-utility
 
 ### CSS Animation
 
-1. [Watch Swipe](https://github.com/EasyWebApp/BootCell/blob/11c5d6f/source%2FMedia%2FCarousel.tsx#L200-L214)
+1. [Watch Swipe](https://github.com/EasyWebApp/BootCell/blob/11c5d6f/source%2FMedia%2FCarousel.tsx#L200-L218)
 
 2. [Simple Hover](https://github.com/EasyWebApp/BootCell/blob/a41bbc1/source/Prompt/Tooltip.tsx#L38-L43)
 

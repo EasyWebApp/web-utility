@@ -36,9 +36,9 @@ export function createMessageServer(
         (source as MessageGlobal).postMessage({ ...result, id }, origin);
     }
 
-    self.addEventListener('message', server);
+    globalThis.addEventListener('message', server);
 
-    return () => self.removeEventListener('message', server);
+    return () => globalThis.removeEventListener('message', server);
 }
 
 export function createMessageClient(target: Window | Worker, origin = '*') {
@@ -51,10 +51,10 @@ export function createMessageClient(target: Window | Worker, origin = '*') {
 
                 resolve(data);
 
-                self.removeEventListener('message', handler);
+                globalThis.removeEventListener('message', handler);
             }
 
-            self.addEventListener('message', handler);
+            globalThis.addEventListener('message', handler);
 
             target.postMessage({ id: UID, type, ...data }, origin);
         });

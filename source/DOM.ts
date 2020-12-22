@@ -81,7 +81,7 @@ export function insertToCursor(...nodes: Node[]) {
         )
             (node as ChildNode).replaceWith(...node.childNodes);
 
-    const selection = self.getSelection();
+    const selection = globalThis.getSelection();
 
     if (!selection) return;
 

@@ -40,17 +40,16 @@ export interface FormEventHandlers {
     onChange?: (event: Event) => any;
 }
 
+type BaseHTMLProps = Partial<
+    Pick<HTMLElement, 'id' | 'className' | 'title' | 'tabIndex' | 'innerHTML'>
+>;
+
 export interface HTMLProps
     extends KeyboardEventHandlers,
         MouseEventHandlers,
         TouchEventHandlers,
         UIEventHandlers,
-        Partial<
-            Pick<
-                HTMLElement,
-                'id' | 'className' | 'title' | 'tabIndex' | 'innerHTML'
-            >
-        > {
+        BaseHTMLProps {
     style?: Partial<Omit<CSSStyleDeclaration, 'length' | 'parentRule'>>;
     [key: string]: any;
 }
@@ -73,10 +72,24 @@ type HTMLFieldProps = Partial<
         | 'required'
         | 'disabled'
         | 'placeholder'
-        | 'autofocus'
     >
 >;
-export type BaseFieldProps = HTMLProps & HTMLFieldProps & FormEventHandlers;
+type HTMLFieldInternals = Pick<
+    HTMLInputElement,
+    | 'form'
+    | 'validity'
+    | 'validationMessage'
+    | 'willValidate'
+    | 'checkValidity'
+    | 'reportValidity'
+>;
+
+export interface BaseFieldProps
+    extends HTMLProps,
+        HTMLFieldProps,
+        FormEventHandlers {
+    autofocus?: HTMLInputElement['autofocus'];
+}
 
 export type HTMLField = HTMLInputElement &
     HTMLTextAreaElement &
@@ -118,16 +131,8 @@ export interface CustomElement extends HTMLElement {
  */
 export interface CustomFormElement
     extends CustomElement,
-        Omit<HTMLFieldProps, 'autofocus'>,
-        Pick<
-            HTMLInputElement,
-            | 'form'
-            | 'validity'
-            | 'validationMessage'
-            | 'willValidate'
-            | 'checkValidity'
-            | 'reportValidity'
-        > {
+        HTMLFieldProps,
+        HTMLFieldInternals {
     /**
      * Called when the browser associates the element with a form element,
      * or disassociates the element from a form element.

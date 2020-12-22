@@ -1,3 +1,4 @@
+import './polyfill';
 import { promisify } from '../source/event';
 
 describe('Event', () => {

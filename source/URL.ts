@@ -1,7 +1,9 @@
 import { parseJSON, isEmpty } from './data';
 
+const { location, atob } = globalThis;
+
 export function isXDomain(URI: string) {
-    return new URL(URI, document.baseURI).origin !== self.location.origin;
+    return new URL(URI, document.baseURI).origin !== location.origin;
 }
 
 export type JSONValue = number | boolean | string | null;
@@ -36,11 +38,14 @@ export function buildURLData(map: string[][] | Record<string, any>) {
 }
 
 const DataURI = /^data:(.+?\/(.+?))?(;base64)?,([\s\S]+)/;
-
+/**
+ * Blob logic forked from axes's
+ * http://www.cnblogs.com/axes/p/4603984.html
+ */
 export function blobFrom(URI: string) {
     var [_, type, __, base64, data] = DataURI.exec(URI) || [];
 
-    data = base64 ? self.atob(data) : data;
+    data = base64 ? atob(data) : data;
 
     const aBuffer = new ArrayBuffer(data.length);
     const uBuffer = new Uint8Array(aBuffer);

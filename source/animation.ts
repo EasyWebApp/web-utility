@@ -45,14 +45,16 @@ export class PageVector {
     }
 }
 
+const { getComputedStyle, getSelection, requestAnimationFrame } = globalThis;
+
 export function getSwipeVector(
     from: CartesianCoordinate,
     to: CartesianCoordinate,
-    threshold = parseInt(self.getComputedStyle(document.body).fontSize) * 6
+    threshold = parseInt(getComputedStyle(document.body).fontSize) * 6
 ) {
     const vector = new PageVector(from, to);
 
-    if (vector.length >= threshold && !self.getSelection()?.toString().trim())
+    if (vector.length >= threshold && !getSelection()?.toString().trim())
         return vector;
 }
 
@@ -89,7 +91,7 @@ function fadeIn<T extends Event>(
     const end = watchMotion<T>(type, element);
 
     return new Promise<T>(resolve =>
-        self.requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
             element.classList.add(className);
 
             end.then(resolve);

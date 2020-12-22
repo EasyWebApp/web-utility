@@ -1,3 +1,4 @@
+import './polyfill';
 import { isXDomain, parseURLData, buildURLData, blobFrom } from '../source/URL';
 
 describe('URL', () => {
