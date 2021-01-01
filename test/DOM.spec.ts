@@ -1,7 +1,27 @@
 import './polyfill';
-import { getVisibleText, watchScroll, formToJSON } from '../source/DOM';
+import {
+    walkDOM,
+    getVisibleText,
+    watchScroll,
+    formToJSON
+} from '../source/DOM';
 
 describe('DOM', () => {
+    it('should walk through a DOM tree with(out) a Type filter', () => {
+        document.body.innerHTML = '<a><b>test</b></a>';
+
+        expect(
+            Array.from(walkDOM(document.body), ({ nodeName }) => nodeName)
+        ).toStrictEqual(['BODY', 'A', 'B', '#text']);
+
+        expect(
+            Array.from(
+                walkDOM<Text>(document.body, Node.TEXT_NODE),
+                ({ nodeValue }) => nodeValue
+            ) + ''
+        ).toBe('test');
+    });
+
     it('should get all the text of Visible elements', () => {
         document.body.innerHTML = `
             <a>

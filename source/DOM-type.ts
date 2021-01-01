@@ -10,11 +10,17 @@ export interface MouseEventHandlers {
     onMouseDown?: (event: MouseEvent) => any;
     onMouseMove?: (event: MouseEvent) => any;
     onMouseUp?: (event: MouseEvent) => any;
-    onMouseEnter?: (event: MouseEvent) => any;
-    onMouseLeave?: (event: MouseEvent) => any;
     onMouseOver?: (event: MouseEvent) => any;
     onMouseOut?: (event: MouseEvent) => any;
     onWheel?: (event: WheelEvent) => any;
+}
+
+/**
+ * Mouse Events with no bubble
+ */
+export interface HoverEventHandlers {
+    onMouseEnter?: (event: MouseEvent) => any;
+    onMouseLeave?: (event: MouseEvent) => any;
 }
 
 export interface TouchEventHandlers {
@@ -26,55 +32,96 @@ export interface TouchEventHandlers {
     onTouchCancel?: (event: TouchEvent) => any;
 }
 
+/**
+ * UI Events with no bubble
+ */
 export interface UIEventHandlers {
     onScroll?: (event: UIEvent) => any;
     onResize?: (Event: UIEvent) => any;
 }
 
-export interface FormEventHandlers {
+export interface AnimationEventHandlers {
+    onTransitionStart?(event: TransitionEvent): any;
+    onTransitionEnd?(event: TransitionEvent): any;
+    onTransitionCancel?(event: TransitionEvent): any;
+    onAnimationStart?(event: AnimationEvent): any;
+    onAnimationEnd?(event: AnimationEvent): any;
+    onAnimationCancel?(event: AnimationEvent): any;
+}
+
+/**
+ * Events of every HTML Element itself
+ */
+export type BaseEventHandlers = KeyboardEventHandlers &
+    MouseEventHandlers &
+    HoverEventHandlers &
+    TouchEventHandlers &
+    UIEventHandlers &
+    AnimationEventHandlers;
+
+/**
+ * Field Events with no bubble
+ */
+export interface FieldEventHandlers {
     onFocus?: (event: FocusEvent) => any;
-    onFocusIn?: (event: FocusEvent) => any;
     onBlur?: (event: FocusEvent) => any;
+}
+
+export interface InputEventHandlers {
+    onFocusIn?: (event: FocusEvent) => any;
     onFocusOut?: (event: FocusEvent) => any;
     onInput?: (event: InputEvent) => any;
     onChange?: (event: Event) => any;
 }
 
-type BaseHTMLProps = Partial<
-    Pick<HTMLElement, 'id' | 'className' | 'title' | 'tabIndex' | 'innerHTML'>
->;
+export interface FormEventHandlers {
+    onSubmit?(event: Event): any;
+    onReset?(event: Event): any;
+}
+
+/**
+ * Events of every Container HTML Element
+ */
+export type BubbleEventHandlers = KeyboardEventHandlers &
+    MouseEventHandlers &
+    TouchEventHandlers &
+    AnimationEventHandlers &
+    InputEventHandlers &
+    FormEventHandlers;
 
 export interface HTMLProps
-    extends KeyboardEventHandlers,
-        MouseEventHandlers,
-        TouchEventHandlers,
-        UIEventHandlers,
-        BaseHTMLProps {
+    extends BaseEventHandlers,
+        Partial<Pick<HTMLElement, 'id' | 'className' | 'title' | 'tabIndex'>> {
     style?: Partial<Omit<CSSStyleDeclaration, 'length' | 'parentRule'>>;
     [key: string]: any;
 }
 
-export interface HTMLHyperLinkProps extends HTMLProps {
+export type HTMLContainerProps = BubbleEventHandlers &
+    HTMLProps &
+    Pick<
+        HTMLElement,
+        'innerHTML' | 'innerText' | 'textContent' | 'contentEditable'
+    >;
+
+export interface HTMLHyperLinkProps extends HTMLContainerProps, HTMLProps {
     href?: string | URL;
     target?: '_self' | '_parent' | '_top' | '_blank';
 }
 
-export type TableCellProps = Partial<
-    Pick<HTMLTableCellElement, 'colSpan' | 'rowSpan'>
->;
+export type HTMLTableCellProps = HTMLContainerProps &
+    Partial<Pick<HTMLTableCellElement, 'colSpan' | 'rowSpan'>>;
 
-type HTMLFieldProps = Partial<
+export type HTMLFieldProps = Partial<
     Pick<
         HTMLInputElement,
-        | 'name'
-        | 'defaultValue'
-        | 'value'
-        | 'required'
-        | 'disabled'
-        | 'placeholder'
+        'name' | 'defaultValue' | 'value' | 'required' | 'disabled'
     >
 >;
-type HTMLFieldInternals = Pick<
+export type HTMLTextFieldProps = Partial<
+    Pick<HTMLInputElement, 'readOnly' | 'placeholder'>
+>;
+
+export type HTMLFieldInternals = Pick<
     HTMLInputElement,
     | 'form'
     | 'validity'
@@ -87,8 +134,36 @@ type HTMLFieldInternals = Pick<
 export interface BaseFieldProps
     extends HTMLProps,
         HTMLFieldProps,
-        FormEventHandlers {
+        FieldEventHandlers,
+        InputEventHandlers {
     autofocus?: HTMLInputElement['autofocus'];
+}
+
+export interface HTMLButtonProps extends BaseFieldProps, HTMLContainerProps {
+    type?: 'button' | 'image' | 'submit' | 'reset';
+}
+
+export interface HTMLInputProps extends HTMLTextFieldProps, BaseFieldProps {
+    type?:
+        | 'checkbox'
+        | 'color'
+        | 'date'
+        | 'datetime-local'
+        | 'email'
+        | 'file'
+        | 'hidden'
+        | 'month'
+        | 'number'
+        | 'password'
+        | 'radio'
+        | 'range'
+        | 'search'
+        | 'tel'
+        | 'text'
+        | 'time'
+        | 'url'
+        | 'week'
+        | HTMLButtonProps['type'];
 }
 
 export type HTMLField = HTMLInputElement &

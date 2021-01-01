@@ -1,6 +1,6 @@
 import { URLData } from './URL';
 import { HTMLField } from './DOM-type';
-import { parseJSON, isEmpty } from './data';
+import { isEmpty, parseJSON } from './data';
 
 const sandbox = document.createElement('template'),
     fragment = document.createDocumentFragment();
@@ -14,12 +14,15 @@ export function parseDOM(HTML: string) {
     });
 }
 
-export function* walkDOM(root: Node): Generator<Node> {
+export function* walkDOM<T extends Node = Node>(
+    root: Node,
+    type?: Node['nodeType']
+): Generator<T> {
     const children = [...root.childNodes];
 
-    yield root;
+    if (isEmpty(type) || type === root.nodeType) yield root as T;
 
-    for (const node of children) yield* walkDOM(node);
+    for (const node of children) yield* walkDOM(node, type);
 }
 
 export function getVisibleText(root: Element) {

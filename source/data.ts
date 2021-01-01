@@ -164,7 +164,7 @@ if ('msCrypto' in self) {
 }
 const { crypto } = globalThis;
 // @ts-ignore
-crypto.subtle = crypto.subtle || crypto.webkitSubtle;
+if (!crypto.subtle && crypto.webkitSubtle) crypto.subtle = crypto.webkitSubtle;
 
 type SHAAlgorithm = 'SHA-1' | 'SHA-256' | 'SHA-384' | 'SHA-512';
 /**
