@@ -1,5 +1,9 @@
 export type Constructor<T> = new (...args: any[]) => T;
 
+export type DataKeys<T> = {
+    [K in keyof T]: T[K] extends Function ? never : K;
+}[keyof T];
+
 export function isEmpty(value: any) {
     return !(value != null) || (!value && isNaN(value)) || value + '' === '';
 }

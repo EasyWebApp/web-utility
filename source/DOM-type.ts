@@ -1,3 +1,5 @@
+import type { DataKeys } from './data';
+
 export interface KeyboardEventHandlers {
     onKeyDown?: (event: KeyboardEvent) => any;
     onKeyPress?: (event: KeyboardEvent) => any;
@@ -89,21 +91,47 @@ export type BubbleEventHandlers = KeyboardEventHandlers &
     InputEventHandlers &
     FormEventHandlers;
 
+export type HTMLOwnKeys<T extends HTMLElement = HTMLElement> = Exclude<
+    keyof T,
+    keyof Node | keyof EventTarget
+>;
+export type SVGOwnKeys<T extends SVGElement = SVGElement> = Exclude<
+    keyof T,
+    keyof Node | keyof EventTarget
+>;
+export type HTMLContentKeys =
+    | 'innerHTML'
+    | 'innerText'
+    | 'textContent'
+    | 'contentEditable';
+
+export type BaseHTMLProps<T extends HTMLElement> = Partial<
+    Pick<T, DataKeys<Pick<T, HTMLOwnKeys<T>>>>
+>;
+export type BaseSVGProps<T extends SVGElement> = Partial<
+    Pick<T, DataKeys<Pick<T, SVGOwnKeys<T>>>>
+>;
+
+export type CSSStyles = Partial<
+    Omit<CSSStyleDeclaration, 'length' | 'parentRule'>
+>;
+
 export interface HTMLProps
     extends BaseEventHandlers,
-        Partial<Pick<HTMLElement, 'id' | 'className' | 'title' | 'tabIndex'>> {
-    style?: Partial<Omit<CSSStyleDeclaration, 'length' | 'parentRule'>>;
-    [key: string]: any;
+        Omit<BaseHTMLProps<HTMLElement>, 'style' | HTMLContentKeys> {
+    style?: CSSStyles;
+}
+export interface SVGProps
+    extends BaseEventHandlers,
+        Omit<BaseSVGProps<SVGElement>, 'style'> {
+    style?: CSSStyles;
 }
 
 export type HTMLContainerProps = BubbleEventHandlers &
     HTMLProps &
-    Pick<
-        HTMLElement,
-        'innerHTML' | 'innerText' | 'textContent' | 'contentEditable'
-    >;
+    Partial<Pick<HTMLElement, HTMLContentKeys>>;
 
-export interface HTMLHyperLinkProps extends HTMLContainerProps, HTMLProps {
+export interface HTMLHyperLinkProps extends HTMLContainerProps {
     href?: string | URL;
     target?: '_self' | '_parent' | '_top' | '_blank';
 }
@@ -111,13 +139,13 @@ export interface HTMLHyperLinkProps extends HTMLContainerProps, HTMLProps {
 export type HTMLTableCellProps = HTMLContainerProps &
     Partial<Pick<HTMLTableCellElement, 'colSpan' | 'rowSpan'>>;
 
-export type HTMLFieldProps = Partial<
+export type BaseFieldProps = Partial<
     Pick<
         HTMLInputElement,
         'name' | 'defaultValue' | 'value' | 'required' | 'disabled'
     >
 >;
-export type HTMLTextFieldProps = Partial<
+export type TextFieldProps = Partial<
     Pick<HTMLInputElement, 'readOnly' | 'placeholder'>
 >;
 
@@ -131,19 +159,19 @@ export type HTMLFieldInternals = Pick<
     | 'reportValidity'
 >;
 
-export interface BaseFieldProps
+export interface HTMLFieldProps
     extends HTMLProps,
-        HTMLFieldProps,
+        BaseFieldProps,
         FieldEventHandlers,
         InputEventHandlers {
     autofocus?: HTMLInputElement['autofocus'];
 }
 
-export interface HTMLButtonProps extends BaseFieldProps, HTMLContainerProps {
+export interface HTMLButtonProps extends HTMLFieldProps, HTMLContainerProps {
     type?: 'button' | 'image' | 'submit' | 'reset';
 }
 
-export interface HTMLInputProps extends HTMLTextFieldProps, BaseFieldProps {
+export interface HTMLInputProps extends HTMLFieldProps, TextFieldProps {
     type?:
         | 'checkbox'
         | 'color'
@@ -206,7 +234,7 @@ export interface CustomElement extends HTMLElement {
  */
 export interface CustomFormElement
     extends CustomElement,
-        HTMLFieldProps,
+        BaseFieldProps,
         HTMLFieldInternals {
     /**
      * Called when the browser associates the element with a form element,
