@@ -3,7 +3,7 @@
 **Web front-end** toolkit based on [TypeScript][1]
 
 [![NPM Dependency](https://david-dm.org/EasyWebApp/web-utility.svg)][2]
-[![Build Status](https://travis-ci.com/EasyWebApp/web-utility.svg)][3]
+[![CI & CD](https://github.com/EasyWebApp/web-utility/workflows/CI%20&%20CD/badge.svg)][3]
 
 [![NPM](https://nodei.co/npm/web-utility.png?downloads=true&downloadRank=true&stars=true)][4]
 
@@ -136,5 +136,5 @@ Promise.all([loaded, documentReady]).then(() =>
 
 [1]: https://www.typescriptlang.org/
 [2]: https://david-dm.org/EasyWebApp/web-utility
-[3]: https://travis-ci.com/EasyWebApp/web-utility
+[3]: https://github.com/EasyWebApp/web-utility/actions
 [4]: https://nodei.co/npm/web-utility/

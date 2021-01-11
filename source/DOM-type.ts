@@ -1,5 +1,23 @@
 import type { DataKeys } from './data';
 
+export type SelfCloseTags =
+    | 'area'
+    | 'base'
+    | 'br'
+    | 'col'
+    | 'embed'
+    | 'hr'
+    | 'img'
+    | 'input'
+    | 'link'
+    | 'meta'
+    | 'param'
+    | 'source'
+    | 'track'
+    | 'wbr';
+
+/* -------------------- Event Handlers -------------------- */
+
 export interface KeyboardEventHandlers {
     onKeyDown?: (event: KeyboardEvent) => any;
     onKeyPress?: (event: KeyboardEvent) => any;
@@ -17,12 +35,27 @@ export interface MouseEventHandlers {
     onWheel?: (event: WheelEvent) => any;
 }
 
+export interface PointerEventHandlers {
+    onPointerDown?(event: PointerEvent): any;
+    onPointerMove?(event: PointerEvent): any;
+    onPointerUp?(event: PointerEvent): any;
+    onPointerOver?(event: PointerEvent): any;
+    onPointerOut?(event: PointerEvent): any;
+    onPointerCancel?(event: PointerEvent): any;
+    onPointerLockChange?(event: Event): any;
+    onPointerLockError?(event: Event): any;
+}
+
 /**
- * Mouse Events with no bubble
+ * Mouse & Pointer Events with no bubble
  */
 export interface HoverEventHandlers {
-    onMouseEnter?: (event: MouseEvent) => any;
-    onMouseLeave?: (event: MouseEvent) => any;
+    onMouseEnter?(event: MouseEvent): any;
+    onMouseLeave?(event: MouseEvent): any;
+    onPointerEnter?(event: PointerEvent): any;
+    onPointerLeave?(event: PointerEvent): any;
+    onGotPointerCapture?(event: PointerEvent): any;
+    onLostPointerCapture?(event: PointerEvent): any;
 }
 
 export interface TouchEventHandlers {
@@ -70,10 +103,13 @@ export interface FieldEventHandlers {
 }
 
 export interface InputEventHandlers {
-    onFocusIn?: (event: FocusEvent) => any;
-    onFocusOut?: (event: FocusEvent) => any;
-    onInput?: (event: InputEvent) => any;
-    onChange?: (event: Event) => any;
+    onFocusIn?(event: FocusEvent): any;
+    onFocusOut?(event: FocusEvent): any;
+    onCompositionStart?(event: CompositionEvent): any;
+    onCompositionUpdate?(event: CompositionEvent): any;
+    onCompositionEnd?(event: CompositionEvent): any;
+    onInput?(event: InputEvent): any;
+    onChange?(event: Event): any;
 }
 
 export interface FormEventHandlers {
@@ -86,10 +122,13 @@ export interface FormEventHandlers {
  */
 export type BubbleEventHandlers = KeyboardEventHandlers &
     MouseEventHandlers &
+    PointerEventHandlers &
     TouchEventHandlers &
     AnimationEventHandlers &
     InputEventHandlers &
     FormEventHandlers;
+
+/* -------------------- DOM Props -------------------- */
 
 export type HTMLOwnKeys<T extends HTMLElement = HTMLElement> = Exclude<
     keyof T,
@@ -105,34 +144,57 @@ export type HTMLContentKeys =
     | 'textContent'
     | 'contentEditable';
 
-export type BaseHTMLProps<T extends HTMLElement> = Partial<
-    Pick<T, DataKeys<Pick<T, HTMLOwnKeys<T>>>>
->;
-export type BaseSVGProps<T extends SVGElement> = Partial<
-    Pick<T, DataKeys<Pick<T, SVGOwnKeys<T>>>>
+export type CSSStyles = Partial<
+    Pick<
+        CSSStyleDeclaration,
+        Exclude<DataKeys<CSSStyleDeclaration>, 'length' | 'parentRule'>
+    > &
+        Record<string, any>
 >;
 
-export type CSSStyles = Partial<
-    Omit<CSSStyleDeclaration, 'length' | 'parentRule'>
+export type DOMProps_Read2Write<T extends Partial<Element>> = {
+    [K in keyof T]: T[K] extends HTMLElement
+        ? string
+        : T[K] extends DOMTokenList
+        ? string
+        : T[K] extends CSSStyleDeclaration
+        ? CSSStyles
+        : T[K];
+};
+export type BaseHTMLProps<T extends HTMLElement> = Partial<
+    DOMProps_Read2Write<Pick<T, Extract<DataKeys<T>, HTMLOwnKeys<T>>>>
+>;
+
+export type SVGProps_Read2Write<T extends Partial<SVGElement>> = {
+    [K in keyof T]?: T[K] extends SVGAnimatedLength
+        ? string
+        : T[K] extends SVGAnimatedLengthList
+        ? string
+        : T[K] extends SVGAnimatedRect
+        ? string
+        : T[K] extends SVGAnimatedPreserveAspectRatio
+        ? string
+        : T[K];
+};
+export type BaseSVGProps<T extends SVGElement> = Partial<
+    SVGProps_Read2Write<
+        DOMProps_Read2Write<Pick<T, Extract<DataKeys<T>, SVGOwnKeys<T>>>>
+    >
 >;
 
 export interface HTMLProps
     extends BaseEventHandlers,
-        Omit<BaseHTMLProps<HTMLElement>, 'style' | HTMLContentKeys> {
-    style?: CSSStyles;
+        Omit<BaseHTMLProps<HTMLElement>, HTMLContentKeys> {
+    role?: string;
 }
-export interface SVGProps
-    extends BaseEventHandlers,
-        Omit<BaseSVGProps<SVGElement>, 'style'> {
-    style?: CSSStyles;
-}
+export interface SVGProps extends BaseEventHandlers, BaseSVGProps<SVGElement> {}
 
 export type HTMLContainerProps = BubbleEventHandlers &
     HTMLProps &
     Partial<Pick<HTMLElement, HTMLContentKeys>>;
 
 export interface HTMLHyperLinkProps extends HTMLContainerProps {
-    href?: string | URL;
+    href?: string;
     target?: '_self' | '_parent' | '_top' | '_blank';
 }
 
@@ -145,9 +207,24 @@ export type BaseFieldProps = Partial<
         'name' | 'defaultValue' | 'value' | 'required' | 'disabled'
     >
 >;
-export type TextFieldProps = Partial<
-    Pick<HTMLInputElement, 'readOnly' | 'placeholder'>
->;
+export interface BaseInputProps
+    extends Partial<Pick<HTMLInputElement, 'readOnly' | 'placeholder'>> {
+    list?: string;
+}
+export type TextFieldProps = BaseInputProps &
+    Partial<
+        Pick<
+            HTMLInputElement,
+            | 'size'
+            | 'minLength'
+            | 'maxLength'
+            | 'pattern'
+            | 'autocomplete'
+            | 'spellcheck'
+        >
+    >;
+export type NumberFieldProps = BaseInputProps &
+    Partial<Pick<HTMLInputElement, 'min' | 'max' | 'step'>>;
 
 export type HTMLFieldInternals = Pick<
     HTMLInputElement,
@@ -171,7 +248,7 @@ export interface HTMLButtonProps extends HTMLFieldProps, HTMLContainerProps {
     type?: 'button' | 'image' | 'submit' | 'reset';
 }
 
-export interface HTMLInputProps extends HTMLFieldProps, TextFieldProps {
+export interface HTMLInputProps extends HTMLFieldProps, BaseInputProps {
     type?:
         | 'checkbox'
         | 'color'
