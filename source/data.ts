@@ -144,9 +144,9 @@ export function makeCRC32(raw: string) {
     return '0x' + ((value ^ 0xffffffff) >>> 0).toString(16);
 }
 
-if ('msCrypto' in self) {
+if ('msCrypto' in globalThis) {
     // @ts-ignore
-    const { subtle } = (self.crypto = self.msCrypto as Crypto);
+    const { subtle } = (globalThis.crypto = globalThis.msCrypto as Crypto);
 
     for (const key in subtle) {
         const origin = subtle[key];

@@ -40,7 +40,7 @@ describe('Date', () => {
     });
 
     it('should format Date according to a Template', () => {
-        expect(formatDate(date, 'YYYY/M/D')).toBe('1989/6/4');
+        expect(formatDate(date, 'YY/MM/DD')).toBe('89/06/04');
     });
 
     describe('change Month', () => {

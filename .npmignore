@@ -1,5 +1,6 @@
 test/
 docs/
 .cache/
+.husky/
 .vscode/
 .github/

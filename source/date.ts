@@ -25,7 +25,7 @@ export function diffTime(
     start: TimeData = new Date(),
     map = TimeUnit
 ) {
-    const distance = +new Date(end) - +start;
+    const distance = +new Date(end) - +new Date(start);
 
     for (const [unit, base] of [...map].reverse()) {
         const rest = distance / base;
@@ -36,29 +36,29 @@ export function diffTime(
     return { distance, unit: 'ms' };
 }
 
-const unitISO = ['Y', 'M', 'D', 'H', 'm', 's', 'ms'],
-    patternISO = /[YMDHms]+/g;
+function fitUnit(value: string) {
+    return ({ length }: string) => value.padStart(length, '0').slice(-length);
+}
 
 export function formatDate(
     time: TimeData = new Date(),
     template = 'YYYY-MM-DD HH:mm:ss'
 ) {
     time = time instanceof Date ? time : new Date(time);
+    time = new Date(+time - time.getTimezoneOffset() * Minute);
 
-    const temp: Record<string, string> = new Date(
-        +time - time.getTimezoneOffset() * 60 * 1000
-    )
+    const [year, month, day, hour, minute, second, millisecond] = time
         .toJSON()
-        .split(/\D/)
-        .reduce((temp, section, index) => {
-            temp[unitISO[index]] = section.replace(/^0+/, '');
+        .split(/\D/);
 
-            return temp;
-        }, {});
-
-    return template.replace(patternISO, section =>
-        temp[section[0]].padStart(section.length, '0')
-    );
+    return template
+        .replace(/ms/g, millisecond)
+        .replace(/Y+/g, fitUnit(year))
+        .replace(/M+/g, fitUnit(month))
+        .replace(/D+/g, fitUnit(day))
+        .replace(/H+/g, fitUnit(hour))
+        .replace(/m+/g, fitUnit(minute))
+        .replace(/s+/g, fitUnit(second));
 }
 
 export function changeMonth(date: TimeData, delta: number) {

@@ -22,6 +22,19 @@ npm install web-utility
 </head>
 ```
 
+`tsconfig.json`
+
+```JSON
+{
+    "compilerOptions": {
+        "module": "ES2021",
+        "moduleResolution": "Node",
+        "downlevelIteration": true,
+        "lib": ["ES2021", "DOM", "DOM.Iterable"]
+    }
+}
+```
+
 ## Usage
 
 [API document](https://web-cell.dev/web-utility/)
@@ -52,13 +65,13 @@ createMessageServer({
 
 `iframe.ts`
 
-```TypeScript
+```typescript
 import { createMessageClient } from 'web-utility';
 
-const request = createMessageClient(self.parent);
+const request = createMessageClient(globalThis.parent);
 
 (async () => {
-    console.log(await request('preset'));  // { test: 1 }
+    console.log(await request('preset')); // { test: 1 }
 })();
 ```
 
@@ -86,31 +99,21 @@ serviceWorker?.addEventListener('controllerchange', () =>
 
 ### Internationalization
 
-`tsconfig.json`
-
-```json
-{
-    "compilerOptions": {
-        "module": "ESNext"
-    }
-}
-```
-
 `source/i18n/en-US.ts`
 
 ```typescript
 export enum en_US {
-    title = 'Test'
+    title = 'Title',
+    name = 'Name'
 }
-
-export type I18nMap = typeof en_US;
 ```
 
 `source/i18n/zh-CN.ts`
 
 ```typescript
 export enum zh_CN {
-    title = '测试'
+    title = '标题',
+    name = '名称'
 }
 ```
 
@@ -118,19 +121,21 @@ export enum zh_CN {
 
 ```javascript
 import { documentReady, render, createCell } from 'web-cell';
-import { createI18nScope } from 'web-utility';
+import { bootI18n } from 'web-utility';
 
-import { I18nMap } from './i18n/en-US';
+import { en_US } from './i18n/en-US';
+import { zh_CN } from './i18n/zh-CN';
 
-console.log(navigator.languages.includes('zh-CN')); // true
-
-const { loaded, i18nTextOf } = createI18nScope<I18nMap>({
-    'en-US': async () => (await import('./i18n/en-US')).en_US,
-    'zh-CN': async () => (await import('./i18n/zh-CN')).zh_CN
-}, 'en-US');
-
-Promise.all([loaded, documentReady]).then(() =>
-    render(<h1>{i18nTextOf('title')}</h1>); // <h1>测试</h1>
+console.log(
+    navigator.languages.includes('zh-CN'),  // true
+    document.documentElement.lang           // ''
+);
+const { language, words } = bootI18n({
+    'en-US': en_US,
+    'zh-CN': zh_CN
+});
+documentReady.then(() =>
+    render(<h1>{words.title}</h1>); // <h1>标题</h1>
 );
 ```
 

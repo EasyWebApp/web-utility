@@ -1,30 +1,14 @@
-type LanguageMap<T> = {
-    [K in keyof T]: string;
-};
-
-interface I18nData<T> {
-    [language: string]: () => Promise<LanguageMap<T>>;
-}
-
-export function createI18nScope<T = {}>(
-    data: I18nData<T>,
-    defaultLanguage: string
+export function bootI18n<T extends Record<string, string>>(
+    data: Record<string, T>,
+    fallback = document.documentElement.lang || 'en-US'
 ) {
-    var map: LanguageMap<T> | null = null;
+    const languages = [...navigator.languages, fallback];
+    const language = languages.find(language => language in data);
+    const words: T = Object.assign(
+        {},
+        ...languages.reverse().map(name => data[name])
+    );
+    document.documentElement.lang = language;
 
-    return {
-        loaded: (async () => {
-            for (const name of new Set(
-                navigator.languages.concat(defaultLanguage)
-            ))
-                try {
-                    if ((map = await data[name]?.())) break;
-                } catch (error) {
-                    console.error(error);
-                }
-
-            if (!map) throw Error('No available I18n data');
-        })(),
-        i18nTextOf: (key: keyof T) => map?.[key]
-    };
+    return { language, words };
 }
