@@ -206,6 +206,9 @@ export function formToJSON<T = URLData<File>>(
                 break;
             case 'file':
                 value = files && [...files];
+                break;
+            case 'datetime-local':
+                value = new Date(value).toISOString();
         }
 
         if (name in data) data[name] = [].concat(data[name], value);
