@@ -12,3 +12,21 @@ export function bootI18n<T extends Record<string, string>>(
 
     return { language, words };
 }
+
+export function isNumberLetter(raw: string) {
+    return /\p{N}/u.test(raw) || /\p{Ll}/u.test(raw.toLowerCase());
+}
+
+export function textJoin(...parts: string[]) {
+    return parts
+        .map((raw, index) => {
+            const isNL = isNumberLetter(raw.slice(-1));
+
+            if (index + 1 === parts.length) return raw;
+
+            const diff = isNL !== isNumberLetter(parts[index + 1]?.trim()[0]);
+
+            return raw + (diff || isNL ? ' ' : '');
+        })
+        .join('');
+}

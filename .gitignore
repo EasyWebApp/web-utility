@@ -3,5 +3,4 @@ node_modules/
 docs/
 dist/
 .cache/
-.husky/_/
 .vscode/

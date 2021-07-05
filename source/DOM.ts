@@ -35,7 +35,7 @@ export function getVisibleText(root: Element) {
         ) {
             const { width, height } = parentElement.getBoundingClientRect();
 
-            if (width && height) text += nodeValue.trim();
+            if (width && height) text += nodeValue.trim().replace(/\s+/g, ' ');
         }
 
     return text;

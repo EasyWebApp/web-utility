@@ -26,7 +26,7 @@ describe('DOM', () => {
         document.body.innerHTML = `
             <a>
                 <i class="icon" aria-hidden="true"></i>
-                test
+                test  example
                 <span style="display: none">current</span>
             </a>`;
 
@@ -35,7 +35,7 @@ describe('DOM', () => {
         link.getBoundingClientRect = () =>
             ({ width: 48, height: 16 } as DOMRect);
 
-        expect(getVisibleText(link)).toBe('test');
+        expect(getVisibleText(link)).toBe('test example');
     });
 
     it('should find all depth-matched Heading Elements in a container', () => {

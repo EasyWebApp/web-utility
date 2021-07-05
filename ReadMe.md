@@ -121,7 +121,7 @@ export enum zh_CN {
 
 ```javascript
 import { documentReady, render, createCell } from 'web-cell';
-import { bootI18n } from 'web-utility';
+import { bootI18n, textJoin } from 'web-utility';
 
 import { en_US } from './i18n/en-US';
 import { zh_CN } from './i18n/zh-CN';
@@ -135,7 +135,10 @@ const { language, words } = bootI18n({
     'zh-CN': zh_CN
 });
 documentReady.then(() =>
-    render(<h1>{words.title}</h1>); // <h1>标题</h1>
+    render(
+        <h1>{textJoin(words.title, words.name, 'test', 'example')}</h1>
+        // <h1>标题名称 test example</h1>
+    );
 );
 ```
 

@@ -1,4 +1,4 @@
-import { bootI18n } from '../source/i18n';
+import { bootI18n, textJoin } from '../source/i18n';
 
 describe('Internationalization', () => {
     enum en_US {
@@ -39,5 +39,17 @@ describe('Internationalization', () => {
         expect(locale.language).toBe('zh-CN');
         expect(locale.words.title).toBe(zh_CN.title);
         expect(document.documentElement.lang).toBe('zh-CN');
+    });
+
+    it('should join strings into text based on the rule of Matched language', () => {
+        const { words } = bootI18n({ 'zh-TW': zh_TW, 'zh-CN': zh_CN });
+
+        expect(
+            textJoin(words.title, words.name, 'test', 'example', '8964')
+        ).toBe(`${words.title}${words.name} test example 8964`);
+
+        expect(
+            textJoin(words.title, 'test', words.name, '8964', 'example')
+        ).toBe(`${words.title} test ${words.name} 8964 example`);
     });
 });
