@@ -96,6 +96,8 @@ describe('DOM', () => {
             </fieldset>
 
             <input type="file" name="files" />
+
+            <input type="datetime-local" name="date" value="1989-06-04T00:00" />
         </form>`;
 
         const data = formToJSON(document.forms[0]);
@@ -106,7 +108,8 @@ describe('DOM', () => {
                 list: [1, 3],
                 array: [2, 3],
                 test: { example: 'sample', other: 2 },
-                files: undefined
+                files: undefined,
+                date: new Date('1989-06-04T00:00').toJSON()
             })
         );
     });
