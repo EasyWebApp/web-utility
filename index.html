@@ -1,0 +1,258 @@
+<!doctype html>
+<html class="default no-js">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>Web utility</title>
+	<meta name="description" content="Documentation for Web utility">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="assets/css/main.css">
+	<script async src="assets/js/search.js" id="search-script"></script>
+</head>
+<body>
+<header>
+	<div class="tsd-page-toolbar">
+		<div class="container">
+			<div class="table-wrap">
+				<div class="table-cell" id="tsd-search" data-index="assets/js/search.json" data-base=".">
+					<div class="field">
+						<label for="tsd-search-field" class="tsd-widget search no-caption">Search</label>
+						<input id="tsd-search-field" type="text" />
+					</div>
+					<ul class="results">
+						<li class="state loading">Preparing search index...</li>
+						<li class="state failure">The search index is not available</li>
+					</ul>
+					<a href="index.html" class="title">Web utility</a>
+				</div>
+				<div class="table-cell" id="tsd-widgets">
+					<div id="tsd-filter">
+						<a href="#" class="tsd-widget options no-caption" data-toggle="options">Options</a>
+						<div class="tsd-filter-group">
+							<div class="tsd-select" id="tsd-filter-visibility">
+								<span class="tsd-select-label">All</span>
+								<ul class="tsd-select-list">
+									<li data-value="public">Public</li>
+									<li data-value="protected">Public/Protected</li>
+									<li data-value="private" class="selected">All</li>
+								</ul>
+							</div>
+							<input type="checkbox" id="tsd-filter-inherited" checked />
+							<label class="tsd-widget" for="tsd-filter-inherited">Inherited</label>
+						</div>
+					</div>
+					<a href="#" class="tsd-widget menu no-caption" data-toggle="menu">Menu</a>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="tsd-page-title">
+		<div class="container">
+			<h1>Web utility</h1>
+		</div>
+	</div>
+</header>
+<div class="container container-main">
+	<div class="row">
+		<div class="col-8 col-content">
+			<div class="tsd-panel tsd-typography">
+				<a href="#web-utility" id="web-utility" style="color: inherit; text-decoration: none;">
+					<h1>Web utility</h1>
+				</a>
+				<p><strong>Web front-end</strong> toolkit based on <a href="https://www.typescriptlang.org/">TypeScript</a></p>
+				<p><a href="https://david-dm.org/EasyWebApp/web-utility"><img src="https://david-dm.org/EasyWebApp/web-utility.svg" alt="NPM Dependency"></a>
+				<a href="https://github.com/EasyWebApp/web-utility/actions"><img src="https://github.com/EasyWebApp/web-utility/workflows/CI%20&%20CD/badge.svg" alt="CI &amp; CD"></a></p>
+				<p><a href="https://open.vscode.dev/EasyWebApp/web-utility"><img src="https://open.vscode.dev/badges/open-in-vscode.svg" alt="Open in Visual Studio Code"></a></p>
+				<p><a href="https://nodei.co/npm/web-utility/"><img src="https://nodei.co/npm/web-utility.png?downloads=true&downloadRank=true&stars=true" alt="NPM"></a></p>
+				<a href="#installation" id="installation" style="color: inherit; text-decoration: none;">
+					<h2>Installation</h2>
+				</a>
+				<pre><code class="language-Shell"><span style="color: #000000">npm install web-utility</span>
+</code></pre>
+				<p><code>index.html</code></p>
+				<pre><code class="language-HTML"><span style="color: #800000">&lt;head&gt;</span>
+<span style="color: #000000">    </span><span style="color: #800000">&lt;script</span><span style="color: #000000FF"> </span><span style="color: #FF0000">src</span><span style="color: #000000FF">=</span><span style="color: #0000FF">&quot;https://polyfill.app/api/polyfill?features=regenerator-runtime,url,scroll-behavior,intersection-observer&quot;</span><span style="color: #800000">&gt;&lt;/script&gt;</span>
+<span style="color: #000000">    </span><span style="color: #800000">&lt;script</span><span style="color: #000000FF"> </span><span style="color: #FF0000">src</span><span style="color: #000000FF">=</span><span style="color: #0000FF">&quot;https://cdn.jsdelivr.net/npm/fast-text-encoding@1.0.3/text.min.js&quot;</span><span style="color: #800000">&gt;&lt;/script&gt;</span>
+<span style="color: #800000">&lt;/head&gt;</span>
+</code></pre>
+				<p><code>tsconfig.json</code></p>
+				<pre><code class="language-JSON"><span style="color: #000000">{</span>
+<span style="color: #000000">    </span><span style="color: #0451A5">&quot;compilerOptions&quot;</span><span style="color: #000000">: {</span>
+<span style="color: #000000">        </span><span style="color: #0451A5">&quot;module&quot;</span><span style="color: #000000">: </span><span style="color: #A31515">&quot;ES2021&quot;</span><span style="color: #000000">,</span>
+<span style="color: #000000">        </span><span style="color: #0451A5">&quot;moduleResolution&quot;</span><span style="color: #000000">: </span><span style="color: #A31515">&quot;Node&quot;</span><span style="color: #000000">,</span>
+<span style="color: #000000">        </span><span style="color: #0451A5">&quot;downlevelIteration&quot;</span><span style="color: #000000">: </span><span style="color: #0000FF">true</span><span style="color: #000000">,</span>
+<span style="color: #000000">        </span><span style="color: #0451A5">&quot;lib&quot;</span><span style="color: #000000">: [</span><span style="color: #A31515">&quot;ES2021&quot;</span><span style="color: #000000">, </span><span style="color: #A31515">&quot;DOM&quot;</span><span style="color: #000000">, </span><span style="color: #A31515">&quot;DOM.Iterable&quot;</span><span style="color: #000000">]</span>
+<span style="color: #000000">    }</span>
+<span style="color: #000000">}</span>
+</code></pre>
+				<a href="#usage" id="usage" style="color: inherit; text-decoration: none;">
+					<h2>Usage</h2>
+				</a>
+				<p><a href="https://web-cell.dev/web-utility/">API document</a></p>
+				<a href="#css-animation" id="css-animation" style="color: inherit; text-decoration: none;">
+					<h3>CSS Animation</h3>
+				</a>
+				<ol>
+					<li><p><a href="https://github.com/EasyWebApp/BootCell/blob/11c5d6f/source%2FMedia%2FCarousel.tsx#L200-L218">Watch Swipe</a></p>
+					</li>
+					<li><p><a href="https://github.com/EasyWebApp/BootCell/blob/a41bbc1/source/Prompt/Tooltip.tsx#L38-L43">Simple Hover</a></p>
+					</li>
+					<li><p><a href="https://github.com/EasyWebApp/BootCell/blob/a41bbc1/source/Content/TabList.tsx#L77-85">Switch with <code>await</code></a></p>
+					</li>
+					<li><p><a href="https://github.com/EasyWebApp/BootCell/blob/a41bbc1/source/Content/Collapse.tsx#L19-L38">Toggle with Inline Styles</a></p>
+					</li>
+					<li><p><a href="https://github.com/EasyWebApp/BootCell/blob/a41bbc1/source/Content/Carousel.tsx#L82-L99">Work with Existed Classes</a></p>
+					</li>
+				</ol>
+				<a href="#message-channel" id="message-channel" style="color: inherit; text-decoration: none;">
+					<h3>Message Channel</h3>
+				</a>
+				<p><code>index.ts</code></p>
+				<pre><code class="language-TypeScript"><span style="color: #AF00DB">import</span><span style="color: #000000"> { </span><span style="color: #001080">createMessageServer</span><span style="color: #000000"> } </span><span style="color: #AF00DB">from</span><span style="color: #000000"> </span><span style="color: #A31515">&#039;web-utility&#039;</span><span style="color: #000000">;</span>
+
+<span style="color: #795E26">createMessageServer</span><span style="color: #000000">({</span>
+<span style="color: #000000">    </span><span style="color: #795E26">preset</span><span style="color: #001080">:</span><span style="color: #000000"> () </span><span style="color: #0000FF">=&gt;</span><span style="color: #000000"> ({</span><span style="color: #001080">test:</span><span style="color: #000000"> </span><span style="color: #098658">1</span><span style="color: #000000">})</span>
+<span style="color: #000000">});</span>
+</code></pre>
+				<p><code>iframe.ts</code></p>
+				<pre><code class="language-typescript"><span style="color: #AF00DB">import</span><span style="color: #000000"> { </span><span style="color: #001080">createMessageClient</span><span style="color: #000000"> } </span><span style="color: #AF00DB">from</span><span style="color: #000000"> </span><span style="color: #A31515">&#039;web-utility&#039;</span><span style="color: #000000">;</span>
+
+<span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">request</span><span style="color: #000000"> = </span><span style="color: #795E26">createMessageClient</span><span style="color: #000000">(</span><span style="color: #001080">globalThis</span><span style="color: #000000">.</span><span style="color: #001080">parent</span><span style="color: #000000">);</span>
+
+<span style="color: #000000">(</span><span style="color: #0000FF">async</span><span style="color: #000000"> () </span><span style="color: #0000FF">=&gt;</span><span style="color: #000000"> {</span>
+<span style="color: #000000">    </span><span style="color: #001080">console</span><span style="color: #000000">.</span><span style="color: #795E26">log</span><span style="color: #000000">(</span><span style="color: #AF00DB">await</span><span style="color: #000000"> </span><span style="color: #795E26">request</span><span style="color: #000000">(</span><span style="color: #A31515">&#039;preset&#039;</span><span style="color: #000000">)); </span><span style="color: #008000">// { test: 1 }</span>
+<span style="color: #000000">})();</span>
+</code></pre>
+				<a href="#service-worker-updating" id="service-worker-updating" style="color: inherit; text-decoration: none;">
+					<h3>Service Worker updating</h3>
+				</a>
+				<pre><code class="language-javascript"><span style="color: #AF00DB">import</span><span style="color: #000000"> { </span><span style="color: #001080">serviceWorkerUpdate</span><span style="color: #000000"> } </span><span style="color: #AF00DB">from</span><span style="color: #000000"> </span><span style="color: #A31515">&#039;web-utility&#039;</span><span style="color: #000000">;</span>
+
+<span style="color: #0000FF">const</span><span style="color: #000000"> { </span><span style="color: #0070C1">serviceWorker</span><span style="color: #000000"> } = </span><span style="color: #001080">window</span><span style="color: #000000">.</span><span style="color: #001080">navigator</span><span style="color: #000000">;</span>
+
+<span style="color: #001080">serviceWorker</span>
+<span style="color: #000000">    ?.</span><span style="color: #795E26">register</span><span style="color: #000000">(</span><span style="color: #A31515">&#039;/sw.js&#039;</span><span style="color: #000000">)</span>
+<span style="color: #000000">    .</span><span style="color: #795E26">then</span><span style="color: #000000">(</span><span style="color: #001080">serviceWorkerUpdate</span><span style="color: #000000">)</span>
+<span style="color: #000000">    .</span><span style="color: #795E26">then</span><span style="color: #000000">(</span><span style="color: #001080">worker</span><span style="color: #000000"> </span><span style="color: #0000FF">=&gt;</span><span style="color: #000000"> {</span>
+<span style="color: #000000">        </span><span style="color: #AF00DB">if</span><span style="color: #000000"> (</span><span style="color: #001080">window</span><span style="color: #000000">.</span><span style="color: #795E26">confirm</span><span style="color: #000000">(</span><span style="color: #A31515">&#039;New version of this Web App detected, update now?&#039;</span><span style="color: #000000">))</span>
+<span style="color: #000000">            </span><span style="color: #008000">// Trigger the message callback listened in the Service Worker</span>
+<span style="color: #000000">            </span><span style="color: #008000">// generated by Workbox CLI</span>
+<span style="color: #000000">            </span><span style="color: #001080">worker</span><span style="color: #000000">.</span><span style="color: #795E26">postMessage</span><span style="color: #000000">({ </span><span style="color: #001080">type:</span><span style="color: #000000"> </span><span style="color: #A31515">&#039;SKIP_WAITING&#039;</span><span style="color: #000000"> });</span>
+<span style="color: #000000">    });</span>
+
+<span style="color: #001080">serviceWorker</span><span style="color: #000000">?.</span><span style="color: #795E26">addEventListener</span><span style="color: #000000">(</span><span style="color: #A31515">&#039;controllerchange&#039;</span><span style="color: #000000">, () </span><span style="color: #0000FF">=&gt;</span>
+<span style="color: #000000">    </span><span style="color: #001080">window</span><span style="color: #000000">.</span><span style="color: #001080">location</span><span style="color: #000000">.</span><span style="color: #795E26">reload</span><span style="color: #000000">()</span>
+<span style="color: #000000">);</span>
+</code></pre>
+				<a href="#internationalization" id="internationalization" style="color: inherit; text-decoration: none;">
+					<h3>Internationalization</h3>
+				</a>
+				<p><code>source/i18n/en-US.ts</code></p>
+				<pre><code class="language-typescript"><span style="color: #AF00DB">export</span><span style="color: #000000"> </span><span style="color: #0000FF">enum</span><span style="color: #000000"> </span><span style="color: #267F99">en_US</span><span style="color: #000000"> {</span>
+<span style="color: #000000">    </span><span style="color: #0070C1">title</span><span style="color: #000000"> = </span><span style="color: #A31515">&#039;Title&#039;</span><span style="color: #000000">,</span>
+<span style="color: #000000">    </span><span style="color: #0070C1">name</span><span style="color: #000000"> = </span><span style="color: #A31515">&#039;Name&#039;</span>
+<span style="color: #000000">}</span>
+</code></pre>
+				<p><code>source/i18n/zh-CN.ts</code></p>
+				<pre><code class="language-typescript"><span style="color: #AF00DB">export</span><span style="color: #000000"> </span><span style="color: #0000FF">enum</span><span style="color: #000000"> </span><span style="color: #267F99">zh_CN</span><span style="color: #000000"> {</span>
+<span style="color: #000000">    </span><span style="color: #0070C1">title</span><span style="color: #000000"> = </span><span style="color: #A31515">&#039;标题&#039;</span><span style="color: #000000">,</span>
+<span style="color: #000000">    </span><span style="color: #0070C1">name</span><span style="color: #000000"> = </span><span style="color: #A31515">&#039;名称&#039;</span>
+<span style="color: #000000">}</span>
+</code></pre>
+				<p><code>source/index.tsx</code></p>
+				<pre><code class="language-javascript"><span style="color: #AF00DB">import</span><span style="color: #000000"> { </span><span style="color: #001080">documentReady</span><span style="color: #000000">, </span><span style="color: #001080">render</span><span style="color: #000000">, </span><span style="color: #001080">createCell</span><span style="color: #000000"> } </span><span style="color: #AF00DB">from</span><span style="color: #000000"> </span><span style="color: #A31515">&#039;web-cell&#039;</span><span style="color: #000000">;</span>
+<span style="color: #AF00DB">import</span><span style="color: #000000"> { </span><span style="color: #001080">bootI18n</span><span style="color: #000000">, </span><span style="color: #001080">textJoin</span><span style="color: #000000"> } </span><span style="color: #AF00DB">from</span><span style="color: #000000"> </span><span style="color: #A31515">&#039;web-utility&#039;</span><span style="color: #000000">;</span>
+
+<span style="color: #AF00DB">import</span><span style="color: #000000"> { </span><span style="color: #001080">en_US</span><span style="color: #000000"> } </span><span style="color: #AF00DB">from</span><span style="color: #000000"> </span><span style="color: #A31515">&#039;./i18n/en-US&#039;</span><span style="color: #000000">;</span>
+<span style="color: #AF00DB">import</span><span style="color: #000000"> { </span><span style="color: #001080">zh_CN</span><span style="color: #000000"> } </span><span style="color: #AF00DB">from</span><span style="color: #000000"> </span><span style="color: #A31515">&#039;./i18n/zh-CN&#039;</span><span style="color: #000000">;</span>
+
+<span style="color: #001080">console</span><span style="color: #000000">.</span><span style="color: #795E26">log</span><span style="color: #000000">(</span>
+<span style="color: #000000">    </span><span style="color: #001080">navigator</span><span style="color: #000000">.</span><span style="color: #001080">languages</span><span style="color: #000000">.</span><span style="color: #795E26">includes</span><span style="color: #000000">(</span><span style="color: #A31515">&#039;zh-CN&#039;</span><span style="color: #000000">),  </span><span style="color: #008000">// true</span>
+<span style="color: #000000">    </span><span style="color: #001080">document</span><span style="color: #000000">.</span><span style="color: #001080">documentElement</span><span style="color: #000000">.</span><span style="color: #001080">lang</span><span style="color: #000000">           </span><span style="color: #008000">// &#039;&#039;</span>
+<span style="color: #000000">);</span>
+<span style="color: #0000FF">const</span><span style="color: #000000"> { </span><span style="color: #0070C1">language</span><span style="color: #000000">, </span><span style="color: #0070C1">words</span><span style="color: #000000"> } = </span><span style="color: #795E26">bootI18n</span><span style="color: #000000">({</span>
+<span style="color: #000000">    </span><span style="color: #A31515">&#039;en-US&#039;</span><span style="color: #001080">:</span><span style="color: #000000"> </span><span style="color: #001080">en_US</span><span style="color: #000000">,</span>
+<span style="color: #000000">    </span><span style="color: #A31515">&#039;zh-CN&#039;</span><span style="color: #001080">:</span><span style="color: #000000"> </span><span style="color: #001080">zh_CN</span>
+<span style="color: #000000">});</span>
+<span style="color: #001080">documentReady</span><span style="color: #000000">.</span><span style="color: #795E26">then</span><span style="color: #000000">(() </span><span style="color: #0000FF">=&gt;</span>
+<span style="color: #000000">    </span><span style="color: #795E26">render</span><span style="color: #000000">(</span>
+<span style="color: #000000">        </span><span style="color: #800000">&lt;h1&gt;</span><span style="color: #0000FF">{</span><span style="color: #795E26">textJoin</span><span style="color: #000000FF">(</span><span style="color: #001080">words</span><span style="color: #000000FF">.</span><span style="color: #001080">title</span><span style="color: #000000FF">, </span><span style="color: #001080">words</span><span style="color: #000000FF">.</span><span style="color: #001080">name</span><span style="color: #000000FF">, </span><span style="color: #A31515">&#039;test&#039;</span><span style="color: #000000FF">, </span><span style="color: #A31515">&#039;example&#039;</span><span style="color: #000000FF">)</span><span style="color: #0000FF">}</span><span style="color: #800000">&lt;/h1&gt;</span>
+<span style="color: #000000">        </span><span style="color: #008000">// &lt;h1&gt;标题名称 test example&lt;/h1&gt;</span>
+<span style="color: #000000">    );</span>
+<span style="color: #000000">);</span>
+</code></pre>
+			</div>
+		</div>
+		<div class="col-4 col-menu menu-sticky-wrap menu-highlight">
+			<nav class="tsd-navigation primary">
+				<ul>
+					<li class=" ">
+						<a href="modules.html">Modules</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/DOM.html">DOM</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/DOM_type.html">DOM-<wbr>type</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/URL.html">URL</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/animation.html">animation</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/data.html">data</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/date.html">date</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/event.html">event</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/i18n.html">i18n</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/index.html">index</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/timer.html">timer</a>
+					</li>
+				</ul>
+			</nav>
+			<nav class="tsd-navigation secondary menu-sticky">
+				<ul class="before-current">
+				</ul>
+			</nav>
+		</div>
+	</div>
+</div>
+<footer class="with-border-bottom">
+	<div class="container">
+		<h2>Legend</h2>
+		<div class="tsd-legend-group">
+			<ul class="tsd-legend">
+				<li class="tsd-kind-variable"><span class="tsd-kind-icon">Variable</span></li>
+				<li class="tsd-kind-function"><span class="tsd-kind-icon">Function</span></li>
+				<li class="tsd-kind-function tsd-has-type-parameter"><span class="tsd-kind-icon">Function with type parameter</span></li>
+				<li class="tsd-kind-type-alias"><span class="tsd-kind-icon">Type alias</span></li>
+				<li class="tsd-kind-type-alias tsd-has-type-parameter"><span class="tsd-kind-icon">Type alias with type parameter</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-interface"><span class="tsd-kind-icon">Interface</span></li>
+				<li class="tsd-kind-interface tsd-has-type-parameter"><span class="tsd-kind-icon">Interface with type parameter</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-class"><span class="tsd-kind-icon">Class</span></li>
+			</ul>
+		</div>
+	</div>
+</footer>
+<div class="container tsd-generator">
+	<p>Generated using <a href="https://typedoc.org/" target="_blank">TypeDoc</a></p>
+</div>
+<div class="overlay"></div>
+<script src="assets/js/main.js"></script>
+</body>
+</html>
