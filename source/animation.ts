@@ -58,10 +58,14 @@ export function getSwipeVector(
         return vector;
 }
 
-export function durationOf(
-    type: 'transition' | 'animation',
-    element: HTMLElement
-) {
+export interface AnimationEvents {
+    transition: TransitionEvent;
+    animation: AnimationEvent;
+}
+
+export type AnimationType = keyof AnimationEvents;
+
+export function durationOf(type: AnimationType, element: HTMLElement) {
     const { transitionDuration, animationDuration } = getComputedStyle(element);
 
     const duration =
@@ -70,27 +74,31 @@ export function durationOf(
     return parseFloat(duration) * (duration.slice(-2) === 'ms' ? 1 : 1000);
 }
 
-export function watchMotion<T extends Event>(
-    type: 'transition' | 'animation',
+export function watchMotion<T extends AnimationType>(
+    type: T,
     element: HTMLElement
 ) {
-    return Promise.race([
-        promisify<T>(type, element).catch(event => Promise.resolve(event)),
-        new Promise(resolve => setTimeout(resolve, durationOf(type, element)))
+    return Promise.race<AnimationEvents[T] | void>([
+        promisify<AnimationEvents[T]>(type, element).catch(event =>
+            Promise.resolve(event)
+        ),
+        new Promise<void>(resolve =>
+            setTimeout(resolve, durationOf(type, element))
+        )
     ]);
 }
 
-function fadeIn<T extends Event>(
-    type: 'transition' | 'animation',
+function fadeIn<T extends AnimationType>(
+    type: T,
     element: HTMLElement,
     className: string,
     display: string
 ) {
     element.style.display = display;
 
-    const end = watchMotion<T>(type, element);
+    const end = watchMotion(type, element);
 
-    return new Promise<T>(resolve =>
+    return new Promise<AnimationEvents[T] | void>(resolve =>
         requestAnimationFrame(() => {
             element.classList.add(className);
 
@@ -99,13 +107,13 @@ function fadeIn<T extends Event>(
     );
 }
 
-async function fadeOut<T extends Event>(
-    type: 'transition' | 'animation',
+async function fadeOut<T extends AnimationType>(
+    type: T,
     element: HTMLElement,
     className: string,
     remove?: boolean
 ) {
-    const end = watchMotion<T>(type, element);
+    const end = watchMotion(type, element);
 
     element.classList.remove(className);
 
@@ -120,7 +128,7 @@ export function transitIn(
     className: string,
     display = 'block'
 ) {
-    return fadeIn<TransitionEvent>('transition', element, className, display);
+    return fadeIn('transition', element, className, display);
 }
 
 export function animateIn(
@@ -128,7 +136,7 @@ export function animateIn(
     className: string,
     display = 'block'
 ) {
-    return fadeIn<AnimationEvent>('animation', element, className, display);
+    return fadeIn('animation', element, className, display);
 }
 
 export function transitOut(
@@ -136,7 +144,7 @@ export function transitOut(
     className: string,
     remove?: boolean
 ) {
-    return fadeOut<TransitionEvent>('transition', element, className, remove);
+    return fadeOut('transition', element, className, remove);
 }
 
 export function animateOut(
@@ -144,5 +152,5 @@ export function animateOut(
     className: string,
     remove?: boolean
 ) {
-    return fadeOut<AnimationEvent>('animation', element, className, remove);
+    return fadeOut('animation', element, className, remove);
 }

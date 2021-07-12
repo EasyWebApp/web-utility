@@ -40,7 +40,8 @@ export function buildURLData(map: string[][] | Record<string, any>) {
 const DataURI = /^data:(.+?\/(.+?))?(;base64)?,([\s\S]+)/;
 /**
  * Blob logic forked from axes's
- * http://www.cnblogs.com/axes/p/4603984.html
+ *
+ * @see http://www.cnblogs.com/axes/p/4603984.html
  */
 export function blobFrom(URI: string) {
     var [_, type, __, base64, data] = DataURI.exec(URI) || [];

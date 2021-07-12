@@ -5,7 +5,9 @@
 [![NPM Dependency](https://david-dm.org/EasyWebApp/web-utility.svg)][2]
 [![CI & CD](https://github.com/EasyWebApp/web-utility/workflows/CI%20&%20CD/badge.svg)][3]
 
-[![NPM](https://nodei.co/npm/web-utility.png?downloads=true&downloadRank=true&stars=true)][4]
+[![Open in Visual Studio Code](https://open.vscode.dev/badges/open-in-vscode.svg)][4]
+
+[![NPM](https://nodei.co/npm/web-utility.png?downloads=true&downloadRank=true&stars=true)][5]
 
 ## Installation
 
@@ -145,4 +147,5 @@ documentReady.then(() =>
 [1]: https://www.typescriptlang.org/
 [2]: https://david-dm.org/EasyWebApp/web-utility
 [3]: https://github.com/EasyWebApp/web-utility/actions
-[4]: https://nodei.co/npm/web-utility/
+[4]: https://open.vscode.dev/EasyWebApp/web-utility
+[5]: https://nodei.co/npm/web-utility/

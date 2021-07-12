@@ -1,3 +1,5 @@
+import { ISODatePattern } from './date';
+
 export type Constructor<T> = new (...args: any[]) => T;
 
 export type DataKeys<T> = {
@@ -50,11 +52,15 @@ export function groupBy<T extends Record<string, any>>(
     return data;
 }
 
-export function parseJSON(value: string) {
+export function parseJSON(raw: string) {
     try {
-        return JSON.parse(value);
+        return JSON.parse(raw, (key, value) =>
+            typeof value === 'string' && ISODatePattern.test(value)
+                ? new Date(value)
+                : value
+        );
     } catch {
-        return value;
+        return raw;
     }
 }
 
@@ -131,7 +137,8 @@ const CRC_32_Table = Array.from(new Array(256), (_, cell) => {
 });
 /**
  * CRC-32 algorithm forked from Bakasen's
- * http://blog.csdn.net/bakasen/article/details/6043797
+ *
+ * @see http://blog.csdn.net/bakasen/article/details/6043797
  */
 export function makeCRC32(raw: string) {
     var value = 0xffffffff;

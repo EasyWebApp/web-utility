@@ -4,6 +4,7 @@ import {
     byteLength,
     differ,
     groupBy,
+    parseJSON,
     parseTextTable,
     makeCRC32,
     makeSHA
@@ -59,6 +60,20 @@ describe('Data', () => {
                     '3': [{ a: [2, 3] }]
                 })
             );
+        });
+    });
+
+    describe('JSON Parser', () => {
+        it('should parse JSON strings within Primitive values', () => {
+            expect(parseJSON('1')).toBe(1);
+            expect(parseJSON('1x')).toBe('1x');
+        });
+
+        it('should parse JSON strings within ISO Date values', () => {
+            const { time } = parseJSON('{"time": "2020-01-23T00:00:00.000Z"}');
+
+            expect(time).toBeInstanceOf(Date);
+            expect((time as Date).toJSON()).toBe('2020-01-23T00:00:00.000Z');
         });
     });
 
