@@ -189,9 +189,19 @@ export function formToJSON<T = URLData<File>>(
 
         if (box && box !== form) continue;
 
-        if (['radio', 'checkbox'].includes(type))
-            if (checked) v = defaultValue || 'true';
-            else continue;
+        if (['radio', 'checkbox'].includes(type)) {
+            if(checked) {
+                v = defaultValue || 'true';
+                if(data[name] === false)
+                    delete data[name];
+            }
+            else {
+                if(data[name] === undefined)
+                    v = 'false';
+                else
+                    continue;
+            }
+        }
 
         let value: any = parseJSON(v);
 
