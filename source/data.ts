@@ -30,22 +30,27 @@ export function differ<T>(
     return data;
 }
 
-export type GroupKey = string | number;
-export type Iteratee<T> = GroupKey | ((item: T) => GroupKey | GroupKey[]);
+export type IndexKey = number | string | symbol;
+export type GroupKey<T extends Record<IndexKey, any>> = keyof T | IndexKey;
+export type Iteratee<T extends Record<IndexKey, any>> =
+    | keyof T
+    | ((item: T) => GroupKey<T> | GroupKey<T>[]);
 
-export function groupBy<T extends Record<string, any>>(
+export function groupBy<T extends Record<IndexKey, any>>(
     list: T[],
     iteratee: Iteratee<T>
 ) {
-    const data: Record<string | number, T[]> = {};
+    const data = {} as Record<GroupKey<T>, T[]>;
 
     for (const item of list) {
-        let keys: GroupKey | GroupKey[] =
+        let keys =
             iteratee instanceof Function ? iteratee(item) : item[iteratee];
 
         if (!(keys instanceof Array)) keys = [keys];
 
-        for (const key of new Set<GroupKey>(keys.filter(key => key != null)))
+        for (const key of new Set(
+            (keys as GroupKey<T>[]).filter(key => key != null)
+        ))
             (data[key] = data[key] || []).push(item);
     }
 
@@ -151,33 +156,37 @@ export function makeCRC32(raw: string) {
     return '0x' + ((value ^ 0xffffffff) >>> 0).toString(16);
 }
 
-if ('msCrypto' in globalThis) {
-    // @ts-ignore
-    const { subtle } = (globalThis.crypto = globalThis.msCrypto as Crypto);
+if (typeof module?.exports === 'undefined') {
+    if ('msCrypto' in globalThis) {
+        // @ts-ignore
+        const { subtle } = (globalThis.crypto = globalThis.msCrypto as Crypto);
 
-    for (const key in subtle) {
-        const origin = subtle[key];
+        for (const key in subtle) {
+            const origin = subtle[key];
 
-        if (origin instanceof Function)
-            subtle[key] = function () {
-                const observer = origin.apply(this, arguments);
+            if (origin instanceof Function)
+                subtle[key] = function () {
+                    const observer = origin.apply(this, arguments);
 
-                return new Promise((resolve, reject) => {
-                    observer.oncomplete = ({
-                        target
-                    }: Parameters<FileReader['onload']>[0]) =>
-                        resolve(target.result);
+                    return new Promise((resolve, reject) => {
+                        observer.oncomplete = ({
+                            target
+                        }: Parameters<FileReader['onload']>[0]) =>
+                            resolve(target.result);
 
-                    observer.onabort = observer.onerror = reject;
-                });
-            };
+                        observer.onabort = observer.onerror = reject;
+                    });
+                };
+        }
     }
-}
-const { crypto } = globalThis;
-// @ts-ignore
-if (!crypto.subtle && crypto.webkitSubtle) crypto.subtle = crypto.webkitSubtle;
+    const { crypto } = globalThis;
 
-type SHAAlgorithm = 'SHA-1' | 'SHA-256' | 'SHA-384' | 'SHA-512';
+    if (!crypto.subtle && crypto['webkitSubtle'])
+        // @ts-ignore
+        crypto.subtle = crypto['webkitSubtle'];
+}
+
+export type SHAAlgorithm = 'SHA-1' | 'SHA-256' | 'SHA-384' | 'SHA-512';
 /**
  * @see https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto/digest#Converting_a_digest_to_a_hex_string
  */

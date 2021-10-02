@@ -41,6 +41,8 @@ describe('Date', () => {
 
     it('should format Date according to a Template', () => {
         expect(formatDate(date, 'YY/MM/DD')).toBe('89/06/04');
+
+        expect(formatDate(new Date(2020, 0, 23), 'YYYY/M/D')).toBe('2020/1/23');
     });
 
     describe('change Month', () => {

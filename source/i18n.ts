@@ -13,7 +13,7 @@ export function bootI18n<T extends Record<string, string>>(
     return { language, words };
 }
 
-export function isNumberLetter(raw: string) {
+export function isNumberLetter(raw = '') {
     return /\p{N}/u.test(raw) || /\p{Ll}/u.test(raw.toLowerCase());
 }
 

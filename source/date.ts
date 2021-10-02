@@ -39,7 +39,13 @@ export function diffTime(
 }
 
 function fitUnit(value: string) {
-    return ({ length }: string) => value.padStart(length, '0').slice(-length);
+    value = +value + '';
+
+    return (template: string) =>
+        (value.length < template.length
+            ? value.padStart(template.length, '0')
+            : value
+        ).slice(-Math.max(template.length, 2));
 }
 
 export function formatDate(

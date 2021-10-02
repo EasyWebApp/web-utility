@@ -2,10 +2,9 @@ import { URLData } from './URL';
 import { HTMLField } from './DOM-type';
 import { isEmpty, parseJSON } from './data';
 
-const sandbox = document.createElement('template'),
-    fragment = document.createDocumentFragment();
-
 export function parseDOM(HTML: string) {
+    const sandbox = document.createElement('template');
+
     sandbox.innerHTML = HTML;
 
     return [...sandbox.content.childNodes].map(node => {
@@ -41,7 +40,7 @@ export function getVisibleText(root: Element) {
     return text;
 }
 
-interface CSSOptions
+export interface CSSOptions
     extends Pick<
         HTMLLinkElement,
         'title' | 'media' | 'crossOrigin' | 'integrity'
@@ -73,6 +72,8 @@ export function importCSS(
 }
 
 export function insertToCursor(...nodes: Node[]) {
+    const fragment = document.createDocumentFragment();
+
     fragment.append(...nodes);
 
     for (const node of walkDOM(fragment))
@@ -104,7 +105,7 @@ export function scrollTo(selector: string, root?: Element) {
             ?.scrollIntoView({ behavior: 'smooth' });
 }
 
-interface ScrollEvent {
+export interface ScrollEvent {
     target: HTMLHeadingElement;
     links: (HTMLAnchorElement | HTMLAreaElement)[];
 }
@@ -205,7 +206,7 @@ export function formToJSON<T = URLData<File>>(
                 value = formToJSON(field as HTMLFieldSetElement);
                 break;
             case 'file':
-                value = files && [...files];
+                value = files && Array.from(files);
                 break;
             case 'datetime-local':
                 value = new Date(value).toISOString();

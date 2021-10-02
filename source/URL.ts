@@ -1,7 +1,5 @@
 import { parseJSON, isEmpty } from './data';
 
-const { location, atob } = globalThis;
-
 export function isXDomain(URI: string) {
     return new URL(URI, document.baseURI).origin !== location.origin;
 }

@@ -45,8 +45,6 @@ export class PageVector {
     }
 }
 
-const { getComputedStyle, getSelection, requestAnimationFrame } = globalThis;
-
 export function getSwipeVector(
     from: CartesianCoordinate,
     to: CartesianCoordinate,
