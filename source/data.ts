@@ -30,6 +30,22 @@ export function differ<T>(
     return data;
 }
 
+export type ResultArray<T> = T extends ArrayLike<infer D> ? D[] : T[];
+
+export function likeArray(data: any): data is ArrayLike<any> {
+    const { length } = data;
+
+    return typeof length === 'number' && length >= 0 && ~~length === length;
+}
+
+export function makeArray<T>(data: T): ResultArray<T> {
+    if (data instanceof Array) return data;
+
+    if (likeArray(data)) return Array.from(data);
+
+    return [data] as ResultArray<T>;
+}
+
 export type IndexKey = number | string | symbol;
 export type GroupKey<T extends Record<IndexKey, any>> = keyof T | IndexKey;
 export type Iteratee<T extends Record<IndexKey, any>> =

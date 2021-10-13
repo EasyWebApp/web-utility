@@ -3,6 +3,8 @@ import {
     isEmpty,
     byteLength,
     differ,
+    likeArray,
+    makeArray,
     groupBy,
     parseJSON,
     parseTextTable,
@@ -38,6 +40,21 @@ describe('Data', () => {
         expect(differ({ a: 1, b: 2 }, { b: 2, c: 3 })).toEqual(
             expect.objectContaining({ c: 3 })
         );
+    });
+
+    it('should detect an Object whether is Array-like or not', () => {
+        expect(likeArray('a')).toBe(true);
+        expect(likeArray({ 0: 'a' })).toBe(false);
+        expect(likeArray({ 0: 'a', length: 1 })).toBe(true);
+    });
+
+    it('should make sure the result is an Array', () => {
+        expect(makeArray('a')).toStrictEqual(['a']);
+        expect(makeArray({ 0: 'a' })).toStrictEqual([{ 0: 'a' }]);
+        expect(makeArray({ 0: 'a', length: 1 })).toStrictEqual(['a']);
+
+        const list = [0];
+        expect(makeArray(list)).toBe(list);
     });
 
     describe('Group by', () => {

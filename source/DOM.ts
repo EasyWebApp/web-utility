@@ -40,6 +40,37 @@ export function getVisibleText(root: Element) {
     return text;
 }
 
+/**
+ * Split a DOM tree into Pages like PDF files
+ *
+ * @param pageHeight the default value is A4 paper's height
+ * @param pageWidth the default value is A4 paper's width
+ */
+export function splitPages(
+    { offsetWidth, children }: HTMLElement,
+    pageHeight = 841.89,
+    pageWidth = 595.28
+) {
+    const scrollHeight = (pageHeight / pageWidth) * offsetWidth;
+    var offset = 0;
+
+    return [...children].reduce((pages, node) => {
+        var { offsetTop: top, offsetHeight: height } = node as HTMLElement;
+        top += offset;
+        var bottom = top + height;
+
+        const bottomOffset = bottom / scrollHeight;
+        const topIndex = ~~(top / scrollHeight),
+            bottomIndex = ~~bottomOffset;
+
+        if (topIndex !== bottomIndex) offset += height - bottomOffset;
+
+        (pages[bottomIndex] ||= []).push(node);
+
+        return pages;
+    }, [] as Element[][]);
+}
+
 export interface CSSOptions
     extends Pick<
         HTMLLinkElement,

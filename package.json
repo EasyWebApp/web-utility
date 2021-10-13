@@ -1,6 +1,6 @@
 {
     "name": "web-utility",
-    "version": "2.7.0",
+    "version": "2.8.0",
     "license": "LGPL-3.0",
     "author": "shiy2008@gmail.com",
     "description": "Web front-end toolkit based on TypeScript",
