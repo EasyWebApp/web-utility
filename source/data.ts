@@ -2,9 +2,13 @@ import { ISODatePattern } from './date';
 
 export type Constructor<T> = new (...args: any[]) => T;
 
-export type DataKeys<T> = {
-    [K in keyof T]: T[K] extends Function ? never : K;
+export type TypeKeys<T, D> = {
+    [K in keyof T]: T[K] extends D ? K : never;
 }[keyof T];
+
+export type PickData<T> = Omit<T, TypeKeys<T, Function>>;
+
+export type DataKeys<T> = Exclude<keyof T, TypeKeys<T, Function>>;
 
 export function isEmpty(value: any) {
     return !(value != null) || (!value && isNaN(value)) || value + '' === '';

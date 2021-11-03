@@ -1,6 +1,6 @@
 {
     "name": "web-utility",
-    "version": "2.8.0",
+    "version": "2.9.1",
     "license": "LGPL-3.0",
     "author": "shiy2008@gmail.com",
     "description": "Web front-end toolkit based on TypeScript",
@@ -21,21 +21,27 @@
     },
     "source": "source/index.ts",
     "types": "dist/index.d.ts",
-    "main": "dist/web-utility.umd.js",
-    "module": "dist/web-utility.js",
+    "main": "dist/index.js",
+    "module": "dist/index.esm.js",
+    "dependencies": {
+        "@swc/helpers": "^0.2.13",
+        "regenerator-runtime": "^0.13.9"
+    },
     "devDependencies": {
-        "@peculiar/webcrypto": "^1.1.7",
+        "@parcel/packager-ts": "^2.0.0",
+        "@parcel/transformer-typescript-types": "^2.0.0",
+        "@peculiar/webcrypto": "^1.2.0",
         "@types/jest": "^27.0.2",
-        "@types/node": "^14.17.22",
-        "husky": "^7.0.2",
+        "@types/node": "^14.17.32",
+        "husky": "^7.0.4",
         "intersection-observer": "^0.12.0",
-        "jest": "^27.2.5",
-        "lint-staged": "^11.2.3",
-        "microbundle": "^0.14.0",
+        "jest": "^27.3.1",
+        "lint-staged": "^11.2.6",
         "open-cli": "^7.0.1",
+        "parcel": "^2.0.0",
         "prettier": "^2.4.1",
-        "ts-jest": "^27.0.5",
-        "typedoc": "^0.22.5",
+        "ts-jest": "^27.0.7",
+        "typedoc": "^0.22.7",
         "typedoc-plugin-mdn-links": "^1.0.4",
         "typescript": "~4.3.5"
     },
@@ -52,10 +58,16 @@
         "preset": "ts-jest",
         "testEnvironment": "jsdom"
     },
+    "browserslist": "> 0.5%, last 2 versions, not dead",
+    "targets": {
+        "main": {
+            "optimize": true
+        }
+    },
     "scripts": {
         "prepare": "husky install",
         "test": "lint-staged  &&  jest --no-cache",
-        "build": "rm -rf dist/ docs/  &&  typedoc source/  &&  microbundle --name WebUtility",
+        "build": "rm -rf dist/ docs/  &&  typedoc source/  &&  parcel build",
         "start": "typedoc source/  &&  open-cli docs/index.html",
         "prepublishOnly": "npm test  &&  npm run build"
     }

@@ -1,4 +1,4 @@
-import type { DataKeys } from './data';
+import type { DataKeys, PickData } from './data';
 
 export type SelfCloseTags =
     | 'area'
@@ -145,10 +145,7 @@ export type HTMLContentKeys =
     | 'contentEditable';
 
 export type CSSStyles = Partial<
-    Pick<
-        CSSStyleDeclaration,
-        Exclude<DataKeys<CSSStyleDeclaration>, 'length' | 'parentRule'>
-    > &
+    Omit<PickData<CSSStyleDeclaration>, 'length' | 'parentRule'> &
         Record<string, any>
 >;
 

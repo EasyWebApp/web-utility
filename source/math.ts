@@ -20,3 +20,14 @@ export function standardDeviationOf(data: number[], sample = false) {
 export function hypotenuseOf(...data: number[]) {
     return Math.sqrt(sum(...data.map(item => item ** 2)));
 }
+
+export function fixFloat(raw: number, length = 2) {
+    const text = raw + '';
+    const offset = text.indexOf('.') + length + 1;
+    const before = +text[offset - 1],
+        anchor = +text[offset],
+        after = +text[offset + 1];
+    const plus = anchor > 5 || (anchor === 5 && (!!after || !!(before % 2)));
+
+    return +text.slice(0, offset) + (plus ? 10 ** -length : 0);
+}
