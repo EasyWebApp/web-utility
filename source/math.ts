@@ -21,13 +21,31 @@ export function hypotenuseOf(...data: number[]) {
     return Math.sqrt(sum(...data.map(item => item ** 2)));
 }
 
-export function fixFloat(raw: number, length = 2) {
+export function carryFloat(raw: number, length: number) {
     const text = raw + '';
     const offset = text.indexOf('.') + length + 1;
+
+    if (!text.slice(offset)) return text;
+
+    const value = `${raw + 10 ** -length}`;
+
+    return value.slice(0, offset).replace(/\.$/, '');
+}
+
+export function fixFloat(raw: number, length = 2) {
+    const text = raw + '';
+    const floatOffset = text.indexOf('.');
+
+    if (floatOffset < 0)
+        return [text, '0'.repeat(length)].filter(Boolean).join('.');
+
+    const offset = floatOffset + length + 1;
+
     const before = +text[offset - 1],
         anchor = +text[offset],
         after = +text[offset + 1];
-    const plus = anchor > 5 || (anchor === 5 && (!!after || !!(before % 2)));
 
-    return +text.slice(0, offset) + (plus ? 10 ** -length : 0);
+    const carry = anchor > 5 || (anchor === 5 && (!!after || !!(before % 2)));
+
+    return carry ? carryFloat(raw, length) : text.slice(0, offset);
 }
