@@ -22,22 +22,23 @@ export function hypotenuseOf(...data: number[]) {
 }
 
 export function carryFloat(raw: number, length: number) {
-    const text = raw + '';
+    const text = raw.toFixed(length + 2);
     const offset = text.indexOf('.') + length + 1;
 
-    if (!text.slice(offset)) return text;
+    const cut = (text: string) => text.slice(0, offset - (length ? 0 : 1));
 
-    const value = `${raw + 10 ** -length}`;
+    if (!+text[offset]) return cut(text);
 
-    return value.slice(0, offset).replace(/\.$/, '');
+    const result = cut((+cut(text) + 10 ** -length).toFixed(length));
+
+    return result.includes('.') ? result.padEnd(offset, '0') : result;
 }
 
 export function fixFloat(raw: number, length = 2) {
-    const text = raw + '';
+    const text = raw.toFixed(length + 2);
     const floatOffset = text.indexOf('.');
 
-    if (floatOffset < 0)
-        return [text, '0'.repeat(length)].filter(Boolean).join('.');
+    if (floatOffset < 0) return length ? `${text}.${'0'.repeat(length)}` : text;
 
     const offset = floatOffset + length + 1;
 
@@ -47,5 +48,9 @@ export function fixFloat(raw: number, length = 2) {
 
     const carry = anchor > 5 || (anchor === 5 && (!!after || !!(before % 2)));
 
-    return carry ? carryFloat(raw, length) : text.slice(0, offset);
+    if (carry) return carryFloat(raw, length);
+
+    const result = text.slice(0, offset - (length ? 0 : 1));
+
+    return result.includes('.') ? result.padEnd(offset, '0') : result;
 }
