@@ -11,13 +11,13 @@
 
 ## Installation
 
-```Shell
+```shell
 npm install web-utility
 ```
 
 `index.html`
 
-```HTML
+```html
 <head>
     <script src="https://polyfill.app/api/polyfill?features=regenerator-runtime,url,scroll-behavior,intersection-observer"></script>
     <script src="https://cdn.jsdelivr.net/npm/fast-text-encoding@1.0.3/text.min.js"></script>
@@ -26,7 +26,7 @@ npm install web-utility
 
 `tsconfig.json`
 
-```JSON
+```json
 {
     "compilerOptions": {
         "module": "ES2021",
@@ -53,15 +53,38 @@ npm install web-utility
 
 5. [Work with Existed Classes](https://github.com/EasyWebApp/BootCell/blob/a41bbc1/source/Content/Carousel.tsx#L82-L99)
 
+### Function Cache
+
+```typescript
+import { cache } from 'web-utility';
+
+const getToken = cache(async (cleaner, code) => {
+    const { access_token, expires_in } = await (
+        await fetch(`https://example.com/access_token?code=${code}`)
+    ).json();
+
+    setTimeout(cleaner, expires_in * 1000);
+
+    return access_token;
+}, 'Get Token');
+
+Promise.all([getToken('xxx'), getToken('yyy')]).then(([first, second]) =>
+    console.assert(
+        first === second,
+        'Getting token for many times should return the same before deadline'
+    )
+);
+```
+
 ### Message Channel
 
 `index.ts`
 
-```TypeScript
+```typescript
 import { createMessageServer } from 'web-utility';
 
 createMessageServer({
-    preset: () => ({test: 1})
+    preset: () => ({ test: 1 })
 });
 ```
 

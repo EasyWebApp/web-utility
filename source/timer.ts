@@ -1,5 +1,5 @@
 export function sleep(seconds = 1) {
-    return new Promise(resolve => setTimeout(resolve, seconds * 1000));
+    return new Promise<void>(resolve => setTimeout(resolve, seconds * 1000));
 }
 
 export function asyncLoop(executor: (...data: any[]) => any, seconds = 1) {

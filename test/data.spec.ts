@@ -6,11 +6,13 @@ import {
     likeArray,
     makeArray,
     groupBy,
+    cache,
     parseJSON,
     parseTextTable,
     makeCRC32,
     makeSHA
 } from '../source/data';
+import { sleep } from '../source/timer';
 
 describe('Data', () => {
     it('should detect Meaningless Null Values', () => {
@@ -77,6 +79,39 @@ describe('Data', () => {
                     '3': [{ a: [2, 3] }]
                 })
             );
+        });
+    });
+
+    describe('Function Cache', () => {
+        it('should cache result of a Sync Function', () => {
+            const add = cache((_, x: number, y: number) => x + y, 'add');
+
+            expect(add(1, 1)).toBe(2);
+            expect(add(1, 2)).toBe(2);
+        });
+
+        it('should cache result of an Async Function', async () => {
+            const origin = jest.fn(() => Promise.resolve(1));
+            const asyncFunc = cache(origin, 'async');
+
+            expect(asyncFunc()).toBeInstanceOf(Promise);
+            expect(asyncFunc()).toBe(asyncFunc());
+            expect(await asyncFunc()).toBe(1);
+            expect(origin).toBeCalledTimes(1);
+        });
+
+        it('should renew Cache data manually', async () => {
+            const asyncFunc = cache(async (clean, data: any) => {
+                setTimeout(clean, 1000);
+
+                return data;
+            }, 'cleanable');
+
+            expect(await asyncFunc(1)).toBe(1);
+            expect(await asyncFunc(2)).toBe(1);
+
+            await sleep();
+            expect(await asyncFunc(3)).toBe(3);
         });
     });
 

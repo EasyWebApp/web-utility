@@ -27,7 +27,7 @@ export function carryFloat(raw: number, length: number) {
 
     const cut = (text: string) => text.slice(0, offset - (length ? 0 : 1));
 
-    if (!+text[offset]) return cut(text);
+    if (!+text.slice(offset)) return cut(text);
 
     const result = cut((+cut(text) + 10 ** -length).toFixed(length));
 

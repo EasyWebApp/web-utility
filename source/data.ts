@@ -77,6 +77,29 @@ export function groupBy<T extends Record<IndexKey, any>>(
     return data;
 }
 
+export function cache<I, O>(
+    executor: (cleaner: () => void, ...data: I[]) => O,
+    title: string
+) {
+    var cacheData: O;
+
+    return function (...data: I[]) {
+        if (cacheData != null) return cacheData;
+
+        console.trace(`[Cache] execute: ${title}`);
+
+        cacheData = executor.call(
+            this,
+            (): void => (cacheData = undefined),
+            ...data
+        );
+        Promise.resolve(cacheData).then(data =>
+            console.log(`[Cache] refreshed: ${title} => ${data}`)
+        );
+        return cacheData;
+    };
+}
+
 export function parseJSON(raw: string) {
     try {
         return JSON.parse(raw, (key, value) =>
