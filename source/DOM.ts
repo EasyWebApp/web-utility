@@ -1,6 +1,26 @@
 import { URLData } from './URL';
 import { HTMLField } from './DOM-type';
-import { isEmpty, parseJSON } from './data';
+import { Constructor, isEmpty, assertInheritance, parseJSON } from './data';
+
+export function isHTMLElementClass<T extends Constructor<HTMLElement>>(
+    Class: any
+): Class is T {
+    return assertInheritance(Class, HTMLElement);
+}
+
+const nameMap = new WeakMap<Constructor<HTMLElement>, string>();
+
+export function tagNameOf(Class: CustomElementConstructor) {
+    const name = nameMap.get(Class);
+
+    if (name) return name;
+
+    const { tagName } = new Class();
+
+    nameMap.set(Class, tagName);
+
+    return tagName;
+}
 
 export function parseDOM(HTML: string) {
     const sandbox = document.createElement('template');

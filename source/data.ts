@@ -14,6 +14,10 @@ export function isEmpty(value: any) {
     return !(value != null) || (!value && isNaN(value)) || value + '' === '';
 }
 
+export function assertInheritance(Sub: Function, Super: Function) {
+    return Sub.prototype instanceof Super;
+}
+
 export function byteLength(raw: string) {
     return raw.replace(/[^\u0021-\u007e\uff61-\uffef]/g, 'xx').length;
 }
@@ -199,7 +203,7 @@ export function makeCRC32(raw: string) {
     return '0x' + ((value ^ 0xffffffff) >>> 0).toString(16);
 }
 
-if (typeof module?.exports === 'undefined') {
+if (typeof self === 'object') {
     if ('msCrypto' in globalThis) {
         // @ts-ignore
         const { subtle } = (globalThis.crypto = globalThis.msCrypto as Crypto);

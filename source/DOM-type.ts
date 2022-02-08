@@ -18,115 +18,64 @@ export type SelfCloseTags =
 
 /* -------------------- Event Handlers -------------------- */
 
-export interface KeyboardEventHandlers {
-    onKeyDown?: (event: KeyboardEvent) => any;
-    onKeyPress?: (event: KeyboardEvent) => any;
-    onKeyUp?: (event: KeyboardEvent) => any;
-}
+export type EventTypes = {
+    [K in keyof typeof global]: K extends `${infer N}Event`
+        ? N extends ''
+            ? never
+            : N
+        : never;
+}[keyof typeof global];
 
-export interface MouseEventHandlers {
-    onClick?: (event: MouseEvent) => any;
-    onDblClick?: (event: MouseEvent) => any;
-    onMouseDown?: (event: MouseEvent) => any;
-    onMouseMove?: (event: MouseEvent) => any;
-    onMouseUp?: (event: MouseEvent) => any;
-    onMouseOver?: (event: MouseEvent) => any;
-    onMouseOut?: (event: MouseEvent) => any;
-    onWheel?: (event: WheelEvent) => any;
-}
+export type UniqueEventNames = {
+    [K in keyof HTMLElementEventMap]: K extends `${Lowercase<EventTypes>}${string}`
+        ? never
+        : K extends `${string}${Lowercase<EventTypes>}`
+        ? never
+        : K;
+}[keyof HTMLElementEventMap];
 
-export interface PointerEventHandlers {
-    onPointerDown?(event: PointerEvent): any;
-    onPointerMove?(event: PointerEvent): any;
-    onPointerUp?(event: PointerEvent): any;
-    onPointerOver?(event: PointerEvent): any;
-    onPointerOut?(event: PointerEvent): any;
-    onPointerCancel?(event: PointerEvent): any;
-    onPointerLockChange?(event: Event): any;
-    onPointerLockError?(event: Event): any;
-}
+export type ComplexUniqueEventNames = {
+    [K in UniqueEventNames]: K extends `${infer L}${UniqueEventNames}`
+        ? L extends ''
+            ? never
+            : K
+        : never;
+}[UniqueEventNames];
 
-/**
- * Mouse & Pointer Events with no bubble
- */
-export interface HoverEventHandlers {
-    onMouseEnter?(event: MouseEvent): any;
-    onMouseLeave?(event: MouseEvent): any;
-    onPointerEnter?(event: PointerEvent): any;
-    onPointerLeave?(event: PointerEvent): any;
-    onGotPointerCapture?(event: PointerEvent): any;
-    onLostPointerCapture?(event: PointerEvent): any;
-}
+export type SimpleEventNames = Exclude<
+    UniqueEventNames,
+    ComplexUniqueEventNames
+>;
 
-export interface TouchEventHandlers {
-    onTouchStart?: (event: TouchEvent) => any;
-    onTouchEnter?: (event: TouchEvent) => any;
-    onTouchMove?: (event: TouchEvent) => any;
-    onTouchLeave?: (event: TouchEvent) => any;
-    onTouchEnd?: (event: TouchEvent) => any;
-    onTouchCancel?: (event: TouchEvent) => any;
-}
+export type EventHandlerNames<T extends Element> = {
+    [K in keyof T]: K extends `on${infer N}`
+        ? T[K] extends (event: Event) => any
+            ? N
+            : never
+        : never;
+}[keyof T];
 
-/**
- * UI Events with no bubble
- */
-export interface UIEventHandlers {
-    onScroll?: (event: UIEvent) => any;
-    onResize?: (Event: UIEvent) => any;
-}
+export type CamelEventName<T extends string> = T extends SimpleEventNames
+    ? Capitalize<T>
+    : T extends `${infer L}${SimpleEventNames}`
+    ? T extends `${L}${infer R}`
+        ? `${Capitalize<L>}${Capitalize<R>}`
+        : T
+    : T extends `${Lowercase<EventTypes>}${infer R}`
+    ? T extends `${infer L}${R}`
+        ? `${Capitalize<L>}${Capitalize<R>}`
+        : T
+    : T extends `${infer L}${Lowercase<EventTypes>}`
+    ? T extends `${L}${infer R}`
+        ? `${Capitalize<L>}${Capitalize<R>}`
+        : T
+    : T;
 
-export interface AnimationEventHandlers {
-    onTransitionStart?(event: TransitionEvent): any;
-    onTransitionEnd?(event: TransitionEvent): any;
-    onTransitionCancel?(event: TransitionEvent): any;
-    onAnimationStart?(event: AnimationEvent): any;
-    onAnimationEnd?(event: AnimationEvent): any;
-    onAnimationCancel?(event: AnimationEvent): any;
-}
-
-/**
- * Events of every HTML Element itself
- */
-export type BaseEventHandlers = KeyboardEventHandlers &
-    MouseEventHandlers &
-    HoverEventHandlers &
-    TouchEventHandlers &
-    UIEventHandlers &
-    AnimationEventHandlers;
-
-/**
- * Field Events with no bubble
- */
-export interface FieldEventHandlers {
-    onFocus?: (event: FocusEvent) => any;
-    onBlur?: (event: FocusEvent) => any;
-}
-
-export interface InputEventHandlers {
-    onFocusIn?(event: FocusEvent): any;
-    onFocusOut?(event: FocusEvent): any;
-    onCompositionStart?(event: CompositionEvent): any;
-    onCompositionUpdate?(event: CompositionEvent): any;
-    onCompositionEnd?(event: CompositionEvent): any;
-    onInput?(event: InputEvent): any;
-    onChange?(event: Event): any;
-}
-
-export interface FormEventHandlers {
-    onSubmit?(event: Event): any;
-    onReset?(event: Event): any;
-}
-
-/**
- * Events of every Container HTML Element
- */
-export type BubbleEventHandlers = KeyboardEventHandlers &
-    MouseEventHandlers &
-    PointerEventHandlers &
-    TouchEventHandlers &
-    AnimationEventHandlers &
-    InputEventHandlers &
-    FormEventHandlers;
+export type EventHandlers<T extends Element> = {
+    [K in EventHandlerNames<T> as `on${CamelEventName<K>}`]: (
+        event: HTMLElementEventMap[K]
+    ) => any;
+};
 
 /* -------------------- DOM Props -------------------- */
 
@@ -138,11 +87,6 @@ export type SVGOwnKeys<T extends SVGElement = SVGElement> = Exclude<
     keyof T,
     keyof Node | keyof EventTarget
 >;
-export type HTMLContentKeys =
-    | 'innerHTML'
-    | 'innerText'
-    | 'textContent'
-    | 'contentEditable';
 
 export type CSSStyles = Partial<
     Omit<PickData<CSSStyleDeclaration>, 'length' | 'parentRule'> &
@@ -154,16 +98,21 @@ export type DOMProps_Read2Write<T extends Partial<Element>> = {
         ? string
         : T[K] extends DOMTokenList
         ? string
+        : T[K] extends Element
+        ? string
         : T[K] extends CSSStyleDeclaration
         ? CSSStyles
         : T[K];
 };
-export type BaseHTMLProps<T extends HTMLElement> = Partial<
-    DOMProps_Read2Write<Pick<T, Extract<DataKeys<T>, HTMLOwnKeys<T>>>>
+export type HTMLProps<T extends HTMLElement> = Partial<
+    EventHandlers<T> &
+        DOMProps_Read2Write<Pick<T, Extract<DataKeys<T>, HTMLOwnKeys<T>>>> & {
+            role: string;
+        }
 >;
 
 export type SVGProps_Read2Write<T extends Partial<SVGElement>> = {
-    [K in keyof T]?: T[K] extends SVGAnimatedLength
+    [K in keyof T]: T[K] extends SVGAnimatedLength
         ? string
         : T[K] extends SVGAnimatedLengthList
         ? string
@@ -173,30 +122,20 @@ export type SVGProps_Read2Write<T extends Partial<SVGElement>> = {
         ? string
         : T[K];
 };
-export type BaseSVGProps<T extends SVGElement> = Partial<
-    SVGProps_Read2Write<
-        DOMProps_Read2Write<Pick<T, Extract<DataKeys<T>, SVGOwnKeys<T>>>>
-    >
+export type SVGProps<T extends SVGElement> = Partial<
+    EventHandlers<T> &
+        SVGProps_Read2Write<
+            DOMProps_Read2Write<Pick<T, Extract<DataKeys<T>, SVGOwnKeys<T>>>>
+        >
 >;
 
-export interface HTMLProps
-    extends BaseEventHandlers,
-        Omit<BaseHTMLProps<HTMLElement>, HTMLContentKeys> {
-    role?: string;
-}
-export interface SVGProps extends BaseEventHandlers, BaseSVGProps<SVGElement> {}
-
-export type HTMLContainerProps = BubbleEventHandlers &
-    HTMLProps &
-    Partial<Pick<HTMLElement, HTMLContentKeys>>;
-
-export interface HTMLHyperLinkProps extends HTMLContainerProps {
+export interface HTMLHyperLinkProps
+    extends HTMLProps<HTMLAnchorElement & HTMLAreaElement> {
     href?: string;
     target?: '_self' | '_parent' | '_top' | '_blank';
 }
 
-export type HTMLTableCellProps = HTMLContainerProps &
-    Partial<Pick<HTMLTableCellElement, 'colSpan' | 'rowSpan'>>;
+export type HTMLTableCellProps = HTMLProps<HTMLTableCellElement>;
 
 export type BaseFieldProps = Partial<
     Pick<
@@ -233,19 +172,16 @@ export type HTMLFieldInternals = Pick<
     | 'reportValidity'
 >;
 
-export interface HTMLFieldProps
-    extends HTMLProps,
-        BaseFieldProps,
-        FieldEventHandlers,
-        InputEventHandlers {
-    autofocus?: HTMLInputElement['autofocus'];
-}
+export type HTMLFieldProps<T extends HTMLElement = HTMLInputElement> =
+    HTMLProps<T> & BaseFieldProps;
 
-export interface HTMLButtonProps extends HTMLFieldProps, HTMLContainerProps {
+export interface HTMLButtonProps extends HTMLFieldProps<HTMLButtonElement> {
     type?: 'button' | 'image' | 'submit' | 'reset';
 }
 
-export interface HTMLInputProps extends HTMLFieldProps, BaseInputProps {
+export interface HTMLInputProps
+    extends HTMLFieldProps,
+        Omit<BaseInputProps, 'list'> {
     type?:
         | 'checkbox'
         | 'color'
