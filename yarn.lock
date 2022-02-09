@@ -1403,6 +1403,11 @@
   dependencies:
     "@types/yargs-parser" "*"
 
+"@webcomponents/webcomponentsjs@^2.6.0":
+  version "2.6.0"
+  resolved "https://registry.yarnpkg.com/@webcomponents/webcomponentsjs/-/webcomponentsjs-2.6.0.tgz#7d1674c40bddf0c6dd974c44ffd34512fe7274ff"
+  integrity sha512-Moog+Smx3ORTbWwuPqoclr+uvfLnciVd6wdCaVscHPrxbmQ/IJKm3wbB7hpzJtXWjAq2l/6QMlO85aZiOdtv5Q==
+
 abab@^2.0.3, abab@^2.0.5:
   version "2.0.5"
   resolved "https://registry.yarnpkg.com/abab/-/abab-2.0.5.tgz#c0b678fb32d60fc1219c784d6a826fe385aeb79a"

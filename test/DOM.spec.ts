@@ -1,5 +1,7 @@
 import './polyfill';
 import {
+    isHTMLElementClass,
+    tagNameOf,
     walkDOM,
     getVisibleText,
     watchScroll,
@@ -7,6 +9,15 @@ import {
 } from '../source/DOM';
 
 describe('DOM', () => {
+    it('should get the Tag Name of a Custom Element', () => {
+        class TestCell extends HTMLElement {}
+
+        customElements.define('test-cell', TestCell);
+
+        expect(isHTMLElementClass(TestCell)).toBeTruthy();
+        expect(tagNameOf(TestCell)).toBe('test-cell');
+    });
+
     it('should walk through a DOM tree with(out) a Type filter', () => {
         document.body.innerHTML = '<a><b>test</b></a>';
 
