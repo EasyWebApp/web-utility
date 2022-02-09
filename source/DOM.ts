@@ -15,9 +15,9 @@ export function tagNameOf(Class: CustomElementConstructor) {
 
     if (name) return name;
 
-    const { tagName } = new Class();
+    var { tagName } = new Class();
 
-    nameMap.set(Class, tagName);
+    nameMap.set(Class, (tagName = tagName.toLowerCase()));
 
     return tagName;
 }

@@ -1,6 +1,7 @@
 import './polyfill';
 import {
     isEmpty,
+    assertInheritance,
     byteLength,
     differ,
     likeArray,
@@ -30,6 +31,14 @@ describe('Data', () => {
                 true
             ])
         );
+    });
+
+    it('should detect the inheritance of Sub & Super classes', () => {
+        class A {}
+        class B extends A {}
+        class C extends B {}
+
+        expect(assertInheritance(C, A)).toBeTruthy();
     });
 
     it('should calculate the Byte Length of a String', () => {
