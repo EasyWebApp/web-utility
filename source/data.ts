@@ -22,6 +22,19 @@ export function byteLength(raw: string) {
     return raw.replace(/[^\u0021-\u007e\uff61-\uffef]/g, 'xx').length;
 }
 
+export function toHyphenCase(raw: string) {
+    return raw.replace(
+        /[A-Z]+/g,
+        (match, offset) => `${offset ? '-' : ''}${match.toLowerCase()}`
+    );
+}
+
+export function toCamelCase(raw: string, large = false) {
+    return raw.replace(/^[a-z]|-[a-z]/g, (match, offset) =>
+        offset || large ? (match[1] || match[0]).toUpperCase() : match
+    );
+}
+
 export function uniqueID() {
     return (Date.now() + parseInt((Math.random() + '').slice(2))).toString(36);
 }
@@ -228,7 +241,7 @@ if (typeof self === 'object') {
     }
     const { crypto } = globalThis;
 
-    if (!crypto.subtle && crypto['webkitSubtle'])
+    if (!crypto?.subtle && crypto?.['webkitSubtle'])
         // @ts-ignore
         crypto.subtle = crypto['webkitSubtle'];
 }

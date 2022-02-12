@@ -1,6 +1,12 @@
 import { URLData } from './URL';
-import { HTMLField } from './DOM-type';
-import { Constructor, isEmpty, assertInheritance, parseJSON } from './data';
+import { HTMLField, CSSStyles } from './DOM-type';
+import {
+    Constructor,
+    isEmpty,
+    assertInheritance,
+    toHyphenCase,
+    parseJSON
+} from './data';
 
 export function isHTMLElementClass<T extends Constructor<HTMLElement>>(
     Class: any
@@ -120,6 +126,27 @@ export function importCSS(
 
         document.head.append(link);
     });
+}
+
+export type CSSRule = Record<string, CSSStyles>;
+export type CSSObject = CSSRule | Record<string, CSSRule>;
+
+export function stringifyCSS(
+    data: CSSStyles | CSSObject,
+    depth = 0,
+    indent = '    '
+): string {
+    const padding = indent.repeat(depth);
+
+    return Object.entries(data)
+        .map(([key, value]) =>
+            typeof value !== 'object'
+                ? `${padding}${toHyphenCase(key)}: ${value};`
+                : `${padding}${key} {
+${stringifyCSS(value as CSSObject, depth + 1, indent)}
+${padding}}`
+        )
+        .join('\n');
 }
 
 export function insertToCursor(...nodes: Node[]) {

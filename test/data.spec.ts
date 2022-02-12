@@ -3,6 +3,8 @@ import {
     isEmpty,
     assertInheritance,
     byteLength,
+    toHyphenCase,
+    toCamelCase,
     differ,
     likeArray,
     makeArray,
@@ -45,6 +47,16 @@ describe('Data', () => {
         expect(byteLength('123')).toBe(3);
 
         expect(byteLength('xＸ中')).toBe(5);
+    });
+
+    it('should convert a Camel-case String to Hyphen-case', () => {
+        expect(toHyphenCase('smallCamel')).toBe('small-camel');
+        expect(toHyphenCase('LargeCamel')).toBe('large-camel');
+    });
+
+    it('should convert a Hyphen-case String to Camel-case', () => {
+        expect(toCamelCase('small-camel')).toBe('smallCamel');
+        expect(toCamelCase('large-camel', true)).toBe('LargeCamel');
     });
 
     it('should return an Object with Diffed Data', () => {
