@@ -1,5 +1,5 @@
 import { URLData } from './URL';
-import { HTMLField, CSSStyles } from './DOM-type';
+import { HTMLField, CSSStyles, CSSObject } from './DOM-type';
 import {
     Constructor,
     isEmpty,
@@ -7,6 +7,25 @@ import {
     toHyphenCase,
     parseJSON
 } from './data';
+
+const spawn = document.createElement('template'),
+    templateMap: Record<string, Element> = {};
+
+export function templateOf(tagName: string) {
+    if (templateMap[tagName]) return templateMap[tagName];
+
+    spawn.innerHTML = `<${tagName} />`;
+
+    return (templateMap[tagName] = spawn.content.firstElementChild!);
+}
+
+export function elementTypeOf(tagName: string) {
+    const node = templateOf(tagName);
+
+    return node instanceof HTMLElement && !(node instanceof HTMLUnknownElement)
+        ? 'html'
+        : 'xml';
+}
 
 export function isHTMLElementClass<T extends Constructor<HTMLElement>>(
     Class: any
@@ -127,9 +146,6 @@ export function importCSS(
         document.head.append(link);
     });
 }
-
-export type CSSRule = Record<string, CSSStyles>;
-export type CSSObject = CSSRule | Record<string, CSSRule>;
 
 export function stringifyCSS(
     data: CSSStyles | CSSObject,

@@ -3,7 +3,7 @@
 **Web front-end** toolkit based on [TypeScript][1]
 
 [![NPM Dependency](https://david-dm.org/EasyWebApp/web-utility.svg)][2]
-[![CI & CD](https://github.com/EasyWebApp/web-utility/workflows/CI%20&%20CD/badge.svg)][3]
+[![CI & CD](https://github.com/EasyWebApp/web-utility/actions/workflows/main.yml/badge.svg)][3]
 
 [![Open in Visual Studio Code](https://open.vscode.dev/badges/open-in-vscode.svg)][4]
 
@@ -76,6 +76,21 @@ Promise.all([getToken('xxx'), getToken('yyy')]).then(([first, second]) =>
 );
 ```
 
+### jQuery-like DOM event delegation
+
+```javascript
+import { delegate } from 'web-utility';
+
+document.addEventListener(
+    'click',
+    delegate('a[href]', (event, link) => {
+        event.preventDefault();
+
+        console.log(link.href);
+    })
+);
+```
+
 ### Message Channel
 
 `index.ts`
@@ -145,8 +160,8 @@ export enum zh_CN {
 `source/index.tsx`
 
 ```javascript
-import { documentReady, render, createCell } from 'web-cell';
-import { bootI18n, textJoin } from 'web-utility';
+import { render, createCell } from 'web-cell';
+import { documentReady, bootI18n, textJoin } from 'web-utility';
 
 import { en_US } from './i18n/en-US';
 import { zh_CN } from './i18n/zh-CN';
@@ -169,6 +184,6 @@ documentReady.then(() =>
 
 [1]: https://www.typescriptlang.org/
 [2]: https://david-dm.org/EasyWebApp/web-utility
-[3]: https://github.com/EasyWebApp/web-utility/actions
+[3]: https://github.com/EasyWebApp/web-utility/actions/workflows/main.yml
 [4]: https://open.vscode.dev/EasyWebApp/web-utility
 [5]: https://nodei.co/npm/web-utility/

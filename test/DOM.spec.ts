@@ -1,6 +1,8 @@
 import './polyfill';
 import { CSSStyles } from '../source/DOM-type';
 import {
+    templateOf,
+    elementTypeOf,
     isHTMLElementClass,
     tagNameOf,
     walkDOM,
@@ -11,6 +13,13 @@ import {
 } from '../source/DOM';
 
 describe('DOM', () => {
+    it('should detect the Element Type of a Tag Name', () => {
+        expect(templateOf('div')).toBeInstanceOf(HTMLDivElement);
+
+        expect(elementTypeOf('div')).toBe('html');
+        expect(elementTypeOf('svg')).toBe('xml');
+    });
+
     it('should get the Tag Name of a Custom Element', () => {
         class TestCell extends HTMLElement {}
 

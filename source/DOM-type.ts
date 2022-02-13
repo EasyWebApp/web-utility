@@ -1,4 +1,4 @@
-import type { DataKeys, PickData } from './data';
+import type { DataKeys, PickData, Constructor } from './data';
 
 export type SelfCloseTags =
     | 'area'
@@ -92,6 +92,8 @@ export type CSSStyles = Partial<
     Omit<PickData<CSSStyleDeclaration>, 'length' | 'parentRule'> &
         Record<string, any>
 >;
+export type CSSRule = Record<string, CSSStyles>;
+export type CSSObject = CSSRule | Record<string, CSSRule>;
 
 export type DOMProps_Read2Write<T extends Partial<Element>> = {
     [K in keyof T]: T[K] extends HTMLElement
@@ -210,6 +212,24 @@ export type HTMLField = HTMLInputElement &
     HTMLFieldSetElement;
 
 /**
+ * fetch from https://html.spec.whatwg.org/
+ */
+export const ReadOnly_Properties = new WeakMap<
+    Constructor<HTMLElement>,
+    string[]
+>([
+    [HTMLLinkElement, ['sizes']],
+    [HTMLIFrameElement, ['sandbox']],
+    [HTMLObjectElement, ['form']],
+    [HTMLInputElement, ['form', 'list']],
+    [HTMLButtonElement, ['form']],
+    [HTMLSelectElement, ['form']],
+    [HTMLTextAreaElement, ['form']],
+    [HTMLOutputElement, ['form']],
+    [HTMLFieldSetElement, ['form']]
+]);
+
+/**
  * @see https://developers.google.com/web/fundamentals/web-components/customelements#reactions
  */
 export interface CustomElement extends HTMLElement {
@@ -237,6 +257,15 @@ export interface CustomElement extends HTMLElement {
      * (e.g. someone called `document.adoptNode(el)`).
      */
     adoptedCallback?(): void;
+}
+
+/**
+ * @see https://developers.google.com/web/fundamentals/web-components/customelements#attrchanges
+ */
+export interface CustomElementClass<T extends CustomElement = CustomElement> {
+    new (...data: any[]): T;
+
+    observedAttributes?: string[];
 }
 
 /**
@@ -276,4 +305,12 @@ export interface CustomFormElement
         state: string | File | FormData,
         mode: 'restore' | 'autocomplete'
     ): void;
+}
+
+/**
+ * @see https://web.dev/more-capable-form-controls/#defining-a-form-associated-custom-element
+ */
+export interface CustomFormElementClass
+    extends CustomElementClass<CustomFormElement> {
+    formAssociated?: boolean;
 }
