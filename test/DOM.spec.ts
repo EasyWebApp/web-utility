@@ -5,6 +5,8 @@ import {
     elementTypeOf,
     isHTMLElementClass,
     tagNameOf,
+    parseDOM,
+    stringifyDOM,
     walkDOM,
     getVisibleText,
     stringifyCSS,
@@ -27,6 +29,19 @@ describe('DOM', () => {
 
         expect(isHTMLElementClass(TestCell)).toBeTruthy();
         expect(tagNameOf(TestCell)).toBe('test-cell');
+    });
+
+    it('should parse HTML to DOM & stringify DOM to HTML', () => {
+        const markup = '<i>test</i>demo';
+        const nodes = parseDOM(markup);
+
+        expect(nodes[0]).toBeInstanceOf(HTMLElement);
+        expect(nodes[1]).toBeInstanceOf(Text);
+
+        const fragment = document.createDocumentFragment();
+        fragment.append(...nodes);
+
+        expect(stringifyDOM(fragment)).toBe(markup);
     });
 
     it('should walk through a DOM tree with(out) a Type filter', () => {

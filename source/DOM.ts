@@ -48,14 +48,18 @@ export function tagNameOf(Class: CustomElementConstructor) {
 }
 
 export function parseDOM(HTML: string) {
-    const sandbox = document.createElement('template');
+    spawn.innerHTML = HTML;
 
-    sandbox.innerHTML = HTML;
-
-    return [...sandbox.content.childNodes].map(node => {
+    return [...spawn.content.childNodes].map(node => {
         node.remove();
         return node;
     });
+}
+
+export function stringifyDOM(node: Node) {
+    return new XMLSerializer()
+        .serializeToString(node)
+        .replace(/ xmlns="http:\/\/www.w3.org\/1999\/xhtml"/g, '');
 }
 
 export function* walkDOM<T extends Node = Node>(

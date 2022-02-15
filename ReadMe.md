@@ -76,6 +76,24 @@ Promise.all([getToken('xxx'), getToken('yyy')]).then(([first, second]) =>
 );
 ```
 
+### DOM operation
+
+```javascript
+import { parseDOM, walkDOM, stringifyDOM } from 'web-utility';
+
+const [root] = parseDOM('<a>Hello, <b>Web</b>!</a>');
+
+var count = 0;
+
+for (const { nodeName, nodeType, dataset } of walkDOM(root)) {
+    console.log(nodeName);
+
+    if (nodeType === Node.ELEMENT_NODE) dataset.id = ++count;
+}
+
+console.log(stringifyDOM(root)); // '<a data-id="1">Hello, <b data-id="2">Web</b>!</a>'
+```
+
 ### jQuery-like DOM event delegation
 
 ```javascript
