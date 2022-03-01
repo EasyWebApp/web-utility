@@ -1,5 +1,5 @@
 import { URLData } from './URL';
-import { HTMLField, CSSStyles, CSSObject } from './DOM-type';
+import { HTMLProps, HTMLField, CSSStyles, CSSObject } from './DOM-type';
 import {
     Constructor,
     isEmpty,
@@ -8,11 +8,12 @@ import {
     parseJSON
 } from './data';
 
-const spawn = document.createElement('template'),
-    templateMap: Record<string, Element> = {};
+const templateMap: Record<string, Element> = {};
 
 export function templateOf(tagName: string) {
     if (templateMap[tagName]) return templateMap[tagName];
+
+    const spawn = document.createElement('template');
 
     spawn.innerHTML = `<${tagName} />`;
 
@@ -47,7 +48,35 @@ export function tagNameOf(Class: CustomElementConstructor) {
     return tagName;
 }
 
+export function isDOMReadOnly<T extends keyof HTMLElementTagNameMap>(
+    tagName: T,
+    propertyName: keyof HTMLProps<HTMLElementTagNameMap[T]>
+) {
+    /**
+     * fetch from https://html.spec.whatwg.org/
+     */
+    const ReadOnly_Properties: [Constructor<HTMLElement>, string[]][] = [
+        [HTMLLinkElement, ['sizes']],
+        [HTMLIFrameElement, ['sandbox']],
+        [HTMLObjectElement, ['form']],
+        [HTMLInputElement, ['form', 'list']],
+        [HTMLButtonElement, ['form']],
+        [HTMLSelectElement, ['form']],
+        [HTMLTextAreaElement, ['form']],
+        [HTMLOutputElement, ['form']],
+        [HTMLFieldSetElement, ['form']]
+    ];
+    const template = templateOf(tagName);
+
+    for (const [Class, keys] of ReadOnly_Properties)
+        if (template instanceof Class && keys.includes(propertyName as string))
+            return true;
+    return false;
+}
+
 export function parseDOM(HTML: string) {
+    const spawn = document.createElement('template');
+
     spawn.innerHTML = HTML;
 
     return [...spawn.content.childNodes].map(node => {

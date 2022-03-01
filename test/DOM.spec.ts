@@ -11,7 +11,8 @@ import {
     getVisibleText,
     stringifyCSS,
     watchScroll,
-    formToJSON
+    formToJSON,
+    isDOMReadOnly
 } from '../source/DOM';
 
 describe('DOM', () => {
@@ -29,6 +30,11 @@ describe('DOM', () => {
 
         expect(isHTMLElementClass(TestCell)).toBeTruthy();
         expect(tagNameOf(TestCell)).toBe('test-cell');
+    });
+
+    it('should detect Read-only properties of DOM elements', () => {
+        expect(isDOMReadOnly('input', 'list')).toBeTruthy();
+        expect(isDOMReadOnly('a', 'href')).toBeFalsy();
     });
 
     it('should parse HTML to DOM & stringify DOM to HTML', () => {

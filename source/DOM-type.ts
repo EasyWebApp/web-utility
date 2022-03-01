@@ -1,3 +1,5 @@
+import type { IAom } from 'element-internals-polyfill';
+
 import type { DataKeys, PickData, Constructor } from './data';
 
 export type SelfCloseTags =
@@ -15,6 +17,27 @@ export type SelfCloseTags =
     | 'source'
     | 'track'
     | 'wbr';
+
+export type ShadowableTags =
+    | 'article'
+    | 'aside'
+    | 'blockquote'
+    | 'body'
+    | 'div'
+    | 'footer'
+    | 'h1'
+    | 'h2'
+    | 'h3'
+    | 'h4'
+    | 'h5'
+    | 'h6'
+    | 'header'
+    | 'main'
+    | 'nav'
+    | 'p'
+    | 'section'
+    | 'span'
+    | `${string}-${string}`;
 
 /* -------------------- Event Handlers -------------------- */
 
@@ -77,6 +100,17 @@ export type EventHandlers<T extends Element> = {
     ) => any;
 };
 
+export type ContainerEvents = 'focusin' | 'focusout';
+
+export type ContainerEventHandlers<T extends keyof HTMLElementTagNameMap> =
+    T extends SelfCloseTags
+        ? {}
+        : {
+              [K in ContainerEvents as `on${CamelEventName<K>}`]: (
+                  event: HTMLElementEventMap[K]
+              ) => any;
+          };
+
 /* -------------------- DOM Props -------------------- */
 
 export type HTMLOwnKeys<T extends HTMLElement = HTMLElement> = Exclude<
@@ -107,10 +141,9 @@ export type DOMProps_Read2Write<T extends Partial<Element>> = {
         : T[K];
 };
 export type HTMLProps<T extends HTMLElement> = Partial<
-    EventHandlers<T> &
-        DOMProps_Read2Write<Pick<T, Extract<DataKeys<T>, HTMLOwnKeys<T>>>> & {
-            role: string;
-        }
+    IAom &
+        EventHandlers<T> &
+        DOMProps_Read2Write<Pick<T, Extract<DataKeys<T>, HTMLOwnKeys<T>>>>
 >;
 
 export type SVGProps_Read2Write<T extends Partial<SVGElement>> = {
@@ -210,24 +243,6 @@ export type HTMLField = HTMLInputElement &
     HTMLTextAreaElement &
     HTMLSelectElement &
     HTMLFieldSetElement;
-
-/**
- * fetch from https://html.spec.whatwg.org/
- */
-export const ReadOnly_Properties = new WeakMap<
-    Constructor<HTMLElement>,
-    string[]
->([
-    [HTMLLinkElement, ['sizes']],
-    [HTMLIFrameElement, ['sandbox']],
-    [HTMLObjectElement, ['form']],
-    [HTMLInputElement, ['form', 'list']],
-    [HTMLButtonElement, ['form']],
-    [HTMLSelectElement, ['form']],
-    [HTMLTextAreaElement, ['form']],
-    [HTMLOutputElement, ['form']],
-    [HTMLFieldSetElement, ['form']]
-]);
 
 /**
  * @see https://developers.google.com/web/fundamentals/web-components/customelements#reactions
