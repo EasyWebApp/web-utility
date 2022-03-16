@@ -200,8 +200,47 @@ documentReady.then(() =>
 );
 ```
 
+### Test scripts
+
+If you are looking for a simple alternative of [Mocha][6] or [Jest][7], just use these **Test Utility** methods with [`ts-node`][8]:
+
+```shell
+npx ts-node index.spec.ts
+```
+
+`index.spec.ts`
+
+```typescript
+import { describe, it } from 'web-utility';
+
+class App {
+    name = 'test';
+
+    static create() {
+        return new App();
+    }
+}
+
+describe('My module', async () => {
+    const app = it('should create an App object', async expect => {
+        const app = App.create();
+
+        expect(app instanceof App);
+
+        return app;
+    });
+
+    it('should init an App name', expect => {
+        expect(app.name === 'test');
+    });
+});
+```
+
 [1]: https://www.typescriptlang.org/
 [2]: https://david-dm.org/EasyWebApp/web-utility
 [3]: https://github.com/EasyWebApp/web-utility/actions/workflows/main.yml
 [4]: https://open.vscode.dev/EasyWebApp/web-utility
 [5]: https://nodei.co/npm/web-utility/
+[6]: https://mochajs.org/
+[7]: https://jestjs.io/
+[8]: https://typestrong.org/ts-node/

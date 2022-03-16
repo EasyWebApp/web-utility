@@ -25,19 +25,24 @@ export function delegate<T>(
     };
 }
 
-export const documentReady = new Promise<void>(resolve => {
-    function done() {
-        document.removeEventListener('DOMContentLoaded', done);
-        self.removeEventListener('load', done);
-        resolve();
-    }
-    document.addEventListener('DOMContentLoaded', done);
-    self.addEventListener('load', done);
+export const documentReady =
+    typeof window === 'object'
+        ? new Promise<void>(resolve => {
+              function done() {
+                  document.removeEventListener('DOMContentLoaded', done);
+                  self.removeEventListener('load', done);
+                  resolve();
+              }
+              document.addEventListener('DOMContentLoaded', done);
+              self.addEventListener('load', done);
 
-    setTimeout(function check() {
-        document.readyState === 'complete' ? resolve() : setTimeout(check);
-    });
-});
+              setTimeout(function check() {
+                  document.readyState === 'complete'
+                      ? resolve()
+                      : setTimeout(check);
+              });
+          })
+        : Promise.resolve();
 
 export function promisify<T extends Event>(scope: string, element: Element) {
     return new Promise<T>((resolve, reject) => {

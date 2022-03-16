@@ -8,3 +8,4 @@ export * from './DOM';
 export * from './timer';
 export * from './event';
 export * from './animation';
+export * from './assert';
