@@ -26,18 +26,18 @@ export function delegate<T>(
 }
 
 export const documentReady =
-    typeof window === 'object'
+    typeof window !== 'undefined'
         ? new Promise<void>(resolve => {
               function done() {
-                  document.removeEventListener('DOMContentLoaded', done);
-                  self.removeEventListener('load', done);
+                  document?.removeEventListener('DOMContentLoaded', done);
+                  window.removeEventListener('load', done);
                   resolve();
               }
-              document.addEventListener('DOMContentLoaded', done);
-              self.addEventListener('load', done);
+              document?.addEventListener('DOMContentLoaded', done);
+              window.addEventListener('load', done);
 
               setTimeout(function check() {
-                  document.readyState === 'complete'
+                  document?.readyState === 'complete'
                       ? resolve()
                       : setTimeout(check);
               });

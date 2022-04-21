@@ -222,7 +222,7 @@ class App {
 }
 
 describe('My module', async () => {
-    const app = it('should create an App object', async expect => {
+    const app = await it('should create an App object', async expect => {
         const app = App.create();
 
         expect(app instanceof App);
@@ -230,7 +230,7 @@ describe('My module', async () => {
         return app;
     });
 
-    it('should init an App name', expect => {
+    await it('should init an App name', expect => {
         expect(app.name === 'test');
     });
 });

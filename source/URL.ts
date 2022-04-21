@@ -35,6 +35,10 @@ export function buildURLData(map: string[][] | Record<string, any>) {
     );
 }
 
+export async function blobOf(URI: string | URL) {
+    return (await fetch(URI + '')).blob();
+}
+
 const DataURI = /^data:(.+?\/(.+?))?(;base64)?,([\s\S]+)/;
 /**
  * Blob logic forked from axes's

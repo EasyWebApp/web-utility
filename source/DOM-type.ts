@@ -42,12 +42,12 @@ export type ShadowableTags =
 /* -------------------- Event Handlers -------------------- */
 
 export type EventTypes = {
-    [K in keyof typeof global]: K extends `${infer N}Event`
+    [K in keyof typeof globalThis]: K extends `${infer N}Event`
         ? N extends ''
             ? never
             : N
         : never;
-}[keyof typeof global];
+}[keyof typeof globalThis];
 
 export type UniqueEventNames = {
     [K in keyof HTMLElementEventMap]: K extends `${Lowercase<EventTypes>}${string}`
