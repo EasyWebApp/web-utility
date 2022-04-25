@@ -203,6 +203,7 @@ object-fit: contain;`);
             <input type="file" name="files" />
 
             <input type="datetime-local" name="date" value="1989-06-04T00:00" />
+            <input type="datetime-local" name="emptyDate" value="" />
         </form>`;
 
         const data = formToJSON(document.forms[0]);
@@ -214,7 +215,8 @@ object-fit: contain;`);
                 array: [2, 3],
                 test: { example: 'sample', other: 2 },
                 files: undefined,
-                date: new Date('1989-06-04T00:00').toJSON()
+                date: new Date('1989-06-04T00:00').toJSON(),
+                emptyDate: "",
             })
         );
     });
