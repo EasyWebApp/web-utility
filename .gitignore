@@ -4,3 +4,4 @@ docs/
 dist/
 .parcel-cache/
 .vscode/settings.json
+.idea
