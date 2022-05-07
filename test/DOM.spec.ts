@@ -209,17 +209,13 @@ object-fit: contain;`);
         </form>`;
 
         const data = formToJSON(document.forms[0]);
-
         expect(data).toEqual(
             expect.objectContaining({
                 switch: true,
                 list: [1, 3],
                 array: [2, 3],
                 test: { example: 'sample', other: 2 },
-                files: undefined,
                 date: new Date('1989-06-04T00:00').toJSON(),
-                emptyDate: null,
-                emptyNumber: null
             })
         );
     });
