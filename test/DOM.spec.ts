@@ -216,7 +216,7 @@ object-fit: contain;`);
                 test: { example: 'sample', other: 2 },
                 files: undefined,
                 date: new Date('1989-06-04T00:00').toJSON(),
-                emptyDate: "",
+                emptyDate: null,
             })
         );
     });
