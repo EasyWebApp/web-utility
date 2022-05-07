@@ -19,8 +19,11 @@ npm install web-utility
 
 ```html
 <head>
-    <script src="https://polyfill.app/api/polyfill?features=regenerator-runtime,url,scroll-behavior,intersection-observer"></script>
-    <script src="https://cdn.jsdelivr.net/npm/fast-text-encoding@1.0.3/text.min.js"></script>
+    <script src="https://polyfill.web-cell.dev/feature/Regenerator.js"></script>
+    <script src="https://polyfill.web-cell.dev/feature/TextEncoder.js"></script>
+    <script src="https://polyfill.web-cell.dev/feature/URL.js"></script>
+    <script src="https://polyfill.web-cell.dev/feature/ScrollBehavior.js"></script>
+    <script src="https://polyfill.web-cell.dev/feature/IntersectionObserver.js"></script>
 </head>
 ```
 
