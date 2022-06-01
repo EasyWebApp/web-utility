@@ -10,8 +10,12 @@ export type PickData<T> = Omit<T, TypeKeys<T, Function>>;
 
 export type DataKeys<T> = Exclude<keyof T, TypeKeys<T, Function>>;
 
-export function isEmpty(value: any) {
-    return !(value != null) || (!value && isNaN(value)) || value + '' === '';
+export function likeNull(value?: any) {
+    return !(value != null) || Number.isNaN(value);
+}
+
+export function isEmpty(value?: any) {
+    return likeNull(value) || value + '' === '';
 }
 
 export function assertInheritance(Sub: Function, Super: Function) {
@@ -30,8 +34,10 @@ export function toHyphenCase(raw: string) {
 }
 
 export function toCamelCase(raw: string, large = false) {
-    return raw.replace(/^[a-z]|-[a-z]/g, (match, offset) =>
-        offset || large ? (match[1] || match[0]).toUpperCase() : match
+    return raw.replace(/^[A-Za-z]|[^A-Za-z][A-Za-z]/g, (match, offset) =>
+        offset || large
+            ? (match[1] || match[0]).toUpperCase()
+            : match.toLowerCase()
     );
 }
 
@@ -53,18 +59,42 @@ export function differ<T>(
 
 export type ResultArray<T> = T extends ArrayLike<infer D> ? D[] : T[];
 
-export function likeArray(data: any): data is ArrayLike<any> {
+export function likeArray(data?: any): data is ArrayLike<any> {
+    if (likeNull(data)) return false;
+
     const { length } = data;
 
     return typeof length === 'number' && length >= 0 && ~~length === length;
 }
 
-export function makeArray<T>(data: T): ResultArray<T> {
+export function makeArray<T>(data?: T): ResultArray<T> {
     if (data instanceof Array) return data;
+
+    if (likeNull(data)) return [];
 
     if (likeArray(data)) return Array.from(data);
 
     return [data] as ResultArray<T>;
+}
+
+export function findDeep<T>(
+    list: T[],
+    subKey: TypeKeys<Required<T>, any[]>,
+    handler: (item: T) => boolean
+): T[] {
+    for (const item of list) {
+        if (handler(item)) return [item];
+
+        if (item[subKey] instanceof Array) {
+            const result = findDeep(
+                item[subKey] as unknown as T[],
+                subKey,
+                handler
+            );
+            if (result.length) return [item, ...result];
+        }
+    }
+    return [];
 }
 
 export type IndexKey = number | string | symbol;

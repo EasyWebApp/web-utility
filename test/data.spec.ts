@@ -1,5 +1,6 @@
 import './polyfill';
 import {
+    likeNull,
     isEmpty,
     assertInheritance,
     byteLength,
@@ -8,6 +9,7 @@ import {
     differ,
     likeArray,
     makeArray,
+    findDeep,
     groupBy,
     cache,
     parseJSON,
@@ -18,7 +20,24 @@ import {
 import { sleep } from '../source/timer';
 
 describe('Data', () => {
-    it('should detect Meaningless Null Values', () => {
+    it('should detect Meaningless Null-like Values', () => {
+        expect(
+            [0, false, '', null, undefined, NaN, [], {}].map(likeNull)
+        ).toEqual(
+            expect.arrayContaining([
+                false,
+                false,
+                false,
+                true,
+                true,
+                true,
+                false,
+                false
+            ])
+        );
+    });
+
+    it('should detect Meaningless Empty Values', () => {
         expect(
             [0, false, '', null, undefined, NaN, [], {}].map(isEmpty)
         ).toEqual(
@@ -57,6 +76,7 @@ describe('Data', () => {
     it('should convert a Hyphen-case String to Camel-case', () => {
         expect(toCamelCase('small-camel')).toBe('smallCamel');
         expect(toCamelCase('large-camel', true)).toBe('LargeCamel');
+        expect(toCamelCase('Small Camel')).toBe('smallCamel');
     });
 
     it('should return an Object with Diffed Data', () => {
@@ -66,18 +86,38 @@ describe('Data', () => {
     });
 
     it('should detect an Object whether is Array-like or not', () => {
+        expect(likeArray(NaN)).toBe(false);
         expect(likeArray('a')).toBe(true);
         expect(likeArray({ 0: 'a' })).toBe(false);
         expect(likeArray({ 0: 'a', length: 1 })).toBe(true);
     });
 
     it('should make sure the result is an Array', () => {
+        expect(makeArray()).toStrictEqual([]);
         expect(makeArray('a')).toStrictEqual(['a']);
         expect(makeArray({ 0: 'a' })).toStrictEqual([{ 0: 'a' }]);
         expect(makeArray({ 0: 'a', length: 1 })).toStrictEqual(['a']);
 
         const list = [0];
         expect(makeArray(list)).toBe(list);
+    });
+
+    it('should find data in Nested Object Array', () => {
+        const data = [
+            { name: 'a' },
+            { name: 'b', list: [{ name: 'c' }] },
+            { name: 'd' }
+        ];
+
+        expect(
+            findDeep(data, 'list', ({ name }) => name === 'c')
+        ).toStrictEqual([
+            {
+                name: 'b',
+                list: [{ name: 'c' }]
+            },
+            { name: 'c' }
+        ]);
     });
 
     describe('Group by', () => {
