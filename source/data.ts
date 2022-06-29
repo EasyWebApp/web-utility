@@ -45,6 +45,12 @@ export function uniqueID() {
     return (Date.now() + parseInt((Math.random() + '').slice(2))).toString(36);
 }
 
+export function objectFrom<V, K extends string>(values: V[], keys: K[]) {
+    return Object.fromEntries(
+        values.map((value, index) => [keys[index], value])
+    ) as Record<K, V>;
+}
+
 export function differ<T>(
     target: Record<string, T>,
     source: Record<string, T>

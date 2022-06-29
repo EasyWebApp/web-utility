@@ -29,7 +29,7 @@ export function buildURLData(map: string[][] | Record<string, any>) {
         (map as any[][])
             .map(
                 ([key, value]) =>
-                    !isEmpty(value) && [key, value.toJSON?.() || value + '']
+                    !isEmpty(value) && [key, JSON.stringify(value)]
             )
             .filter(Boolean)
     );

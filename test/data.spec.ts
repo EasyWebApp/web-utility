@@ -6,6 +6,7 @@ import {
     byteLength,
     toHyphenCase,
     toCamelCase,
+    objectFrom,
     differ,
     likeArray,
     makeArray,
@@ -79,6 +80,13 @@ describe('Data', () => {
         expect(toCamelCase('Small Camel')).toBe('smallCamel');
     });
 
+    it('should build an Object with Key & Value arrays', () => {
+        expect(objectFrom([1, '2'], ['x', 'y'])).toStrictEqual({
+            x: 1,
+            y: '2'
+        });
+    });
+
     it('should return an Object with Diffed Data', () => {
         expect(differ({ a: 1, b: 2 }, { b: 2, c: 3 })).toEqual(
             expect.objectContaining({ c: 3 })
@@ -132,7 +140,10 @@ describe('Data', () => {
 
         it('should handle multiple Group Keys', () => {
             expect(
-                groupBy([{ a: [1, 2] }, { a: [2, 3] }, { b: 4 }], ({ a }) => a)
+                groupBy(
+                    [{ a: [1, 2] }, { a: [2, 3] }, { b: 4 }],
+                    ({ a = [] }) => a
+                )
             ).toEqual(
                 expect.objectContaining({
                     '1': [{ a: [1, 2] }],
