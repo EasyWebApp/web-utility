@@ -304,47 +304,57 @@ export function formToJSON<T = URLData<File>>(
         let {
             type,
             name,
-            value: v,
+            value,
             checked,
             defaultValue,
             selectedOptions,
             files
         } = field as HTMLField;
 
-        if (!name || v === "") continue;
+        if (!name || value === '') continue;
 
         const box = type !== 'fieldset' && field.closest('fieldset');
 
         if (box && box !== form) continue;
 
-        if (['radio', 'checkbox'].includes(type))
-            if (checked) v = defaultValue || 'true';
-            else continue;
-
-        let value: any = parseJSON(v);
+        let parsedValue: any = value;
 
         switch (type) {
+            case 'radio':
+            case 'checkbox':
+                if (checked)
+                    parsedValue = defaultValue ? parseJSON(defaultValue) : true;
+                else continue;
+                break;
             case 'select-multiple':
-                value = Array.from(selectedOptions, ({ value }) =>
+                parsedValue = Array.from(selectedOptions, ({ value }) =>
                     parseJSON(value)
                 );
                 break;
             case 'fieldset':
-                value = formToJSON(field as HTMLFieldSetElement);
+                parsedValue = formToJSON(field as HTMLFieldSetElement);
                 break;
             case 'file':
-                value = files && Array.from(files);
+                parsedValue = files && Array.from(files);
                 break;
+            case 'date':
             case 'datetime-local':
-                value = new Date(value).toISOString();
+            case 'month':
+                parsedValue = new Date(parsedValue).toISOString();
+                break;
+            case 'hidden':
+            case 'number':
+            case 'range':
+            case 'select-one':
+                parsedValue = parseJSON(value);
         }
 
-        if (name in data) data[name] = [].concat(data[name], value);
+        if (name in data) data[name] = [].concat(data[name], parsedValue);
         else
             data[name] =
-                !(value instanceof Array) || !isEmpty(value[1])
-                    ? value
-                    : value[0];
+                !(parsedValue instanceof Array) || !isEmpty(parsedValue[1])
+                    ? parsedValue
+                    : parsedValue[0];
     }
 
     return data;

@@ -25,14 +25,17 @@ export function parseURLData(raw = window.location.search): URLData {
 export function buildURLData(map: string[][] | Record<string, any>) {
     if (!(map instanceof Array)) map = Object.entries(map);
 
-    return new URLSearchParams(
-        (map as any[][])
-            .map(
-                ([key, value]) =>
-                    !isEmpty(value) && [key, JSON.stringify(value)]
-            )
-            .filter(Boolean)
-    );
+    const list = (map as any[][])
+        .map(
+            ([key, value]) =>
+                !isEmpty(value) && [
+                    key,
+                    typeof value === 'string' ? value : JSON.stringify(value)
+                ]
+        )
+        .filter(Boolean);
+
+    return new URLSearchParams(list);
 }
 
 export async function blobOf(URI: string | URL) {

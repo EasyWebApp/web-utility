@@ -75,10 +75,10 @@ describe('DOM', () => {
 
         const { firstElementChild: link } = document.body;
 
-        link.getBoundingClientRect = () =>
+        link!.getBoundingClientRect = () =>
             ({ width: 48, height: 16 } as DOMRect);
 
-        expect(getVisibleText(link)).toBe('test example');
+        expect(getVisibleText(link!)).toBe('test example');
     });
 
     describe('Stringify CSS', () => {
@@ -191,7 +191,7 @@ object-fit: contain;`);
             </select>
 
             <fieldset name="test">
-                <input type="text" name="example" value="sample" />
+                <input type="text" name="example" value="123" />
 
                 <select name="other" size="3">
                     <option>1</option>
@@ -209,13 +209,14 @@ object-fit: contain;`);
         </form>`;
 
         const data = formToJSON(document.forms[0]);
+
         expect(data).toEqual(
             expect.objectContaining({
                 switch: true,
                 list: [1, 3],
                 array: [2, 3],
-                test: { example: 'sample', other: 2 },
-                date: new Date('1989-06-04T00:00').toJSON(),
+                test: { example: '123', other: 2 },
+                date: new Date('1989-06-04T00:00').toJSON()
             })
         );
     });
