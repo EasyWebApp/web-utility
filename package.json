@@ -1,6 +1,6 @@
 {
     "name": "web-utility",
-    "version": "3.7.6",
+    "version": "3.7.7",
     "license": "LGPL-3.0",
     "author": "shiy2008@gmail.com",
     "description": "Web front-end toolkit based on TypeScript",
@@ -25,7 +25,7 @@
     "module": "dist/index.esm.js",
     "dependencies": {
         "@swc/helpers": "^0.4.3",
-        "element-internals-polyfill": "^1.1.4",
+        "element-internals-polyfill": "^1.1.6",
         "regenerator-runtime": "^0.13.9"
     },
     "peerDependencies": {
@@ -35,18 +35,18 @@
         "@parcel/packager-ts": "~2.6.2",
         "@parcel/transformer-typescript-types": "~2.6.2",
         "@peculiar/webcrypto": "^1.4.0",
-        "@types/jest": "^28.1.4",
-        "@types/node": "^14.18.21",
+        "@types/jest": "^28.1.6",
+        "@types/node": "^14.18.22",
         "@webcomponents/webcomponentsjs": "^2.6.0",
         "husky": "^8.0.1",
         "intersection-observer": "^0.12.2",
-        "jest": "^28.1.2",
-        "jest-environment-jsdom": "^28.1.2",
+        "jest": "^28.1.3",
+        "jest-environment-jsdom": "^28.1.3",
         "lint-staged": "^13.0.3",
         "open-cli": "^7.0.1",
         "parcel": "~2.6.2",
         "prettier": "^2.7.1",
-        "ts-jest": "^28.0.5",
+        "ts-jest": "^28.0.7",
         "typedoc": "^0.22.18",
         "typedoc-plugin-mdn-links": "^1.0.6",
         "typescript": "~4.3.5"

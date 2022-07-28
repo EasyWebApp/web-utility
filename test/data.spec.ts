@@ -24,35 +24,13 @@ describe('Data', () => {
     it('should detect Meaningless Null-like Values', () => {
         expect(
             [0, false, '', null, undefined, NaN, [], {}].map(likeNull)
-        ).toEqual(
-            expect.arrayContaining([
-                false,
-                false,
-                false,
-                true,
-                true,
-                true,
-                false,
-                false
-            ])
-        );
+        ).toEqual([false, false, false, true, true, true, false, false]);
     });
 
     it('should detect Meaningless Empty Values', () => {
         expect(
             [0, false, '', null, undefined, NaN, [], {}].map(isEmpty)
-        ).toEqual(
-            expect.arrayContaining([
-                false,
-                false,
-                true,
-                true,
-                true,
-                true,
-                true,
-                true
-            ])
-        );
+        ).toEqual([false, false, true, true, true, true, true, true]);
     });
 
     it('should detect the inheritance of Sub & Super classes', () => {
@@ -203,30 +181,28 @@ describe('Data', () => {
 
     describe('Text Table parser', () => {
         it('should parse Simple CSV', () => {
-            expect(parseTextTable('1,2,3\n4,5,6')).toEqual(
-                expect.arrayContaining([
-                    [1, 2, 3],
-                    [4, 5, 6]
-                ])
-            );
+            expect(parseTextTable('1,2,3\n4,5,6')).toEqual([
+                [1, 2, 3],
+                [4, 5, 6]
+            ]);
         });
 
         it('should parse Quoted CSV', () => {
-            expect(parseTextTable('"a,1","b,2","c,3"')).toEqual(
-                expect.arrayContaining([['a,1', 'b,2', 'c,3']])
-            );
+            expect(parseTextTable('"a,1","b,2","c,3"')).toEqual([
+                ['a,1', 'b,2', 'c,3']
+            ]);
         });
 
         it('should parse Mixed CSV', () => {
-            expect(parseTextTable('"a,1",2,\'c,3\'')).toEqual(
-                expect.arrayContaining([['a,1', 2, 'c,3']])
-            );
+            expect(parseTextTable('"a,1",2,\'c,3\'')).toEqual([
+                ['a,1', 2, 'c,3']
+            ]);
         });
 
         it('should parse Table Headers', () => {
-            expect(parseTextTable('a,b,c\n1,2,3', true)).toEqual(
-                expect.arrayContaining([{ a: 1, b: 2, c: 3 }])
-            );
+            expect(parseTextTable('a,b,c\n1,2,3', true)).toEqual([
+                { a: 1, b: 2, c: 3 }
+            ]);
         });
     });
 

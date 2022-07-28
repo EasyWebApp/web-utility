@@ -15,7 +15,10 @@ export function likeNull(value?: any) {
 }
 
 export function isEmpty(value?: any) {
-    return likeNull(value) || value + '' === '';
+    return (
+        likeNull(value) ||
+        (typeof value === 'object' ? !Object.keys(value).length : value === '')
+    );
 }
 
 export function assertInheritance(Sub: Function, Super: Function) {
