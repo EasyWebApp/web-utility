@@ -76,7 +76,7 @@ export function createMessageServer(
         var result = handlers[type]?.(data);
 
         if (result instanceof Promise) result = await result;
-
+        // @ts-ignore
         (source as MessageGlobal).postMessage({ ...result, id }, origin);
     }
 
@@ -99,7 +99,7 @@ export function createMessageClient(target: Window | Worker, origin = '*') {
             }
 
             globalThis.addEventListener('message', handler);
-
+            // @ts-ignore
             target.postMessage({ id: UID, type, ...data }, origin);
         });
 }

@@ -14,6 +14,7 @@ import {
     groupBy,
     cache,
     parseJSON,
+    toJSValue,
     parseTextTable,
     makeCRC32,
     makeSHA
@@ -177,6 +178,12 @@ describe('Data', () => {
             expect(time).toBeInstanceOf(Date);
             expect((time as Date).toJSON()).toBe('2020-01-23T00:00:00.000Z');
         });
+    });
+
+    it('should parse a String to a Primitive value or JS object', () => {
+        expect(toJSValue('01')).toBe(1);
+        expect(toJSValue('true')).toBe(true);
+        expect(toJSValue('1989-06-04')).toStrictEqual(new Date('1989-06-04'));
     });
 
     describe('Text Table parser', () => {

@@ -14,7 +14,10 @@ export function bootI18n<T extends Record<string, string>>(
 }
 
 export function isNumberLetter(raw = '') {
-    return /\p{N}/u.test(raw) || /\p{Ll}/u.test(raw.toLowerCase());
+    return (
+        new RegExp('\\p{N}', 'u').test(raw) ||
+        new RegExp('\\p{Ll}', 'u').test(raw.toLowerCase())
+    );
 }
 
 export function textJoin(...parts: string[]) {

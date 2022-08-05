@@ -180,9 +180,9 @@ object-fit: contain;`);
         <form>
             <input type="checkbox" name="switch" checked>
 
-            <input type="checkbox" name="list" value="1" checked>
-            <input type="checkbox" name="list" value="2">
-            <input type="checkbox" name="list" value="3" checked>
+            <input type="checkbox" name="list" value="01" checked>
+            <input type="checkbox" name="list" value="02">
+            <input type="checkbox" name="list" value="03" checked>
 
             <select name="array" multiple>
                 <option>1</option>
@@ -216,7 +216,7 @@ object-fit: contain;`);
                 list: [1, 3],
                 array: [2, 3],
                 test: { example: '123', other: 2 },
-                date: new Date('1989-06-04T00:00').toJSON()
+                date: new Date('1989-06-04T00:00')
             })
         );
     });

@@ -8,8 +8,6 @@ export const Year = Day * 365;
 export const Month = Year / 12;
 export const Season = Month * 3;
 
-export const ISODatePattern = /^\d{4}(-\d{2}){2}T\d{2}(:\d{2}){2}\.\d{3}Z$/;
-
 const TimeUnit = new Map([
     ['s', Second],
     ['m', Minute],

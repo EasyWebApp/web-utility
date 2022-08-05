@@ -4,8 +4,8 @@ import {
     Constructor,
     isEmpty,
     assertInheritance,
-    toHyphenCase,
-    parseJSON
+    toJSValue,
+    toHyphenCase
 } from './data';
 
 const templateMap: Record<string, Element> = {};
@@ -323,12 +323,12 @@ export function formToJSON<T = URLData<File>>(
             case 'radio':
             case 'checkbox':
                 if (checked)
-                    parsedValue = defaultValue ? parseJSON(defaultValue) : true;
+                    parsedValue = defaultValue ? toJSValue(defaultValue) : true;
                 else continue;
                 break;
             case 'select-multiple':
                 parsedValue = Array.from(selectedOptions, ({ value }) =>
-                    parseJSON(value)
+                    toJSValue(value)
                 );
                 break;
             case 'fieldset':
@@ -340,13 +340,11 @@ export function formToJSON<T = URLData<File>>(
             case 'date':
             case 'datetime-local':
             case 'month':
-                parsedValue = new Date(parsedValue).toISOString();
-                break;
             case 'hidden':
             case 'number':
             case 'range':
             case 'select-one':
-                parsedValue = parseJSON(value);
+                parsedValue = toJSValue(value);
         }
 
         if (name in data) data[name] = [].concat(data[name], parsedValue);

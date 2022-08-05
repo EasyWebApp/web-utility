@@ -1,5 +1,3 @@
-import { ISODatePattern } from './date';
-
 export type Constructor<T> = new (...args: any[]) => T;
 
 export type TypeKeys<T, D> = {
@@ -76,12 +74,12 @@ export function likeArray(data?: any): data is ArrayLike<any> {
     return typeof length === 'number' && length >= 0 && ~~length === length;
 }
 
-export function makeArray<T>(data?: T): ResultArray<T> {
-    if (data instanceof Array) return data;
+export function makeArray<T>(data?: T) {
+    if (data instanceof Array) return data as unknown as ResultArray<T>;
 
-    if (likeNull(data)) return [];
+    if (likeNull(data)) return [] as ResultArray<T>;
 
-    if (likeArray(data)) return Array.from(data);
+    if (likeArray(data)) return Array.from(data) as ResultArray<T>;
 
     return [data] as ResultArray<T>;
 }
@@ -157,15 +155,34 @@ export function cache<I, O>(
 }
 
 export function parseJSON(raw: string) {
+    function parseItem(value: any) {
+        if (typeof value === 'string' && value.includes('-')) {
+            const date = new Date(value);
+
+            if (!Number.isNaN(+date)) return date;
+        }
+        return value;
+    }
+
+    const value = parseItem(raw);
+
+    if (typeof value !== 'string') return value;
+
     try {
-        return JSON.parse(raw, (key, value) =>
-            typeof value === 'string' && ISODatePattern.test(value)
-                ? new Date(value)
-                : value
-        );
+        return JSON.parse(raw, (key, value) => parseItem(value));
     } catch {
         return raw;
     }
+}
+
+export function toJSValue(raw: string) {
+    const parsed = parseJSON(raw);
+
+    if (typeof parsed !== 'string') return parsed;
+
+    const number = parseFloat(parsed);
+
+    return Number.isNaN(number) ? parsed : number;
 }
 
 function readQuoteValue(raw: string) {
