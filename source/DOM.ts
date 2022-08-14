@@ -151,8 +151,8 @@ export function splitPages(
 
 export interface CSSOptions
     extends Pick<
-        HTMLLinkElement,
-        'title' | 'media' | 'crossOrigin' | 'integrity'
+    HTMLLinkElement,
+    'title' | 'media' | 'crossOrigin' | 'integrity'
     > {
     alternate?: boolean;
 }
@@ -222,14 +222,14 @@ export function insertToCursor(...nodes: Node[]) {
     range.insertNode(fragment);
 }
 
-export function scrollTo(selector: string, root?: Element) {
+export function scrollTo(selector: string, root?: Element, align?: ScrollLogicalPosition, justify?: ScrollLogicalPosition) {
     const [_, ID] = /^#(.+)/.exec(selector) || [];
 
     if (ID === 'top') window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
     else
         (root || document)
             .querySelector(ID ? `[id="${ID}"]` : selector)
-            ?.scrollIntoView({ behavior: 'smooth' });
+            ?.scrollIntoView({ behavior: 'smooth', block: align, inline: justify });
 }
 
 export interface ScrollEvent {
