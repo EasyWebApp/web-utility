@@ -29,8 +29,8 @@ export function byteLength(raw: string) {
 
 export function toHyphenCase(raw: string) {
     return raw.replace(
-        /[A-Z]+/g,
-        (match, offset) => `${offset ? '-' : ''}${match.toLowerCase()}`
+        /[A-Z]+|[^A-Za-z][A-Za-z]/g,
+        (match, offset) => `${offset ? '-' : ''}${(match[1] || match[0]).toLowerCase()}`
     );
 }
 
@@ -241,12 +241,12 @@ export function parseTextTable<T = {}>(
     return !header
         ? data
         : data.slice(1).map(row =>
-              row.reduce((object, item, index) => {
-                  object[data[0][index]] = item;
+            row.reduce((object, item, index) => {
+                object[data[0][index]] = item;
 
-                  return object;
-              }, {} as T)
-          );
+                return object;
+            }, {} as T)
+        );
 }
 
 const CRC_32_Table = Array.from(new Array(256), (_, cell) => {
