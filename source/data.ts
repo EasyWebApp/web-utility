@@ -29,8 +29,9 @@ export function byteLength(raw: string) {
 
 export function toHyphenCase(raw: string) {
     return raw.replace(
-        /[A-Z]+/g,
-        (match, offset) => `${offset ? '-' : ''}${match.toLowerCase()}`
+        /[A-Z]+|[^A-Za-z][A-Za-z]/g,
+        (match, offset) =>
+            `${offset ? '-' : ''}${(match[1] || match[0]).toLowerCase()}`
     );
 }
 

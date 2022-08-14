@@ -51,6 +51,10 @@ describe('Data', () => {
     it('should convert a Camel-case String to Hyphen-case', () => {
         expect(toHyphenCase('smallCamel')).toBe('small-camel');
         expect(toHyphenCase('LargeCamel')).toBe('large-camel');
+        expect(toHyphenCase('With space')).toBe('with-space');
+        expect(toHyphenCase('With Space')).toBe('with-space');
+        expect(toHyphenCase('with space')).toBe('with-space');
+        expect(toHyphenCase('with Space')).toBe('with-space');
     });
 
     it('should convert a Hyphen-case String to Camel-case', () => {
