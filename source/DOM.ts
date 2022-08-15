@@ -1,12 +1,7 @@
 import { URLData } from './URL';
 import { HTMLProps, HTMLField, CSSStyles, CSSObject } from './DOM-type';
-import {
-    Constructor,
-    isEmpty,
-    assertInheritance,
-    toJSValue,
-    toHyphenCase
-} from './data';
+import { Constructor, isEmpty, assertInheritance, toHyphenCase } from './data';
+import { toJSValue } from './parser';
 
 const templateMap: Record<string, Element> = {};
 

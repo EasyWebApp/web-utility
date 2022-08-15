@@ -85,6 +85,19 @@ export function makeArray<T>(data?: T) {
     return [data] as ResultArray<T>;
 }
 
+export function splitArray<T>(array: T[], unitLength: number) {
+    const list: T[][] = [];
+
+    for (
+        let i = 0, current: T[];
+        (current = array.slice(unitLength * i, unitLength * ++i)).length;
+
+    )
+        list.push(current);
+
+    return list;
+}
+
 export function findDeep<T>(
     list: T[],
     subKey: TypeKeys<Required<T>, any[]>,
@@ -155,164 +168,24 @@ export function cache<I, O>(
     };
 }
 
-export function parseJSON(raw: string) {
-    function parseItem(value: any) {
-        if (typeof value === 'string' && value.includes('-')) {
-            const date = new Date(value);
-
-            if (!Number.isNaN(+date)) return date;
-        }
-        return value;
-    }
-
-    const value = parseItem(raw);
-
-    if (typeof value !== 'string') return value;
-
-    try {
-        return JSON.parse(raw, (key, value) => parseItem(value));
-    } catch {
-        return raw;
-    }
-}
-
-export function toJSValue(raw: string) {
-    const parsed = parseJSON(raw);
-
-    if (typeof parsed !== 'string') return parsed;
-
-    const number = parseFloat(parsed);
-
-    return Number.isNaN(number) ? parsed : number;
-}
-
-function readQuoteValue(raw: string) {
-    const quote = raw[0];
-    const index = raw.indexOf(quote, 1);
-
-    if (index < 0) throw SyntaxError(`A ${quote} is missing`);
-
-    return raw.slice(1, index);
-}
-
-export function parseTextTable<T = {}>(
-    raw: string,
-    header?: boolean,
-    separator = ','
+export async function* mergeStream<T, R = void, N = T>(
+    ...sources: (() => AsyncIterator<T, R, N>)[]
 ) {
-    const data = raw
-        .trim()
-        .split(/[\r\n]+/)
-        .map(row => {
-            const list = [];
+    var iterators = sources.map(item => item());
 
-            do {
-                let value: string;
+    while (iterators[0]) {
+        const dones: number[] = [];
 
-                if (row[0] === '"' || row[0] === "'") {
-                    value = readQuoteValue(row);
+        for (
+            let i = 0, iterator: AsyncIterator<T>;
+            (iterator = iterators[i]);
+            i++
+        ) {
+            const { done, value } = await iterator.next();
 
-                    row = row.slice(value.length + 3);
-                } else {
-                    const index = row.indexOf(separator);
-
-                    if (index > -1) {
-                        value = row.slice(0, index);
-
-                        row = row.slice(index + 1);
-                    } else {
-                        value = row;
-
-                        row = '';
-                    }
-                }
-
-                try {
-                    value = value.trim();
-
-                    list.push(JSON.parse(value));
-                } catch (error) {
-                    list.push(value);
-                }
-            } while (row);
-
-            return list;
-        });
-
-    return !header
-        ? data
-        : data.slice(1).map(row =>
-              row.reduce((object, item, index) => {
-                  object[data[0][index]] = item;
-
-                  return object;
-              }, {} as T)
-          );
-}
-
-const CRC_32_Table = Array.from(new Array(256), (_, cell) => {
-    for (var j = 0; j < 8; j++)
-        if (cell & 1) cell = ((cell >> 1) & 0x7fffffff) ^ 0xedb88320;
-        else cell = (cell >> 1) & 0x7fffffff;
-
-    return cell;
-});
-/**
- * CRC-32 algorithm forked from Bakasen's
- *
- * @see http://blog.csdn.net/bakasen/article/details/6043797
- */
-export function makeCRC32(raw: string) {
-    var value = 0xffffffff;
-
-    for (const char of raw)
-        value =
-            ((value >> 8) & 0x00ffffff) ^
-            CRC_32_Table[(value & 0xff) ^ char.charCodeAt(0)];
-
-    return '0x' + ((value ^ 0xffffffff) >>> 0).toString(16);
-}
-
-if (typeof self === 'object') {
-    if ('msCrypto' in globalThis) {
-        // @ts-ignore
-        const { subtle } = (globalThis.crypto = globalThis.msCrypto as Crypto);
-
-        for (const key in subtle) {
-            const origin = subtle[key];
-
-            if (origin instanceof Function)
-                subtle[key] = function () {
-                    const observer = origin.apply(this, arguments);
-
-                    return new Promise((resolve, reject) => {
-                        observer.oncomplete = ({
-                            target
-                        }: Parameters<FileReader['onload']>[0]) =>
-                            resolve(target.result);
-
-                        observer.onabort = observer.onerror = reject;
-                    });
-                };
+            if (!done) yield value;
+            else dones.push(i);
         }
+        iterators = iterators.filter((_, i) => !dones.includes(i));
     }
-    const { crypto } = globalThis;
-
-    if (!crypto?.subtle && crypto?.['webkitSubtle'])
-        // @ts-ignore
-        crypto.subtle = crypto['webkitSubtle'];
-}
-
-export type SHAAlgorithm = 'SHA-1' | 'SHA-256' | 'SHA-384' | 'SHA-512';
-/**
- * @see https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto/digest#Converting_a_digest_to_a_hex_string
- */
-export async function makeSHA(raw: string, algorithm: SHAAlgorithm = 'SHA-1') {
-    const buffer = await crypto.subtle.digest(
-        algorithm,
-        new TextEncoder().encode(raw)
-    );
-    return Array.from(new Uint8Array(buffer), byte =>
-        byte.toString(16).padStart(2, '0')
-    ).join('');
 }

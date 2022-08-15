@@ -1,4 +1,5 @@
-import { parseJSON, isEmpty } from './data';
+import { isEmpty } from './data';
+import { parseJSON } from './parser';
 
 export function isXDomain(URI: string) {
     return new URL(URI, document.baseURI).origin !== location.origin;
