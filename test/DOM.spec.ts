@@ -213,7 +213,7 @@ object-fit: contain;`);
         expect(data).toEqual(
             expect.objectContaining({
                 switch: true,
-                list: [1, 3],
+                list: ['01', '03'],
                 array: [2, 3],
                 test: { example: '123', other: 2 },
                 date: new Date('1989-06-04T00:00')

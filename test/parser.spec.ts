@@ -5,6 +5,8 @@ describe('Data String Parser', () => {
         it('should parse JSON strings within Primitive values', () => {
             expect(parseJSON('1')).toBe(1);
             expect(parseJSON('1x')).toBe('1x');
+            expect(parseJSON('0xFF')).toBe('0xFF');
+            expect(parseJSON('1989-')).toBe('1989-');
         });
 
         it('should parse JSON strings within ISO Date values', () => {
@@ -16,7 +18,7 @@ describe('Data String Parser', () => {
     });
 
     it('should parse a String to a Primitive value or JS object', () => {
-        expect(toJSValue('01')).toBe(1);
+        expect(toJSValue('1')).toBe(1);
         expect(toJSValue('true')).toBe(true);
         expect(toJSValue('1989-06-04')).toStrictEqual(new Date('1989-06-04'));
     });

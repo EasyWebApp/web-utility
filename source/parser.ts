@@ -1,6 +1,6 @@
 export function parseJSON(raw: string) {
     function parseItem(value: any) {
-        if (typeof value === 'string' && value.includes('-')) {
+        if (typeof value === 'string' && /^\d+(-\d{1,2}){1,2}/.test(value)) {
             const date = new Date(value);
 
             if (!Number.isNaN(+date)) return date;
@@ -24,9 +24,9 @@ export function toJSValue(raw: string) {
 
     if (typeof parsed !== 'string') return parsed;
 
-    const number = parseFloat(parsed);
+    const number = +parsed;
 
-    return Number.isNaN(number) ? parsed : number;
+    return Number.isNaN(number) || number + '' !== parsed ? parsed : number;
 }
 
 function readQuoteValue(raw: string) {
