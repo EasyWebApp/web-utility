@@ -161,8 +161,9 @@ export function cache<I, O>(
             (): void => (cacheData = undefined),
             ...data
         );
-        Promise.resolve(cacheData).then(data =>
-            console.log(`[Cache] refreshed: ${title} => ${data}`)
+        Promise.resolve(cacheData).then(
+            data => console.log(`[Cache] refreshed: ${title} => ${data}`),
+            error => console.error(`[Cache] failed: ${error?.message || error}`)
         );
         return cacheData;
     };
