@@ -13,7 +13,8 @@ import {
     findDeep,
     groupBy,
     cache,
-    mergeStream
+    mergeStream,
+    countBy
 } from '../source/data';
 import { sleep } from '../source/timer';
 
@@ -142,6 +143,23 @@ describe('Data', () => {
                     '3': [{ a: [2, 3] }]
                 })
             );
+        });
+    });
+
+    describe('Count by', () => {
+        it('should handle a simple Group Key', () => {
+            expect(countBy([{ a: 1 }, { a: 1 }], 'a')).toEqual(
+                expect.objectContaining({ '1': 2 })
+            );
+        });
+
+        it('should handle a custom Group Key', () => {
+            expect(
+                countBy(
+                    [{ date: '1989-04-26' }, { date: '1989-06-04' }],
+                    ({ date }) => new Date(date).getFullYear()
+                )
+            ).toEqual(expect.objectContaining({ '1989': 2 }));
         });
     });
 

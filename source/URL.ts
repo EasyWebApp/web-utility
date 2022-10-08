@@ -1,4 +1,4 @@
-import { isEmpty } from './data';
+import { isEmpty, likeArray, makeArray } from './data';
 import { parseJSON } from './parser';
 
 export function isXDomain(URI: string) {
@@ -23,17 +23,18 @@ export function parseURLData(raw = window.location.search): URLData {
     );
 }
 
+const stringify = (value: any) =>
+    typeof value === 'string'
+        ? value
+        : likeArray(value)
+        ? makeArray(value) + ''
+        : JSON.stringify(value);
+
 export function buildURLData(map: string[][] | Record<string, any>) {
     if (!(map instanceof Array)) map = Object.entries(map);
 
     const list = (map as any[][])
-        .map(
-            ([key, value]) =>
-                !isEmpty(value) && [
-                    key,
-                    typeof value === 'string' ? value : JSON.stringify(value)
-                ]
-        )
+        .map(([key, value]) => !isEmpty(value) && [key, stringify(value)])
         .filter(Boolean);
 
     return new URLSearchParams(list);

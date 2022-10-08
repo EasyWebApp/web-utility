@@ -1,5 +1,9 @@
 export type Constructor<T> = new (...args: any[]) => T;
 
+export type AbstractClass<T> = abstract new (...args: any[]) => T;
+
+export type Values<T> = Required<T>[keyof T];
+
 export type TypeKeys<T, D> = {
     [K in keyof T]: T[K] extends D ? K : never;
 }[keyof T];
@@ -143,6 +147,18 @@ export function groupBy<T extends Record<IndexKey, any>>(
     }
 
     return data;
+}
+
+export function countBy<T extends Record<IndexKey, any>>(
+    list: T[],
+    iteratee: Iteratee<T>
+) {
+    const group = groupBy(list, iteratee);
+
+    const sortedList = Object.entries(group).map(
+        ([key, { length }]) => [key, length] as const
+    );
+    return Object.fromEntries(sortedList);
 }
 
 export function cache<I, O>(

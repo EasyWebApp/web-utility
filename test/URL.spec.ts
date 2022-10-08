@@ -46,9 +46,10 @@ describe('URL', () => {
                     a: 1,
                     b: null,
                     c: '',
-                    d: { toJSON: () => 4 }
+                    d: { toJSON: () => 4 },
+                    e: [1, 2]
                 }) + ''
-            ).toBe('a=1&d=4');
+            ).toBe('a=1&d=4&e=1%2C2');
         });
     });
 
