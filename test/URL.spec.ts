@@ -13,11 +13,12 @@ describe('URL', () => {
         });
 
         it('should parse Primitive values', () =>
-            expect(parseURLData('a=A&b=2&c=false')).toEqual(
+            expect(parseURLData('a=A&b=2&c=false&d=9007199254740993')).toEqual(
                 expect.objectContaining({
                     a: 'A',
                     b: 2,
-                    c: false
+                    c: false,
+                    d: '9007199254740993'
                 })
             ));
 
