@@ -22,6 +22,18 @@ describe('URL', () => {
                 })
             ));
 
+        it('should parse Primitive values', () =>
+            expect(
+                parseURLData('a=A&b=2&c=false&d=1031495205251190784')
+            ).toEqual(
+                expect.objectContaining({
+                    a: 'A',
+                    b: 2,
+                    c: false,
+                    d: '1031495205251190784'
+                })
+            ));
+
         it('should parse Multiple key to Array', () =>
             expect(parseURLData('/test/example?a=1&b=2&b=3')).toEqual(
                 expect.objectContaining({ a: 1, b: [2, 3] })
