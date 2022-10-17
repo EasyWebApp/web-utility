@@ -14,7 +14,9 @@ export function parseJSON(raw: string) {
 
     try {
         return /^[\d.]+$/.test(value) &&
-            value.localeCompare(Number.MAX_SAFE_INTEGER + '') > 0
+            value.localeCompare(Number.MAX_SAFE_INTEGER + '', undefined, {
+                numeric: true
+            }) > 0
             ? value
             : JSON.parse(raw, (key, value) => parseItem(value));
     } catch {
