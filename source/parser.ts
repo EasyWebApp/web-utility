@@ -13,7 +13,10 @@ export function parseJSON(raw: string) {
     if (typeof value !== 'string') return value;
 
     try {
-        return JSON.parse(raw, (key, value) => parseItem(value));
+        return /^[\d.]+$/.test(value) &&
+            value.localeCompare(Number.MAX_SAFE_INTEGER + '') > 0
+            ? value
+            : JSON.parse(raw, (key, value) => parseItem(value));
     } catch {
         return raw;
     }

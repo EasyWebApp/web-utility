@@ -4,6 +4,7 @@ describe('Data String Parser', () => {
     describe('JSON Parser', () => {
         it('should parse JSON strings within Primitive values', () => {
             expect(parseJSON('1')).toBe(1);
+            expect(parseJSON('9007199254740993')).toBe('9007199254740993');
             expect(parseJSON('1x')).toBe('1x');
             expect(parseJSON('0xFF')).toBe('0xFF');
             expect(parseJSON('1989-')).toBe('1989-');
