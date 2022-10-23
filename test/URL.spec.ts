@@ -27,8 +27,7 @@ describe('URL', () => {
                     f: new Date('2022-1')
                 })
             ));
-
-        it('should parse strings when toJSON parameter is false', () =>
+        it('should parse strings when toBuiltIn parameter is false', () =>
             expect(
                 parseURLData(
                     'a=A&b=2&c=false&d=9007199254740993&e=1031495205251190784&f=2022-1',

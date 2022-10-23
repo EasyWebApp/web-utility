@@ -12,14 +12,14 @@ export interface URLData<E = unknown> {
 
 export function parseURLData(
     raw = window.location.search,
-    toJSON = true
+    toBuiltIn = true
 ): URLData {
     const list = raw.split(/\?|#/);
     const data = new URLSearchParams(list[1] || list[0]);
 
     return Object.fromEntries(
         [...data.keys()].map(key => {
-            const list = toJSON
+            const list = toBuiltIn
                 ? data.getAll(key).map(parseJSON)
                 : data.getAll(key);
 
