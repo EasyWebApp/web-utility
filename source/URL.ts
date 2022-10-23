@@ -10,13 +10,18 @@ export interface URLData<E = unknown> {
     [key: string]: JSONValue | JSONValue[] | URLData | URLData[] | E;
 }
 
-export function parseURLData(raw = window.location.search): URLData {
+export function parseURLData(
+    raw = window.location.search,
+    toJSON = true
+): URLData {
     const list = raw.split(/\?|#/);
     const data = new URLSearchParams(list[1] || list[0]);
 
     return Object.fromEntries(
         [...data.keys()].map(key => {
-            const list = data.getAll(key).map(parseJSON);
+            const list = toJSON
+                ? data.getAll(key).map(parseJSON)
+                : data.getAll(key);
 
             return [key, list.length < 2 ? list[0] : list];
         })

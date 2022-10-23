@@ -12,10 +12,10 @@ describe('URL', () => {
             expect(parseURLData('#')).toBeInstanceOf(Object);
         });
 
-        it('should parse Primitive values', () =>
+        it('should parse Primitive values by default', () =>
             expect(
                 parseURLData(
-                    'a=A&b=2&c=false&d=9007199254740993&e=1031495205251190784'
+                    'a=A&b=2&c=false&d=9007199254740993&e=1031495205251190784&f=2022-1'
                 )
             ).toEqual(
                 expect.objectContaining({
@@ -23,7 +23,25 @@ describe('URL', () => {
                     b: 2,
                     c: false,
                     d: '9007199254740993',
-                    e: '1031495205251190784'
+                    e: '1031495205251190784',
+                    f: new Date('2022-1')
+                })
+            ));
+
+        it('should parse strings when toJSON parameter is false', () =>
+            expect(
+                parseURLData(
+                    'a=A&b=2&c=false&d=9007199254740993&e=1031495205251190784&f=2022-1',
+                    false
+                )
+            ).toEqual(
+                expect.objectContaining({
+                    a: 'A',
+                    b: '2',
+                    c: 'false',
+                    d: '9007199254740993',
+                    e: '1031495205251190784',
+                    f: '2022-1'
                 })
             ));
 
