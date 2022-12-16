@@ -160,48 +160,7 @@ serviceWorker?.addEventListener('controllerchange', () =>
 
 ### Internationalization
 
-`source/i18n/en-US.ts`
-
-```typescript
-export enum en_US {
-    title = 'Title',
-    name = 'Name'
-}
-```
-
-`source/i18n/zh-CN.ts`
-
-```typescript
-export enum zh_CN {
-    title = '标题',
-    name = '名称'
-}
-```
-
-`source/index.tsx`
-
-```javascript
-import { render, createCell } from 'web-cell';
-import { documentReady, bootI18n, textJoin } from 'web-utility';
-
-import { en_US } from './i18n/en-US';
-import { zh_CN } from './i18n/zh-CN';
-
-console.log(
-    navigator.languages.includes('zh-CN'),  // true
-    document.documentElement.lang           // ''
-);
-const { language, words } = bootI18n({
-    'en-US': en_US,
-    'zh-CN': zh_CN
-});
-documentReady.then(() =>
-    render(
-        <h1>{textJoin(words.title, words.name, 'test', 'example')}</h1>
-        // <h1>标题名称 test example</h1>
-    );
-);
-```
+Migrate to [MobX i18n][9] since v4.
 
 ### Test scripts
 
@@ -247,3 +206,4 @@ describe('My module', async () => {
 [6]: https://mochajs.org/
 [7]: https://jestjs.io/
 [8]: https://typestrong.org/ts-node/
+[9]: https://github.com/idea2app/MobX-i18n

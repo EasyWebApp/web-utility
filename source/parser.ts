@@ -1,3 +1,5 @@
+import { isUnsafeNumeric } from './data';
+
 export function parseJSON(raw: string) {
     function parseItem(value: any) {
         if (typeof value === 'string' && /^\d+(-\d{1,2}){1,2}/.test(value)) {
@@ -10,15 +12,10 @@ export function parseJSON(raw: string) {
 
     const value = parseItem(raw);
 
-    if (typeof value !== 'string') return value;
+    if (typeof value !== 'string' || isUnsafeNumeric(value)) return value;
 
     try {
-        return /^[\d.]+$/.test(value) &&
-            value.localeCompare(Number.MAX_SAFE_INTEGER + '', undefined, {
-                numeric: true
-            }) > 0
-            ? value
-            : JSON.parse(raw, (key, value) => parseItem(value));
+        return JSON.parse(raw, (key, value) => parseItem(value));
     } catch {
         return raw;
     }

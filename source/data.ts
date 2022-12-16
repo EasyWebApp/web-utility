@@ -5,7 +5,7 @@ export type AbstractClass<T> = abstract new (...args: any[]) => T;
 export type Values<T> = Required<T>[keyof T];
 
 export type TypeKeys<T, D> = {
-    [K in keyof T]: T[K] extends D ? K : never;
+    [K in keyof T]: Required<T>[K] extends D ? K : never;
 }[keyof T];
 
 export type PickData<T> = Omit<T, TypeKeys<T, Function>>;
@@ -25,6 +25,15 @@ export function isEmpty(value?: any) {
 
 export function assertInheritance(Sub: Function, Super: Function) {
     return Sub.prototype instanceof Super;
+}
+
+export function isUnsafeNumeric(raw: string) {
+    return (
+        /^[\d.]+$/.test(raw) &&
+        raw.localeCompare(Number.MAX_SAFE_INTEGER + '', undefined, {
+            numeric: true
+        }) > 0
+    );
 }
 
 export function byteLength(raw: string) {

@@ -1,7 +1,6 @@
 export * from './data';
 export * from './math';
 export * from './date';
-export * from './i18n';
 export * from './parser';
 export * from './URL';
 export * from './crypto';
