@@ -77,11 +77,12 @@ export function parseTextTable<T = {}>(
 
     return !header
         ? data
-        : data.slice(1).map(row =>
-              row.reduce((object, item, index) => {
-                  object[data[0][index]] = item;
+        : data.slice(1).map(
+              row =>
+                  row.reduce((object, item, index) => {
+                      object[data[0][index]] = item;
 
-                  return object;
-              }, {} as T)
+                      return object;
+                  }, {}) as T
           );
 }

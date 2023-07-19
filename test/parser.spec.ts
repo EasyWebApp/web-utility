@@ -48,9 +48,12 @@ describe('Data String Parser', () => {
         });
 
         it('should parse Table Headers', () => {
-            expect(parseTextTable('a,b,c\n1,2,3', true)).toEqual([
-                { a: 1, b: 2, c: 3 }
-            ]);
+            expect(
+                parseTextTable<Record<'a' | 'b' | 'c', number>>(
+                    'a,b,c\n1,2,3',
+                    true
+                )
+            ).toEqual([{ a: 1, b: 2, c: 3 }]);
         });
     });
 });
