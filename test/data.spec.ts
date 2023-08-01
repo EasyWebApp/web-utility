@@ -6,7 +6,8 @@ import {
     toHyphenCase,
     toCamelCase,
     objectFrom,
-    differ,
+    DiffStatus,
+    diffKeys,
     likeArray,
     makeArray,
     splitArray,
@@ -67,10 +68,15 @@ describe('Data', () => {
         });
     });
 
-    it('should return an Object with Diffed Data', () => {
-        expect(differ({ a: 1, b: 2 }, { b: 2, c: 3 })).toEqual(
-            expect.objectContaining({ c: 3 })
-        );
+    it('should find out Old, Same & New keys from 2 keys arrays', () => {
+        expect(diffKeys(['a', 'b'], ['b', 'c'])).toEqual({
+            map: { a: DiffStatus.Old, b: DiffStatus.Same, c: DiffStatus.New },
+            group: {
+                [DiffStatus.Old]: [['a', DiffStatus.Old]],
+                [DiffStatus.Same]: [['b', DiffStatus.Same]],
+                [DiffStatus.New]: [['c', DiffStatus.New]]
+            }
+        });
     });
 
     it('should detect an Object whether is Array-like or not', () => {

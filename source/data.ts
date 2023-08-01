@@ -66,16 +66,29 @@ export function objectFrom<V, K extends string>(values: V[], keys: K[]) {
     ) as Record<K, V>;
 }
 
-export function differ<T>(
-    target: Record<string, T>,
-    source: Record<string, T>
-) {
-    const data: Record<string, T> = {};
+export enum DiffStatus {
+    Old = -1,
+    Same = 0,
+    New = 1
+}
 
-    for (const key in source)
-        if (!(target[key] != null)) data[key] = source[key];
+export function diffKeys<T extends IndexKey>(oldList: T[], newList: T[]) {
+    const map = {} as Record<T, DiffStatus>;
 
-    return data;
+    for (const item of oldList) map[item] = DiffStatus.Old;
+
+    for (const item of newList) {
+        map[item] ||= 0;
+        map[item] += DiffStatus.New;
+    }
+
+    return {
+        map,
+        group: groupBy(
+            Object.entries<DiffStatus>(map),
+            ([key, status]) => status
+        )
+    };
 }
 
 export type ResultArray<T> = T extends ArrayLike<infer D> ? D[] : T[];
@@ -98,18 +111,12 @@ export function makeArray<T>(data?: T) {
     return [data] as ResultArray<T>;
 }
 
-export function splitArray<T>(array: T[], unitLength: number) {
-    const list: T[][] = [];
+export const splitArray = <T>(array: T[], unitLength: number) =>
+    array.reduce((grid, item, index) => {
+        (grid[~~(index / unitLength)] ||= [])[index % unitLength] = item;
 
-    for (
-        let i = 0, current: T[];
-        (current = array.slice(unitLength * i, unitLength * ++i)).length;
-
-    )
-        list.push(current);
-
-    return list;
-}
+        return grid;
+    }, [] as T[][]);
 
 export function findDeep<T>(
     list: T[],
