@@ -16,7 +16,8 @@ import {
     groupBy,
     cache,
     mergeStream,
-    countBy
+    countBy,
+    isTypedArray
 } from '../source/data';
 import { sleep } from '../source/timer';
 
@@ -93,6 +94,11 @@ describe('Data', () => {
         expect(likeArray('a')).toBe(true);
         expect(likeArray({ 0: 'a' })).toBe(false);
         expect(likeArray({ 0: 'a', length: 1 })).toBe(true);
+    });
+
+    it('should detect an Object whether is TypedArray or not', () => {
+        expect(isTypedArray([])).toBe(false);
+        expect(isTypedArray(new Uint32Array())).toBe(true);
     });
 
     it('should make sure the result is an Array', () => {
