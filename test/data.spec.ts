@@ -1,6 +1,7 @@
 import {
     likeNull,
     isEmpty,
+    classNameOf,
     assertInheritance,
     byteLength,
     toHyphenCase,
@@ -15,7 +16,8 @@ import {
     groupBy,
     cache,
     mergeStream,
-    countBy
+    countBy,
+    isTypedArray
 } from '../source/data';
 import { sleep } from '../source/timer';
 
@@ -30,6 +32,14 @@ describe('Data', () => {
         expect(
             [0, false, '', null, undefined, NaN, [], {}].map(isEmpty)
         ).toEqual([false, false, true, true, true, true, true, true]);
+    });
+
+    it('should return the Class Name of an object', () => {
+        class NewObject {}
+
+        expect(classNameOf(new NewObject())).toBe('Object');
+
+        expect(classNameOf(new URLSearchParams(''))).toBe('URLSearchParams');
     });
 
     it('should detect the inheritance of Sub & Super classes', () => {
@@ -84,6 +94,11 @@ describe('Data', () => {
         expect(likeArray('a')).toBe(true);
         expect(likeArray({ 0: 'a' })).toBe(false);
         expect(likeArray({ 0: 'a', length: 1 })).toBe(true);
+    });
+
+    it('should detect an Object whether is TypedArray or not', () => {
+        expect(isTypedArray([])).toBe(false);
+        expect(isTypedArray(new Uint32Array())).toBe(true);
     });
 
     it('should make sure the result is an Array', () => {

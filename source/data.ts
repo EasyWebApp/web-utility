@@ -23,6 +23,12 @@ export function isEmpty(value?: any) {
     );
 }
 
+/**
+ * @see {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Symbol/toStringTag}
+ */
+export const classNameOf = (data: any): string =>
+    Object.prototype.toString.call(data).slice(8, -1);
+
 export function assertInheritance(Sub: Function, Super: Function) {
     return Sub.prototype instanceof Super;
 }
@@ -100,6 +106,25 @@ export function likeArray(data?: any): data is ArrayLike<any> {
 
     return typeof length === 'number' && length >= 0 && ~~length === length;
 }
+
+export type TypedArray =
+    | Int8Array
+    | Uint8Array
+    | Uint8ClampedArray
+    | Int16Array
+    | Uint16Array
+    | Int32Array
+    | Uint32Array
+    | Float32Array
+    | Float64Array
+    | BigInt64Array
+    | BigUint64Array;
+
+/**
+ * @see {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/TypedArray}
+ */
+export const isTypedArray = (data: any): data is TypedArray =>
+    data instanceof Object.getPrototypeOf(Int8Array);
 
 export function makeArray<T>(data?: T) {
     if (data instanceof Array) return data as unknown as ResultArray<T>;
