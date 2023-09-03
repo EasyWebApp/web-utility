@@ -23,6 +23,12 @@ export function isEmpty(value?: any) {
     );
 }
 
+/**
+ * @see {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Symbol/toStringTag}
+ */
+export const classNameOf = (data: any): string =>
+    Object.prototype.toString.call(data).slice(8, -1);
+
 export function assertInheritance(Sub: Function, Super: Function) {
     return Sub.prototype instanceof Super;
 }

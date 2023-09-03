@@ -2,7 +2,7 @@
 
 **Web front-end** toolkit based on [TypeScript][1]
 
-[![NPM Dependency](https://david-dm.org/EasyWebApp/web-utility.svg)][2]
+[![NPM Dependency](https://img.shields.io/librariesio/github/EasyWebApp/web-utility.svg)][2]
 [![CI & CD](https://github.com/EasyWebApp/web-utility/actions/workflows/main.yml/badge.svg)][3]
 
 [![Open in Visual Studio Code](https://open.vscode.dev/badges/open-in-vscode.svg)][4]
@@ -199,7 +199,7 @@ describe('My module', async () => {
 ```
 
 [1]: https://www.typescriptlang.org/
-[2]: https://david-dm.org/EasyWebApp/web-utility
+[2]: https://libraries.io/npm/web-utility
 [3]: https://github.com/EasyWebApp/web-utility/actions/workflows/main.yml
 [4]: https://open.vscode.dev/EasyWebApp/web-utility
 [5]: https://nodei.co/npm/web-utility/

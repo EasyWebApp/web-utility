@@ -1,6 +1,7 @@
 import {
     likeNull,
     isEmpty,
+    classNameOf,
     assertInheritance,
     byteLength,
     toHyphenCase,
@@ -30,6 +31,14 @@ describe('Data', () => {
         expect(
             [0, false, '', null, undefined, NaN, [], {}].map(isEmpty)
         ).toEqual([false, false, true, true, true, true, true, true]);
+    });
+
+    it('should return the Class Name of an object', () => {
+        class NewObject {}
+
+        expect(classNameOf(new NewObject())).toBe('Object');
+
+        expect(classNameOf(new URLSearchParams(''))).toBe('URLSearchParams');
     });
 
     it('should detect the inheritance of Sub & Super classes', () => {
