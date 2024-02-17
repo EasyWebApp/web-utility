@@ -3,6 +3,7 @@ import {
     isEmpty,
     classNameOf,
     assertInheritance,
+    proxyPrototype,
     byteLength,
     toHyphenCase,
     toCamelCase,
@@ -48,6 +49,33 @@ describe('Data', () => {
         class C extends B {}
 
         expect(assertInheritance(C, A)).toBeTruthy();
+    });
+
+    it('should proxy the Prototype object of a Class', () => {
+        const setter = jest.fn();
+
+        class ProxyElement extends HTMLElement {
+            #props = {};
+
+            toJSON() {
+                return this.#props;
+            }
+
+            constructor() {
+                super();
+                proxyPrototype(this, this.#props, setter);
+            }
+        }
+        customElements.define('proxy-tag', ProxyElement);
+
+        const proxyElement = new ProxyElement();
+
+        proxyElement['test'] = 'example';
+
+        expect(proxyElement.toJSON()).toEqual({ test: 'example' });
+
+        expect(setter).toHaveBeenCalledTimes(1);
+        expect(setter).toHaveBeenCalledWith('test', 'example');
     });
 
     it('should calculate the Byte Length of a String', () => {

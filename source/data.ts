@@ -8,6 +8,8 @@ export type TypeKeys<T, D> = {
     [K in keyof T]: Required<T>[K] extends D ? K : never;
 }[keyof T];
 
+export type PickSingle<T> = T extends infer S | (infer S)[] ? S : T;
+
 export type PickData<T> = Omit<T, TypeKeys<T, Function>>;
 
 export type DataKeys<T> = Exclude<keyof T, TypeKeys<T, Function>>;
@@ -33,6 +35,31 @@ export function assertInheritance(Sub: Function, Super: Function) {
     return Sub.prototype instanceof Super;
 }
 
+export function proxyPrototype<T extends object>(
+    target: T,
+    dataStore: Record<IndexKey, any>,
+    setter?: (key: IndexKey, value: any) => any
+) {
+    const prototype = Object.getPrototypeOf(target);
+
+    const prototypeProxy = new Proxy(prototype, {
+        set: (_, key, value, receiver) => {
+            if (key in receiver) Reflect.set(prototype, key, value, receiver);
+            else dataStore[key] = value;
+
+            setter?.(key, value);
+
+            return true;
+        },
+        get: (prototype, key, receiver) =>
+            key in dataStore
+                ? dataStore[key]
+                : Reflect.get(prototype, key, receiver)
+    });
+
+    Object.setPrototypeOf(target, prototypeProxy);
+}
+
 export function isUnsafeNumeric(raw: string) {
     return (
         /^[\d.]+$/.test(raw) &&
@@ -46,6 +73,9 @@ export function byteLength(raw: string) {
     return raw.replace(/[^\u0021-\u007e\uff61-\uffef]/g, 'xx').length;
 }
 
+export type HyphenCase<T extends string> = T extends `${infer L}${infer R}`
+    ? `${L extends Uppercase<L> ? `-${Lowercase<L>}` : L}${HyphenCase<R>}`
+    : T;
 export function toHyphenCase(raw: string) {
     return raw.replace(
         /[A-Z]+|[^A-Za-z][A-Za-z]/g,
@@ -54,6 +84,14 @@ export function toHyphenCase(raw: string) {
     );
 }
 
+export type CamelCase<
+    Raw extends string,
+    Delimiter extends string = '-'
+> = Uncapitalize<
+    Raw extends `${infer L}${Delimiter}${infer R}`
+        ? `${Capitalize<L>}${Capitalize<CamelCase<R>>}`
+        : `${Capitalize<Raw>}`
+>;
 export function toCamelCase(raw: string, large = false) {
     return raw.replace(/^[A-Za-z]|[^A-Za-z][A-Za-z]/g, (match, offset) =>
         offset || large
