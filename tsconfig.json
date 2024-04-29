@@ -6,7 +6,7 @@
         "esModuleInterop": true,
         "downlevelIteration": true,
         "declaration": true,
-        "lib": ["ES2019", "DOM", "DOM.Iterable"],
+        "lib": ["ESNext", "DOM", "DOM.Iterable"],
         "types": ["node", "jest"],
         "outDir": "dist/"
     },

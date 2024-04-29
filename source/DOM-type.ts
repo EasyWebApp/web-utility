@@ -53,8 +53,8 @@ export type UniqueEventNames = {
     [K in keyof HTMLElementEventMap]: K extends `${Lowercase<EventTypes>}${string}`
         ? never
         : K extends `${string}${Lowercase<EventTypes>}`
-        ? never
-        : K;
+          ? never
+          : K;
 }[keyof HTMLElementEventMap];
 
 export type ComplexUniqueEventNames = {
@@ -81,18 +81,18 @@ export type EventHandlerNames<T extends Element> = {
 export type CamelEventName<T extends string> = T extends SimpleEventNames
     ? Capitalize<T>
     : T extends `${infer L}${SimpleEventNames}`
-    ? T extends `${L}${infer R}`
-        ? `${Capitalize<L>}${Capitalize<R>}`
-        : T
-    : T extends `${Lowercase<EventTypes>}${infer R}`
-    ? T extends `${infer L}${R}`
-        ? `${Capitalize<L>}${Capitalize<R>}`
-        : T
-    : T extends `${infer L}${Lowercase<EventTypes>}`
-    ? T extends `${L}${infer R}`
-        ? `${Capitalize<L>}${Capitalize<R>}`
-        : T
-    : T;
+      ? T extends `${L}${infer R}`
+          ? `${Capitalize<L>}${Capitalize<R>}`
+          : T
+      : T extends `${Lowercase<EventTypes>}${infer R}`
+        ? T extends `${infer L}${R}`
+            ? `${Capitalize<L>}${Capitalize<R>}`
+            : T
+        : T extends `${infer L}${Lowercase<EventTypes>}`
+          ? T extends `${L}${infer R}`
+              ? `${Capitalize<L>}${Capitalize<R>}`
+              : T
+          : T;
 
 export type EventHandlers<T extends Element> = {
     [K in EventHandlerNames<T> as `on${CamelEventName<K>}`]: (
@@ -133,12 +133,12 @@ export type DOMProps_Read2Write<T extends Partial<Element>> = {
     [K in keyof T]: T[K] extends HTMLElement
         ? string
         : T[K] extends DOMTokenList
-        ? string
-        : T[K] extends Element
-        ? string
-        : T[K] extends CSSStyleDeclaration
-        ? CSSStyles
-        : T[K];
+          ? string
+          : T[K] extends Element
+            ? string
+            : T[K] extends CSSStyleDeclaration
+              ? CSSStyles
+              : T[K];
 };
 export type HTMLProps<T extends HTMLElement> = Partial<
     IAom &
@@ -150,12 +150,12 @@ export type SVGProps_Read2Write<T extends Partial<SVGElement>> = {
     [K in keyof T]: T[K] extends SVGAnimatedLength
         ? string
         : T[K] extends SVGAnimatedLengthList
-        ? string
-        : T[K] extends SVGAnimatedRect
-        ? string
-        : T[K] extends SVGAnimatedPreserveAspectRatio
-        ? string
-        : T[K];
+          ? string
+          : T[K] extends SVGAnimatedRect
+            ? string
+            : T[K] extends SVGAnimatedPreserveAspectRatio
+              ? string
+              : T[K];
 };
 export type SVGProps<T extends SVGElement> = Partial<
     EventHandlers<T> &
@@ -210,9 +210,7 @@ export type HTMLFieldInternals = Pick<
 export type HTMLFieldProps<T extends HTMLElement = HTMLInputElement> =
     HTMLProps<T> & BaseFieldProps;
 
-export interface HTMLButtonProps extends HTMLFieldProps<HTMLButtonElement> {
-    type?: 'button' | 'image' | 'submit' | 'reset';
-}
+export interface HTMLButtonProps extends HTMLFieldProps<HTMLButtonElement> {}
 
 export interface HTMLInputProps
     extends HTMLFieldProps,

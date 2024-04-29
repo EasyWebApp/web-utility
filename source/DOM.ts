@@ -299,7 +299,7 @@ export function watchVisible(
     );
 }
 
-export function formToJSON<T = URLData<File>>(
+export function formToJSON<T extends object = URLData<File>>(
     form: HTMLFormElement | HTMLFieldSetElement
 ) {
     const data = {} as T;
