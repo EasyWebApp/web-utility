@@ -73,7 +73,7 @@ export abstract class Scalar {
         return `${(value / base).toFixed(fractionDigits)} ${name}`;
     }
 
-    static distanceOf(a: Scalar, b: Scalar) {
-        return Reflect.construct(this, [a.value - b.value]);
+    static distanceOf<T extends Scalar>(a: number, b: number) {
+        return Reflect.construct(this, [a - b]) as T;
     }
 }

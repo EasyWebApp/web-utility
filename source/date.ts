@@ -1,3 +1,5 @@
+import { Scalar } from './math';
+
 export const Second = 1000;
 export const Minute = Second * 60;
 export const Quarter = Minute * 15;
@@ -8,32 +10,36 @@ export const Year = Day * 365;
 export const Month = Year / 12;
 export const Season = Month * 3;
 
-const TimeUnit = new Map([
-    ['s', Second],
-    ['m', Minute],
-    ['H', Hour],
-    ['D', Day],
-    ['W', Week],
-    ['M', Month],
-    ['Y', Year]
-]);
+export class Timestamp extends Scalar {
+    units = [
+        { base: Second, name: 's' },
+        { base: Minute, name: 'm' },
+        { base: Hour, name: 'H' },
+        { base: Day, name: 'D' },
+        { base: Week, name: 'W' },
+        { base: Month, name: 'M' },
+        { base: Year, name: 'Y' }
+    ];
+
+    toShortString(fractionDigits = 0) {
+        return super.toShortString(fractionDigits);
+    }
+}
 
 export type TimeData = number | string | Date;
 
-export function diffTime(
-    end: TimeData,
-    start: TimeData = new Date(),
-    map = TimeUnit
-) {
-    const distance = +new Date(end) - +new Date(start);
+/**
+ * @deprecated since v4.4, use {@link Timestamp.distanceOf} instead.
+ */
+export function diffTime(end: TimeData, start: TimeData = new Date()) {
+    const timeDistance = Timestamp.distanceOf(
+        +new Date(end),
+        +new Date(start)
+    ) as Timestamp;
 
-    for (const [unit, base] of [...map].reverse()) {
-        const rest = distance / base;
+    const [value, unit] = timeDistance.toShortString().split(/\s+/);
 
-        if (Math.abs(rest) >= 1) return { distance: +rest.toFixed(0), unit };
-    }
-
-    return { distance, unit: 'ms' };
+    return { distance: +value, unit };
 }
 
 function fitUnit(value: string) {

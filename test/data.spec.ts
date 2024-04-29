@@ -18,7 +18,8 @@ import {
     cache,
     mergeStream,
     countBy,
-    isTypedArray
+    isTypedArray,
+    ByteSize
 } from '../source/data';
 import { sleep } from '../source/timer';
 
@@ -258,5 +259,9 @@ describe('Data', () => {
         for await (const item of stream) list.push(item);
 
         expect(list).toEqual([1, 2, 3, 4, 5]);
+    });
+
+    it('should convert Byte Size number to Human Readable string', () => {
+        expect(new ByteSize(65535).toShortString()).toBe('64.00 KB');
     });
 });

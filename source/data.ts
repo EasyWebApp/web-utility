@@ -1,3 +1,5 @@
+import { Scalar } from './math';
+
 export type Constructor<T> = new (...args: any[]) => T;
 
 export type AbstractClass<T> = abstract new (...args: any[]) => T;
@@ -284,4 +286,11 @@ export async function* mergeStream<T, R = void, N = T>(
         }
         iterators = iterators.filter((_, i) => !dones.includes(i));
     }
+}
+
+export class ByteSize extends Scalar {
+    units = ['', 'K', 'M', 'G', 'T', 'P', 'E', 'Z', 'Y'].map((name, i) => ({
+        base: 1024 ** i,
+        name: name + 'B'
+    }));
 }
