@@ -1,3 +1,5 @@
+import { Scalar } from './math';
+
 export type Constructor<T> = new (...args: any[]) => T;
 
 export type AbstractClass<T> = abstract new (...args: any[]) => T;
@@ -264,6 +266,45 @@ export function cache<I, O>(
     };
 }
 
+export interface IteratorController<V = any, E = Error> {
+    next: (value: V) => any;
+    error: (error: E) => any;
+    complete: () => any;
+}
+
+export async function* createAsyncIterator<V, E = Error>(
+    executor: (controller: IteratorController<V, E>) => (() => any) | void
+) {
+    let { promise, resolve, reject } = Promise.withResolvers<V>();
+
+    const doneSymbol = Symbol('done'),
+        done = Promise.withResolvers<symbol>();
+
+    const disposer = executor({
+        next: value => resolve(value),
+        error: error => {
+            reject(error);
+            // @ts-ignore
+            disposer?.();
+        },
+        complete: () => {
+            done.resolve(doneSymbol);
+            // @ts-ignore
+            disposer?.();
+        }
+    });
+
+    while (true) {
+        const value = await Promise.race([promise, done.promise]);
+
+        if (value === doneSymbol) return;
+
+        yield value as V;
+
+        ({ promise, resolve, reject } = Promise.withResolvers<V>());
+    }
+}
+
 export async function* mergeStream<T, R = void, N = T>(
     ...sources: (() => AsyncIterator<T, R, N>)[]
 ) {
@@ -284,4 +325,11 @@ export async function* mergeStream<T, R = void, N = T>(
         }
         iterators = iterators.filter((_, i) => !dones.includes(i));
     }
+}
+
+export class ByteSize extends Scalar {
+    units = ['', 'K', 'M', 'G', 'T', 'P', 'E', 'Z', 'Y'].map((name, i) => ({
+        base: 1024 ** i,
+        name: name + 'B'
+    }));
 }

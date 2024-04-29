@@ -54,3 +54,26 @@ export function fixFloat(raw: number, length = 2) {
 
     return result.includes('.') ? result.padEnd(offset, '0') : result;
 }
+
+export abstract class Scalar {
+    abstract units: { base: number; name: string }[];
+
+    constructor(public value: number) {}
+
+    valueOf() {
+        return this.value;
+    }
+
+    toShortString(fractionDigits = 2) {
+        const { units, value } = this;
+        const { base, name } =
+            [...units].reverse().find(({ base }) => Math.abs(value) >= base) ||
+            units[0];
+
+        return `${(value / base).toFixed(fractionDigits)} ${name}`;
+    }
+
+    static distanceOf<T extends Scalar>(a: number, b: number) {
+        return Reflect.construct(this, [a - b]) as T;
+    }
+}

@@ -7,7 +7,8 @@ import {
     Month,
     Year,
     formatDate,
-    changeMonth
+    changeMonth,
+    Timestamp
 } from '../source/date';
 
 describe('Date', () => {
@@ -21,21 +22,23 @@ describe('Date', () => {
         });
 
         it('should calculate Time based on Chinese calendar', () => {
+            class ChineseTimestamp extends Timestamp {
+                units = [
+                    { base: Second, name: '秒' },
+                    { base: Minute, name: '分' },
+                    { base: Quarter, name: '刻' },
+                    { base: Quarter * 8, name: '时辰' },
+                    { base: Day, name: '日' },
+                    { base: Month, name: '月' },
+                    { base: Year, name: '岁' }
+                ];
+            }
             expect(
-                diffTime(
-                    date,
-                    new Date(1989, 3, 15),
-                    new Map([
-                        ['秒', Second],
-                        ['分', Minute],
-                        ['刻', Quarter],
-                        ['时辰', Quarter * 8],
-                        ['日', Day],
-                        ['月', Month],
-                        ['岁', Year]
-                    ])
-                )
-            ).toEqual(expect.objectContaining({ distance: 2, unit: '月' }));
+                ChineseTimestamp.distanceOf(
+                    +date,
+                    +new Date(1989, 3, 15)
+                ).toShortString()
+            ).toBe('2 月');
         });
     });
 

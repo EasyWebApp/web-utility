@@ -1,3 +1,4 @@
+import 'core-js/proposals/promise-with-resolvers';
 import {
     likeNull,
     isEmpty,
@@ -11,14 +12,16 @@ import {
     DiffStatus,
     diffKeys,
     likeArray,
+    isTypedArray,
     makeArray,
     splitArray,
     findDeep,
     groupBy,
+    countBy,
     cache,
     mergeStream,
-    countBy,
-    isTypedArray
+    createAsyncIterator,
+    ByteSize
 } from '../source/data';
 import { sleep } from '../source/timer';
 
@@ -245,6 +248,25 @@ describe('Data', () => {
         });
     });
 
+    it('should wrap some Async Data into an Async Generator', async () => {
+        const disposer = jest.fn();
+
+        const stream = createAsyncIterator<number>(({ next, complete }) => {
+            setTimeout(() => next(1));
+            setTimeout(() => next(2));
+            setTimeout(() => (next(3), complete()));
+
+            return disposer;
+        });
+
+        const list: number[] = [];
+
+        for await (const item of stream) list.push(item);
+
+        expect(list).toEqual([1, 2, 3]);
+        expect(disposer).toHaveBeenCalledTimes(1);
+    });
+
     it('should merge some Async Generators into one', async () => {
         const list: number[] = [],
             stream = mergeStream(
@@ -258,5 +280,9 @@ describe('Data', () => {
         for await (const item of stream) list.push(item);
 
         expect(list).toEqual([1, 2, 3, 4, 5]);
+    });
+
+    it('should convert Byte Size number to Human Readable string', () => {
+        expect(new ByteSize(65535).toShortString()).toBe('64.00 KB');
     });
 });
