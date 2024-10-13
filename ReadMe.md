@@ -15,7 +15,7 @@
 npm install web-utility
 ```
 
-`index.html`
+### `index.html`
 
 ```html
 <head>
@@ -27,7 +27,7 @@ npm install web-utility
 </head>
 ```
 
-`tsconfig.json`
+### `tsconfig.json`
 
 ```json
 {
@@ -114,7 +114,7 @@ document.addEventListener(
 
 ### Message Channel
 
-`index.ts`
+#### `index.ts`
 
 ```typescript
 import { createMessageServer } from 'web-utility';
@@ -124,16 +124,14 @@ createMessageServer({
 });
 ```
 
-`iframe.ts`
+#### `iframe.ts`
 
 ```typescript
 import { createMessageClient } from 'web-utility';
 
 const request = createMessageClient(globalThis.parent);
 
-(async () => {
-    console.log(await request('preset')); // { test: 1 }
-})();
+request('preset').then(console.log); // { test: 1 }
 ```
 
 ### Service Worker updating
@@ -170,7 +168,7 @@ If you are looking for a simple alternative of [Mocha][6] or [Jest][7], just use
 npx ts-node index.spec.ts
 ```
 
-`index.spec.ts`
+#### `index.spec.ts`
 
 ```typescript
 import { describe, it } from 'web-utility';

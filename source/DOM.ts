@@ -305,15 +305,9 @@ export function formToJSON<T extends object = URLData<File>>(
     const data = {} as T;
 
     for (const field of form.elements) {
-        let {
-            type,
-            name,
-            value,
-            checked,
-            defaultValue,
-            selectedOptions,
-            files
-        } = field as HTMLField;
+        let { name, value, checked, defaultValue, selectedOptions, files } =
+            field as HTMLField;
+        const type = (field as HTMLField).type as string;
 
         if (!name || value === '') continue;
 
