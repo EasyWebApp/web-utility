@@ -11,7 +11,7 @@ export interface URLData<E = unknown> {
 }
 
 export function parseURLData(
-    raw = window.location.search,
+    raw = globalThis.location?.search,
     toBuiltIn = true
 ): URLData {
     const list = raw.split(/\?|#/);
@@ -32,8 +32,8 @@ const stringify = (value: any) =>
     typeof value === 'string'
         ? value
         : likeArray(value)
-        ? makeArray(value) + ''
-        : JSON.stringify(value);
+          ? makeArray(value) + ''
+          : JSON.stringify(value);
 
 export function buildURLData(map: string[][] | Record<string, any>) {
     if (!(map instanceof Array)) map = Object.entries(map);
