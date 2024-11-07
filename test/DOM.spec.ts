@@ -20,7 +20,10 @@ describe('DOM', () => {
         expect(templateOf('div')).toBeInstanceOf(HTMLDivElement);
 
         expect(elementTypeOf('div')).toBe('html');
+        expect(elementTypeOf('x-tag')).toBe('html');
         expect(elementTypeOf('svg')).toBe('xml');
+        expect(elementTypeOf('svg:a')).toBe('xml');
+        expect(elementTypeOf('math')).toBe('xml');
     });
 
     it('should get the Tag Name of a Custom Element', () => {
@@ -76,7 +79,7 @@ describe('DOM', () => {
         const { firstElementChild: link } = document.body;
 
         link!.getBoundingClientRect = () =>
-            ({ width: 48, height: 16 } as DOMRect);
+            ({ width: 48, height: 16 }) as DOMRect;
 
         expect(getVisibleText(link!)).toBe('test example');
     });
