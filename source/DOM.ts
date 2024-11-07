@@ -3,6 +3,12 @@ import { HTMLProps, HTMLField, CSSStyles, CSSObject } from './DOM-type';
 import { Constructor, isEmpty, assertInheritance, toHyphenCase } from './data';
 import { toJSValue } from './parser';
 
+export const XMLNamespace = {
+    html: 'http://www.w3.org/1999/xhtml',
+    svg: 'http://www.w3.org/2000/svg',
+    math: 'http://www.w3.org/1998/Math/MathML'
+};
+
 const templateMap: Record<string, Element> = {};
 
 export function templateOf(tagName: string) {
@@ -16,6 +22,12 @@ export function templateOf(tagName: string) {
 }
 
 export function elementTypeOf(tagName: string) {
+    if (tagName.includes('-')) return 'html';
+
+    const [prefix, localName] = tagName.split(':');
+
+    if (localName) return prefix === 'html' ? 'html' : 'xml';
+
     const node = templateOf(tagName);
 
     return node instanceof HTMLElement && !(node instanceof HTMLUnknownElement)

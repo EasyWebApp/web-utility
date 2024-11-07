@@ -94,9 +94,12 @@ export type CamelEventName<T extends string> = T extends SimpleEventNames
               : T
           : T;
 
-export type EventHandlers<T extends Element> = {
+export type EventHandlers<
+    T extends Element,
+    M extends HTMLElementEventMap = HTMLElementEventMap
+> = {
     [K in EventHandlerNames<T> as `on${CamelEventName<K>}`]: (
-        event: HTMLElementEventMap[K]
+        event: M[K]
     ) => any;
 };
 
@@ -113,14 +116,17 @@ export type ContainerEventHandlers<T extends keyof HTMLElementTagNameMap> =
 
 /* -------------------- DOM Props -------------------- */
 
-export type HTMLOwnKeys<T extends HTMLElement = HTMLElement> = Exclude<
-    keyof T,
-    keyof Node | keyof EventTarget
->;
-export type SVGOwnKeys<T extends SVGElement = SVGElement> = Exclude<
-    keyof T,
-    keyof Node | keyof EventTarget
->;
+export type XMLOwnKeys<
+    T extends HTMLElement | SVGElement | MathMLElement = HTMLElement
+> = Exclude<keyof T, keyof Node | keyof EventTarget>;
+/**
+ * @deprecated since v4.4.2, use {@link XMLOwnKeys} instead
+ */
+export type HTMLOwnKeys<T extends HTMLElement = HTMLElement> = XMLOwnKeys<T>;
+/**
+ * @deprecated since v4.4.2, use {@link XMLOwnKeys} instead
+ */
+export type SVGOwnKeys<T extends SVGElement = SVGElement> = XMLOwnKeys<T>;
 
 export type CSSStyles = Partial<
     Omit<PickData<CSSStyleDeclaration>, 'length' | 'parentRule'> &
@@ -143,25 +149,37 @@ export type DOMProps_Read2Write<T extends Partial<Element>> = {
 export type HTMLProps<T extends HTMLElement> = Partial<
     IAom &
         EventHandlers<T> &
-        DOMProps_Read2Write<Pick<T, Extract<DataKeys<T>, HTMLOwnKeys<T>>>>
+        DOMProps_Read2Write<Pick<T, Extract<DataKeys<T>, XMLOwnKeys<T>>>>
 >;
 
 export type SVGProps_Read2Write<T extends Partial<SVGElement>> = {
-    [K in keyof T]: T[K] extends SVGAnimatedLength
+    [K in keyof T]: T[K] extends
+        | SVGAnimatedString
+        | SVGAnimatedBoolean
+        | SVGAnimatedEnumeration
+        | SVGAnimatedNumber
+        | SVGAnimatedNumberList
+        | SVGAnimatedInteger
+        | SVGAnimatedLength
+        | SVGAnimatedLengthList
+        | SVGAnimatedPoints
+        | SVGAnimatedAngle
+        | SVGAnimatedRect
+        | SVGAnimatedPreserveAspectRatio
+        | SVGAnimatedTransformList
         ? string
-        : T[K] extends SVGAnimatedLengthList
-          ? string
-          : T[K] extends SVGAnimatedRect
-            ? string
-            : T[K] extends SVGAnimatedPreserveAspectRatio
-              ? string
-              : T[K];
+        : T[K];
 };
 export type SVGProps<T extends SVGElement> = Partial<
-    EventHandlers<T> &
+    EventHandlers<T, SVGElementEventMap> &
         SVGProps_Read2Write<
-            DOMProps_Read2Write<Pick<T, Extract<DataKeys<T>, SVGOwnKeys<T>>>>
+            DOMProps_Read2Write<Pick<T, Extract<DataKeys<T>, XMLOwnKeys<T>>>>
         >
+>;
+
+export type MathMLProps<T extends MathMLElement> = Partial<
+    EventHandlers<T, MathMLElementEventMap> &
+        DOMProps_Read2Write<Pick<T, Extract<DataKeys<T>, XMLOwnKeys<T>>>>
 >;
 
 export interface HTMLHyperLinkProps
