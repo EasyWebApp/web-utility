@@ -7,9 +7,10 @@ describe('URL', () => {
     });
 
     describe('Parse URL data', () => {
-        it('should accept ? or # prefix', () => {
-            expect(parseURLData('?')).toBeInstanceOf(Object);
-            expect(parseURLData('#')).toBeInstanceOf(Object);
+        it('should accept History & Hash routes', () => {
+            expect(parseURLData('a/b?c=1')).toEqual({ c: 1 });
+            expect(parseURLData('a/b?c=1#d/e')).toEqual({ c: 1 });
+            expect(parseURLData('a/b?c=1#d/e?f=2')).toEqual({ c: 1, f: 2 });
         });
 
         it('should parse Primitive values by default', () =>

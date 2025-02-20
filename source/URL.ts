@@ -14,8 +14,17 @@ export function parseURLData(
     raw = globalThis.location?.search,
     toBuiltIn = true
 ): URLData {
-    const list = raw.split(/\?|#/);
-    const data = new URLSearchParams(list[1] || list[0]);
+    const rawData = raw
+        .split('#')
+        .map(URI => {
+            const [before, after] = URI.split('?');
+
+            return new URLSearchParams(
+                after || (before.includes('=') ? before : '')
+            );
+        })
+        .join('&');
+    const data = new URLSearchParams(rawData);
 
     return Object.fromEntries(
         [...data.keys()].map(key => {
