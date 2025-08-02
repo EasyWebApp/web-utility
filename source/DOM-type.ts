@@ -1,6 +1,4 @@
-import type { IAom } from 'element-internals-polyfill';
-
-import type { DataKeys, PickData, Constructor } from './data';
+import type { DataKeys, PickData } from './data';
 
 export type SelfCloseTags =
     | 'area'
@@ -147,7 +145,7 @@ export type DOMProps_Read2Write<T extends Partial<Element>> = {
               : T[K];
 };
 export type HTMLProps<T extends HTMLElement> = Partial<
-    IAom &
+    ARIAMixin &
         EventHandlers<T> &
         DOMProps_Read2Write<Pick<T, Extract<DataKeys<T>, XMLOwnKeys<T>>>>
 >;

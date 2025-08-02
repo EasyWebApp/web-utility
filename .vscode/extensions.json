@@ -10,6 +10,6 @@
         "eamodio.gitlens",
         "github.vscode-pull-request-github",
         "github.vscode-github-actions",
-        "gitHub.copilot"
+        "github.copilot"
     ]
 }
