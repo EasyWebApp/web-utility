@@ -15,9 +15,10 @@ import {
     isTypedArray,
     makeArray,
     splitArray,
-    findDeep,
     groupBy,
     countBy,
+    findDeep,
+    treeFrom,
     cache,
     mergeStream,
     createAsyncIterator,
@@ -154,24 +155,6 @@ describe('Data', () => {
         ]);
     });
 
-    it('should find data in Nested Object Array', () => {
-        const data = [
-            { name: 'a' },
-            { name: 'b', list: [{ name: 'c' }] },
-            { name: 'd' }
-        ];
-
-        expect(
-            findDeep(data, 'list', ({ name }) => name === 'c')
-        ).toStrictEqual([
-            {
-                name: 'b',
-                list: [{ name: 'c' }]
-            },
-            { name: 'c' }
-        ]);
-    });
-
     describe('Group by', () => {
         it('should handle single Group Key', () => {
             expect(groupBy([{ a: 1 }, { a: 2 }], 'a')).toEqual(
@@ -213,6 +196,56 @@ describe('Data', () => {
                 )
             ).toEqual(expect.objectContaining({ '1989': 2 }));
         });
+    });
+
+    it('should find data in Nested Object Array', () => {
+        const data = [
+            { name: 'a' },
+            { name: 'b', list: [{ name: 'c' }] },
+            { name: 'd' }
+        ];
+
+        expect(
+            findDeep(data, 'list', ({ name }) => name === 'c')
+        ).toStrictEqual([
+            {
+                name: 'b',
+                list: [{ name: 'c' }]
+            },
+            { name: 'c' }
+        ]);
+    });
+
+    it('should build a Tree from a flat Array', () => {
+        interface Item {
+            id: number;
+            name: string;
+            parentId?: number;
+            children?: Item[];
+        }
+        const data: Item[] = [
+            { id: 1, name: 'a' },
+            { id: 2, name: 'b', parentId: 1 },
+            { id: 3, name: 'c', parentId: 1 },
+            { id: 4, name: 'd', parentId: 2 }
+        ];
+        const tree = treeFrom(data, 'id', 'parentId', 'children');
+
+        expect(tree).toEqual([
+            {
+                id: 1,
+                name: 'a',
+                children: [
+                    {
+                        id: 2,
+                        name: 'b',
+                        parentId: 1,
+                        children: [{ id: 4, name: 'd', parentId: 2 }]
+                    },
+                    { id: 3, name: 'c', parentId: 1 }
+                ]
+            }
+        ]);
     });
 
     describe('Function Cache', () => {

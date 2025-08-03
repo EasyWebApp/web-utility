@@ -3,6 +3,7 @@ export * from './math';
 export * from './date';
 export * from './parser';
 export * from './URL';
+export * from './HTTP';
 export * from './crypto';
 export * from './DOM-type';
 export * from './DOM';

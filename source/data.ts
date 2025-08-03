@@ -183,26 +183,6 @@ export const splitArray = <T>(array: T[], unitLength: number) =>
         return grid;
     }, [] as T[][]);
 
-export function findDeep<T>(
-    list: T[],
-    subKey: TypeKeys<Required<T>, any[]>,
-    handler: (item: T) => boolean
-): T[] {
-    for (const item of list) {
-        if (handler(item)) return [item];
-
-        if (item[subKey] instanceof Array) {
-            const result = findDeep(
-                item[subKey] as unknown as T[],
-                subKey,
-                handler
-            );
-            if (result.length) return [item, ...result];
-        }
-    }
-    return [];
-}
-
 export type IndexKey = number | string | symbol;
 export type GroupKey<T extends Record<IndexKey, any>> = keyof T | IndexKey;
 export type Iteratee<T extends Record<IndexKey, any>> =
@@ -240,6 +220,71 @@ export function countBy<T extends Record<IndexKey, any>>(
         ([key, { length }]) => [key, length] as const
     );
     return Object.fromEntries(sortedList);
+}
+
+export function findDeep<T>(
+    list: T[],
+    subKey: TypeKeys<Required<T>, any[]>,
+    handler: (item: T) => boolean
+): T[] {
+    for (const item of list) {
+        if (handler(item)) return [item];
+
+        if (item[subKey] instanceof Array) {
+            const result = findDeep(
+                item[subKey] as unknown as T[],
+                subKey,
+                handler
+            );
+            if (result.length) return [item, ...result];
+        }
+    }
+    return [];
+}
+
+export type TreeNode<
+    IK extends string,
+    PK extends string,
+    CK extends string
+> = {
+    [key in IK]: number | string;
+} & {
+    [key in PK]?: number | string;
+} & {
+    [key in CK]?: TreeNode<IK, PK, CK>[];
+};
+
+export function treeFrom<
+    IK extends string,
+    PK extends string,
+    CK extends string,
+    N extends TreeNode<IK, PK, CK>
+>(
+    list: N[],
+    idKey = 'id' as IK,
+    parentIdKey = 'parentId' as PK,
+    childrenKey = 'children' as CK
+) {
+    list =
+        globalThis.structuredClone?.(list) || JSON.parse(JSON.stringify(list));
+
+    const map: Record<string, N> = {};
+    const roots: N[] = [];
+
+    for (const item of list) map[item[idKey] as string] = item;
+
+    for (const item of list) {
+        const parent = map[item[parentIdKey] as string];
+
+        if (!parent) roots.push(item);
+        else {
+            parent[childrenKey] ||= [] as TreeNode<IK, PK, CK>[] as N[CK];
+            parent[childrenKey].push(item);
+        }
+    }
+    if (!roots[0]) throw new ReferenceError('No root node is found');
+
+    return roots;
 }
 
 export function cache<I, O>(
