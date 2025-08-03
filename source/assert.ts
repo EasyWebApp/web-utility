@@ -18,16 +18,22 @@ export async function it<T>(
 
     console.time(title);
 
+    function expect(status: boolean | (() => boolean)): void {
+        const assert = typeof status === 'function' ? status : undefined;
+
+        status = assert?.() ?? status;
+
+        if (!status)
+            throw new Error(`Assertion failed: ${title}\n\n${assert || ''}`);
+    }
+
     async function timeOut(): Promise<T> {
         await sleep(secondsOut);
 
         throw new RangeError('Timed out');
     }
     try {
-        return await Promise.race<T>([
-            userCase(status => console.assert(status, title)),
-            timeOut()
-        ]);
+        return await Promise.race<T>([userCase(expect), timeOut()]);
     } finally {
         console.timeEnd(title);
     }
