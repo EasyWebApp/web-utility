@@ -9,29 +9,29 @@ export async function describe(title: string, cases: () => any) {
     console.timeEnd(title);
 }
 
+export type Expector = (status: boolean | (() => boolean)) => void;
+
 export async function it<T>(
     title: string,
-    userCase: (expect: (status: boolean) => void) => T | Promise<T>,
+    userCase: (expect: Expector) => T | Promise<T>,
     secondsOut = 3
 ): Promise<T> {
     title = '    ' + title;
 
     console.time(title);
 
-    function expect(status: boolean | (() => boolean)): void {
+    const expect: Expector = status => {
         const assert = typeof status === 'function' ? status : undefined;
 
         status = assert?.() ?? status;
 
         if (!status)
             throw new Error(`Assertion failed: ${title}\n\n${assert || ''}`);
-    }
-
-    async function timeOut(): Promise<T> {
-        await sleep(secondsOut);
-
-        throw new RangeError('Timed out');
-    }
+    };
+    const timeOut = (): Promise<T> =>
+        sleep(secondsOut).then(() =>
+            Promise.reject(new RangeError('Timed out'))
+        );
     try {
         return await Promise.race<T>([userCase(expect), timeOut()]);
     } finally {
