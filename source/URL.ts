@@ -1,4 +1,4 @@
-import { isEmpty, likeArray, makeArray } from './data';
+import { isEmpty, likeArray, makeArray, decodeBase64Bytes } from './data';
 import { parseJSON } from './parser';
 
 export function isXDomain(URI: string) {
@@ -67,12 +67,15 @@ const DataURI = /^data:(.+?\/(.+?))?(;base64)?,([\s\S]+)/;
 export function blobFrom(URI: string) {
     var [_, type, __, base64, data] = DataURI.exec(URI) || [];
 
-    data = base64 ? atob(data) : data;
+    if (base64) {
+        const bytes = decodeBase64Bytes(data);
+        return new Blob([bytes.buffer as ArrayBuffer], { type });
+    } else {
+        const aBuffer = new ArrayBuffer(data.length);
+        const uBuffer = new Uint8Array(aBuffer);
 
-    const aBuffer = new ArrayBuffer(data.length);
-    const uBuffer = new Uint8Array(aBuffer);
+        for (let i = 0; data[i]; i++) uBuffer[i] = data.charCodeAt(i);
 
-    for (let i = 0; data[i]; i++) uBuffer[i] = data.charCodeAt(i);
-
-    return new Blob([aBuffer], { type });
+        return new Blob([aBuffer], { type });
+    }
 }
