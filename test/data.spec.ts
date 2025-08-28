@@ -1,3 +1,4 @@
+import './polyfill';
 import 'core-js/proposals/promise-with-resolvers';
 import {
     likeNull,
@@ -8,6 +9,8 @@ import {
     byteLength,
     toHyphenCase,
     toCamelCase,
+    encodeBase64,
+    decodeBase64,
     objectFrom,
     DiffStatus,
     diffKeys,
@@ -101,6 +104,35 @@ describe('Data', () => {
         expect(toCamelCase('small-camel')).toBe('smallCamel');
         expect(toCamelCase('large-camel', true)).toBe('LargeCamel');
         expect(toCamelCase('Small Camel')).toBe('smallCamel');
+    });
+
+    it('should encode and decode Base64 with Unicode support', () => {
+        // Test basic ASCII
+        const ascii = 'Hello World';
+        expect(decodeBase64(encodeBase64(ascii))).toBe(ascii);
+
+        // Test Unicode characters
+        const unicode = 'Hello 世界 🌍 😀';
+        expect(decodeBase64(encodeBase64(unicode))).toBe(unicode);
+
+        // Test various Unicode ranges
+        const emoji = '🚀🎉🌟💖';
+        expect(decodeBase64(encodeBase64(emoji))).toBe(emoji);
+
+        // Test mathematical symbols
+        const math = '∑∏∫∆∇∂';
+        expect(decodeBase64(encodeBase64(math))).toBe(math);
+
+        // Test empty string
+        expect(decodeBase64(encodeBase64(''))).toBe('');
+
+        // Test known Base64 encoding
+        expect(encodeBase64('Hello')).toBe('SGVsbG8=');
+        expect(decodeBase64('SGVsbG8=')).toBe('Hello');
+
+        // Test known Unicode encoding
+        expect(encodeBase64('世界')).toBe('5LiW55WM');
+        expect(decodeBase64('5LiW55WM')).toBe('世界');
     });
 
     it('should build an Object with Key & Value arrays', () => {

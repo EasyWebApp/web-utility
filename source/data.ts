@@ -16,16 +16,12 @@ export type PickData<T> = Omit<T, TypeKeys<T, Function>>;
 
 export type DataKeys<T> = Exclude<keyof T, TypeKeys<T, Function>>;
 
-export function likeNull(value?: any) {
-    return !(value != null) || Number.isNaN(value);
-}
+export const likeNull = (value?: any) =>
+    !(value != null) || Number.isNaN(value);
 
-export function isEmpty(value?: any) {
-    return (
-        likeNull(value) ||
-        (typeof value === 'object' ? !Object.keys(value).length : value === '')
-    );
-}
+export const isEmpty = (value?: any) =>
+    likeNull(value) ||
+    (typeof value === 'object' ? !Object.keys(value).length : value === '');
 
 /**
  * @see {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Symbol/toStringTag}
@@ -33,9 +29,8 @@ export function isEmpty(value?: any) {
 export const classNameOf = (data: any): string =>
     Object.prototype.toString.call(data).slice(8, -1);
 
-export function assertInheritance(Sub: Function, Super: Function) {
-    return Sub.prototype instanceof Super;
-}
+export const assertInheritance = (Sub: Function, Super: Function) =>
+    Sub.prototype instanceof Super;
 
 export function proxyPrototype<T extends object>(
     target: T,
@@ -62,29 +57,24 @@ export function proxyPrototype<T extends object>(
     Object.setPrototypeOf(target, prototypeProxy);
 }
 
-export function isUnsafeNumeric(raw: string) {
-    return (
-        /^[\d.]+$/.test(raw) &&
-        raw.localeCompare(Number.MAX_SAFE_INTEGER + '', undefined, {
-            numeric: true
-        }) > 0
-    );
-}
+export const isUnsafeNumeric = (raw: string) =>
+    /^[\d.]+$/.test(raw) &&
+    raw.localeCompare(Number.MAX_SAFE_INTEGER + '', undefined, {
+        numeric: true
+    }) > 0;
 
-export function byteLength(raw: string) {
-    return raw.replace(/[^\u0021-\u007e\uff61-\uffef]/g, 'xx').length;
-}
+export const byteLength = (raw: string) =>
+    raw.replace(/[^\u0021-\u007e\uff61-\uffef]/g, 'xx').length;
 
 export type HyphenCase<T extends string> = T extends `${infer L}${infer R}`
     ? `${L extends Uppercase<L> ? `-${Lowercase<L>}` : L}${HyphenCase<R>}`
     : T;
-export function toHyphenCase(raw: string) {
-    return raw.replace(
+export const toHyphenCase = (raw: string) =>
+    raw.replace(
         /[A-Z]+|[^A-Za-z][A-Za-z]/g,
         (match, offset) =>
             `${offset ? '-' : ''}${(match[1] || match[0]).toLowerCase()}`
     );
-}
 
 export type CamelCase<
     Raw extends string,
@@ -94,23 +84,40 @@ export type CamelCase<
         ? `${Capitalize<L>}${Capitalize<CamelCase<R>>}`
         : `${Capitalize<Raw>}`
 >;
-export function toCamelCase(raw: string, large = false) {
-    return raw.replace(/^[A-Za-z]|[^A-Za-z][A-Za-z]/g, (match, offset) =>
+export const toCamelCase = (raw: string, large = false) =>
+    raw.replace(/^[A-Za-z]|[^A-Za-z][A-Za-z]/g, (match, offset) =>
         offset || large
             ? (match[1] || match[0]).toUpperCase()
             : match.toLowerCase()
     );
-}
 
-export function uniqueID() {
-    return (Date.now() + parseInt((Math.random() + '').slice(2))).toString(36);
-}
+export const uniqueID = () =>
+    (Date.now() + parseInt((Math.random() + '').slice(2))).toString(36);
 
-export function objectFrom<V, K extends string>(values: V[], keys: K[]) {
-    return Object.fromEntries(
+/**
+ * Encode string to Base64 with Unicode support
+ *
+ * @param input - String to encode
+ * @returns Base64 encoded string
+ */
+export const encodeBase64 = (input: string) =>
+    btoa(String.fromCharCode(...new TextEncoder().encode(input)));
+
+/**
+ * Decode Base64 string with Unicode support
+ *
+ * @param input - Base64 encoded string to decode
+ * @returns Decoded Unicode string
+ */
+export const decodeBase64 = (input: string) =>
+    new TextDecoder().decode(
+        Uint8Array.from(atob(input), char => char.charCodeAt(0))
+    );
+
+export const objectFrom = <V, K extends string>(values: V[], keys: K[]) =>
+    Object.fromEntries(
         values.map((value, index) => [keys[index], value])
     ) as Record<K, V>;
-}
 
 export enum DiffStatus {
     Old = -1,
