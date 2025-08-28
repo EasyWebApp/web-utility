@@ -106,6 +106,45 @@ export function uniqueID() {
     return (Date.now() + parseInt((Math.random() + '').slice(2))).toString(36);
 }
 
+/**
+ * Encode string to Base64 with Unicode support
+ * @param input - String to encode
+ * @returns Base64 encoded string
+ */
+export function base64Encode(input: string): string {
+    // Use TextEncoder for proper UTF-8 encoding
+    const encoder = new TextEncoder();
+    const bytes = encoder.encode(input);
+
+    // Convert bytes to base64
+    let binary = '';
+    for (let i = 0; i < bytes.length; i++) {
+        binary += String.fromCharCode(bytes[i]);
+    }
+
+    return btoa(binary);
+}
+
+/**
+ * Decode Base64 string with Unicode support
+ * @param input - Base64 encoded string to decode
+ * @returns Decoded Unicode string
+ */
+export function base64Decode(input: string): string {
+    // Decode base64 to binary string
+    const binary = atob(input);
+
+    // Convert binary string to bytes
+    const bytes = new Uint8Array(binary.length);
+    for (let i = 0; i < binary.length; i++) {
+        bytes[i] = binary.charCodeAt(i);
+    }
+
+    // Use TextDecoder for proper UTF-8 decoding
+    const decoder = new TextDecoder();
+    return decoder.decode(bytes);
+}
+
 export function objectFrom<V, K extends string>(values: V[], keys: K[]) {
     return Object.fromEntries(
         values.map((value, index) => [keys[index], value])
