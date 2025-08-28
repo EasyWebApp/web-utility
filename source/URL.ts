@@ -1,9 +1,8 @@
-import { isEmpty, likeArray, makeArray, decodeBase64Bytes } from './data';
+import { isEmpty, likeArray, makeArray } from './data';
 import { parseJSON } from './parser';
 
-export function isXDomain(URI: string) {
-    return new URL(URI, document.baseURI).origin !== location.origin;
-}
+export const isXDomain = (URI: string) =>
+    new URL(URI, document.baseURI).origin !== location.origin;
 
 export type JSONValue = number | boolean | string | null;
 export interface URLData<E = unknown> {
@@ -11,7 +10,7 @@ export interface URLData<E = unknown> {
 }
 
 export function parseURLData(
-    raw = globalThis.location?.search,
+    raw = globalThis.location?.search || '',
     toBuiltIn = true
 ): URLData {
     const rawData = raw
@@ -54,28 +53,21 @@ export function buildURLData(map: string[][] | Record<string, any>) {
     return new URLSearchParams(list);
 }
 
-export async function blobOf(URI: string | URL) {
-    return (await fetch(URI + '')).blob();
-}
+export const blobOf = async (URI: string | URL) =>
+    (await fetch(URI + '')).blob();
 
 const DataURI = /^data:(.+?\/(.+?))?(;base64)?,([\s\S]+)/;
 /**
  * Blob logic forked from axes's
  *
- * @see http://www.cnblogs.com/axes/p/4603984.html
+ * @see {@link http://www.cnblogs.com/axes/p/4603984.html}
  */
 export function blobFrom(URI: string) {
     var [_, type, __, base64, data] = DataURI.exec(URI) || [];
 
-    if (base64) {
-        const bytes = decodeBase64Bytes(data);
-        return new Blob([bytes.buffer as ArrayBuffer], { type });
-    } else {
-        const aBuffer = new ArrayBuffer(data.length);
-        const uBuffer = new Uint8Array(aBuffer);
+    data = base64 ? atob(data) : data;
 
-        for (let i = 0; data[i]; i++) uBuffer[i] = data.charCodeAt(i);
+    const aBuffer = Uint8Array.from(data, char => char.charCodeAt(0));
 
-        return new Blob([aBuffer], { type });
-    }
+    return new Blob([aBuffer], { type });
 }

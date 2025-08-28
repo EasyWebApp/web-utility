@@ -181,7 +181,7 @@ object-fit: contain;`);
     it('should convert a Form to JSON', () => {
         document.body.innerHTML = `
         <form>
-            <input type="checkbox" name="switch" checked>
+            <input type="checkbox" name="switch">
 
             <input type="checkbox" name="list" value="01" checked>
             <input type="checkbox" name="list" value="02">
@@ -215,7 +215,7 @@ object-fit: contain;`);
 
         expect(data).toEqual(
             expect.objectContaining({
-                switch: true,
+                switch: false,
                 list: ['01', '03'],
                 array: [2, 3],
                 test: { example: '123', other: 2 },

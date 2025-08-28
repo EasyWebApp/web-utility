@@ -1,6 +1,12 @@
 import { URLData } from './URL';
 import { HTMLProps, HTMLField, CSSStyles, CSSObject } from './DOM-type';
-import { Constructor, isEmpty, assertInheritance, toHyphenCase } from './data';
+import {
+    Constructor,
+    isEmpty,
+    assertInheritance,
+    toHyphenCase,
+    likeArray
+} from './data';
 import { toJSValue } from './parser';
 
 export const XMLNamespace = {
@@ -35,11 +41,9 @@ export function elementTypeOf(tagName: string) {
         : 'xml';
 }
 
-export function isHTMLElementClass<T extends Constructor<HTMLElement>>(
+export const isHTMLElementClass = <T extends Constructor<HTMLElement>>(
     Class: any
-): Class is T {
-    return assertInheritance(Class, HTMLElement);
-}
+): Class is T => assertInheritance(Class, HTMLElement);
 
 const nameMap = new WeakMap<Constructor<HTMLElement>, string>();
 
@@ -92,11 +96,10 @@ export function parseDOM(HTML: string) {
     });
 }
 
-export function stringifyDOM(node: Node) {
-    return new XMLSerializer()
+export const stringifyDOM = (node: Node) =>
+    new XMLSerializer()
         .serializeToString(node)
         .replace(/ xmlns="http:\/\/www.w3.org\/1999\/xhtml"/g, '');
-}
 
 export function* walkDOM<T extends Node = Node>(
     root: Node,
@@ -253,12 +256,12 @@ export interface ScrollEvent {
     links: (HTMLAnchorElement | HTMLAreaElement)[];
 }
 
-export function watchScroll(
+export const watchScroll = (
     box: HTMLElement,
     handler: (event: ScrollEvent) => any,
     depth = 6
-) {
-    return Array.from(
+) =>
+    Array.from(
         box.querySelectorAll<HTMLHeadingElement>(
             Array.from(new Array(depth), (_, index) => `h${++index}`) + ''
         ),
@@ -288,8 +291,6 @@ export function watchScroll(
             };
         }
     );
-}
-
 export function watchVisible(
     root: Element,
     handler: (visible: boolean) => any
@@ -314,9 +315,10 @@ export function watchVisible(
 export function formToJSON<T extends object = URLData<File>>(
     form: HTMLFormElement | HTMLFieldSetElement
 ) {
-    const data = {} as T;
+    const { elements } = form,
+        data = {} as T;
 
-    for (const field of form.elements) {
+    for (const field of elements) {
         let { name, value, checked, defaultValue, selectedOptions, files } =
             field as HTMLField;
         const type = (field as HTMLField).type as string;
@@ -333,8 +335,9 @@ export function formToJSON<T extends object = URLData<File>>(
             case 'radio':
             case 'checkbox':
                 if (checked)
-                    parsedValue = defaultValue ? toJSValue(defaultValue) : true;
-                else continue;
+                    parsedValue = !defaultValue || toJSValue(defaultValue);
+                else if (likeArray(elements.namedItem(name))) continue;
+                else parsedValue = false;
                 break;
             case 'select-multiple':
                 parsedValue = Array.from(selectedOptions, ({ value }) =>
