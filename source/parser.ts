@@ -67,6 +67,9 @@ function parseRow(row: string, separator = ',') {
     return list;
 }
 
+/**
+ * @deprecated Use parseTextTableAsync or readTextTable for better performance with large tables to avoid high memory usage
+ */
 export function parseTextTable<T = {}>(
     raw: string,
     header?: boolean,
@@ -82,12 +85,23 @@ export function parseTextTable<T = {}>(
         : data.slice(1).map(row => objectFrom(row, data[0]) as T);
 }
 
+export const parseTextTableAsync = async <T extends object>(raw: string) =>
+    Array.fromAsync(readTextTable<T>(raw[Symbol.iterator]()));
+
 // 字符流生成器：将字符串块打散为单一字符流
 async function* characterStream(
-    chunks: AsyncIterable<string>
+    chunks: Iterable<string> | AsyncIterable<string>
 ): AsyncGenerator<string, void, unknown> {
-    for await (const chunk of chunks) {
-        yield* chunk;
+    if (Symbol.asyncIterator in chunks) {
+        // AsyncIterable
+        for await (const chunk of chunks as AsyncIterable<string>) {
+            yield* chunk;
+        }
+    } else {
+        // Iterable (synchronous)
+        for (const chunk of chunks as Iterable<string>) {
+            yield* chunk;
+        }
     }
 }
 
@@ -117,7 +131,7 @@ async function* parseCharacterStream(
                 continue;
             }
 
-            // 遇到换行符：完成当前单元格并输出行
+            // 遇到换行符：完成当前单元格
             completeCell();
 
             // 只输出非空行
@@ -125,7 +139,6 @@ async function* parseCharacterStream(
 
             // 重置状态
             currentRow = [];
-            cellBuffer = '';
         }
         // 处理引号状态
         else if (
@@ -162,7 +175,7 @@ async function* parseCharacterStream(
 }
 
 export async function* readTextTable<T = {}>(
-    chunks: AsyncIterable<string>,
+    chunks: Iterable<string> | AsyncIterable<string>,
     header?: boolean,
     separator = ','
 ): AsyncGenerator<T extends {} ? T : any[], void, unknown> {
