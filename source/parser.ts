@@ -117,6 +117,12 @@ export async function* readTextTable<T = {}>(
     let headerRow: any[] | undefined;
     let isFirstRow = true;
 
+    const makeObject = (parsedRow: string[]) =>
+        parsedRow.reduce((object, item, index) => {
+            object[headerRow![index]] = item;
+            return object;
+        }, {} as T);
+
     for await (const chunk of chunks) {
         buffer += chunk;
 
@@ -147,18 +153,11 @@ export async function* readTextTable<T = {}>(
                         headerRow = parsedRow;
                         isFirstRow = false;
                     } else {
-                        if (header && headerRow) {
-                            const rowObject = parsedRow.reduce(
-                                (object, item, index) => {
-                                    object[headerRow![index]] = item;
-                                    return object;
-                                },
-                                {} as any
-                            );
-                            yield rowObject as T extends {} ? T : any[];
-                        } else {
-                            yield parsedRow as T extends {} ? T : any[];
-                        }
+                        yield header && headerRow
+                            ? (makeObject(parsedRow) as T extends {}
+                                  ? T
+                                  : any[])
+                            : (parsedRow as T extends {} ? T : any[]);
                     }
                 }
 
@@ -178,6 +177,10 @@ export async function* readTextTable<T = {}>(
     }
 
     // Process any remaining data in buffer
+    // 当 chunks 迭代完毕后，buffer 中可能仍有剩余的字符串片段，这是因为：
+    // 1. 最后一个 chunk 可能没有以换行符结尾，导致完整的行数据仍在 buffer 中
+    // 2. 上面的主循环只处理以换行符结尾的完整行，无法处理文件末尾没有换行符的情况
+    // 3. 因此需要单独处理 buffer 中的剩余内容，确保不丢失数据
     if (buffer.trim()) {
         const parsedRow = parseRow(buffer.trim(), separator);
 
@@ -186,14 +189,8 @@ export async function* readTextTable<T = {}>(
             return;
         }
 
-        if (header && headerRow) {
-            const rowObject = parsedRow.reduce((object, item, index) => {
-                object[headerRow![index]] = item;
-                return object;
-            }, {} as any);
-            yield rowObject as T extends {} ? T : any[];
-        } else {
-            yield parsedRow as T extends {} ? T : any[];
-        }
+        yield header && headerRow
+            ? (makeObject(parsedRow) as T extends {} ? T : any[])
+            : (parsedRow as T extends {} ? T : any[]);
     }
 }
