@@ -100,10 +100,29 @@ async function* parseCharacterStream(
     let currentRow: string[] = [];
     let inQuote = false;
     let quoteChar = '';
+    let prevChar = '';
 
     for await (const char of chars) {
+        // 处理换行符（跨平台支持）
+        if (char === '\n' || char === '\r') {
+            // 避免 \r\n 被处理两次：如果当前是 \n 且前一个是 \r，跳过此次处理
+            if (char === '\n' && prevChar === '\r') {
+                prevChar = char;
+                continue;
+            }
+
+            // 遇到换行符：完成当前单元格并输出行
+            currentRow.push(toJSValue(cellBuffer.trim()));
+
+            // 只输出非空行
+            if (currentRow.length > 1 || currentRow[0]) yield currentRow;
+
+            // 重置状态
+            currentRow = [];
+            cellBuffer = '';
+        }
         // 处理引号状态
-        if (
+        else if (
             (char === '"' || char === "'") &&
             !inQuote &&
             cellBuffer.trim() === ''
@@ -122,20 +141,12 @@ async function* parseCharacterStream(
             // 遇到分隔符：完成当前单元格
             currentRow.push(toJSValue(cellBuffer.trim()));
             cellBuffer = '';
-        } else if (char === '\n') {
-            // 遇到换行符：完成当前单元格并输出行
-            currentRow.push(toJSValue(cellBuffer.trim()));
-
-            // 只输出非空行
-            if (currentRow.length > 1 || currentRow[0]) yield currentRow;
-
-            // 重置状态
-            currentRow = [];
-            cellBuffer = '';
-        } else if (char !== '\r') {
-            // 普通字符（忽略\r字符）
+        } else {
+            // 普通字符
             cellBuffer += char;
         }
+
+        prevChar = char;
     }
 
     // 处理最后一行（如果有内容）

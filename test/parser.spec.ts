@@ -194,5 +194,51 @@ describe('Data String Parser', () => {
                 ['d,ef', 4, 5]
             ]);
         });
+
+        it('should handle different newline formats (Windows CRLF)', async () => {
+            const chunks = createAsyncIterable(['1,2,3\r\n', '4,5,6\r\n']);
+            const results = [];
+
+            for await (const row of readTextTable(chunks)) {
+                results.push(row);
+            }
+
+            expect(results).toEqual([
+                [1, 2, 3],
+                [4, 5, 6]
+            ]);
+        });
+
+        it('should handle mixed newline formats', async () => {
+            const chunks = createAsyncIterable([
+                '1,2,3\r\n4,5,6\n',
+                '7,8,9\r\n'
+            ]);
+            const results = [];
+
+            for await (const row of readTextTable(chunks)) {
+                results.push(row);
+            }
+
+            expect(results).toEqual([
+                [1, 2, 3],
+                [4, 5, 6],
+                [7, 8, 9]
+            ]);
+        });
+
+        it('should handle old Mac newline formats (\\r only)', async () => {
+            const chunks = createAsyncIterable(['1,2,3\r', '4,5,6\r']);
+            const results = [];
+
+            for await (const row of readTextTable(chunks)) {
+                results.push(row);
+            }
+
+            expect(results).toEqual([
+                [1, 2, 3],
+                [4, 5, 6]
+            ]);
+        });
     });
 });
