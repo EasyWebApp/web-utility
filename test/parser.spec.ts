@@ -2,7 +2,7 @@ import {
     parseJSON,
     toJSValue,
     parseTextTable,
-    parseTextTableStream
+    readTextTable
 } from '../source/parser';
 
 describe('Data String Parser', () => {
@@ -73,7 +73,7 @@ describe('Data String Parser', () => {
             const chunks = createAsyncIterable(['1,2,3\n', '4,5,6']);
             const results = [];
 
-            for await (const row of parseTextTableStream(chunks)) {
+            for await (const row of readTextTable(chunks)) {
                 results.push(row);
             }
 
@@ -87,7 +87,7 @@ describe('Data String Parser', () => {
             const chunks = createAsyncIterable(['"a,1","b,2",', '"c,3"']);
             const results = [];
 
-            for await (const row of parseTextTableStream(chunks)) {
+            for await (const row of readTextTable(chunks)) {
                 results.push(row);
             }
 
@@ -98,7 +98,7 @@ describe('Data String Parser', () => {
             const chunks = createAsyncIterable(['"a,1",2,', "'c,3'"]);
             const results = [];
 
-            for await (const row of parseTextTableStream(chunks)) {
+            for await (const row of readTextTable(chunks)) {
                 results.push(row);
             }
 
@@ -109,7 +109,7 @@ describe('Data String Parser', () => {
             const chunks = createAsyncIterable(['a,b,c\n', '1,2,3']);
             const results = [];
 
-            for await (const row of parseTextTableStream<
+            for await (const row of readTextTable<
                 Record<'a' | 'b' | 'c', number>
             >(chunks, true)) {
                 results.push(row);
@@ -122,7 +122,7 @@ describe('Data String Parser', () => {
             const chunks = createAsyncIterable(['1,2', ',3\n4,5', ',6\n7,8,9']);
             const results = [];
 
-            for await (const row of parseTextTableStream(chunks)) {
+            for await (const row of readTextTable(chunks)) {
                 results.push(row);
             }
 
@@ -137,7 +137,7 @@ describe('Data String Parser', () => {
             const chunks = createAsyncIterable(['1,2,3\n4,5,6\n7,8,9']);
             const results = [];
 
-            for await (const row of parseTextTableStream(chunks)) {
+            for await (const row of readTextTable(chunks)) {
                 results.push(row);
             }
 
@@ -157,7 +157,7 @@ describe('Data String Parser', () => {
             ]);
             const results = [];
 
-            for await (const row of parseTextTableStream(chunks)) {
+            for await (const row of readTextTable(chunks)) {
                 results.push(row);
             }
 
@@ -171,7 +171,7 @@ describe('Data String Parser', () => {
             const chunks = createAsyncIterable(['1;2;3\n', '4;5;6']);
             const results = [];
 
-            for await (const row of parseTextTableStream(chunks, false, ';')) {
+            for await (const row of readTextTable(chunks, false, ';')) {
                 results.push(row);
             }
 
@@ -185,7 +185,7 @@ describe('Data String Parser', () => {
             const chunks = createAsyncIterable(['"a,bc",2,', '3\n"d,ef",4,5']);
             const results = [];
 
-            for await (const row of parseTextTableStream(chunks)) {
+            for await (const row of readTextTable(chunks)) {
                 results.push(row);
             }
 

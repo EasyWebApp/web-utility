@@ -40,53 +40,6 @@ function readQuoteValue(raw: string) {
     return raw.slice(1, index);
 }
 
-export function parseTextTable<T = {}>(
-    raw: string,
-    header?: boolean,
-    separator = ','
-) {
-    const data = raw
-        .trim()
-        .split(/[\r\n]+/)
-        .map(row => {
-            const list = [];
-
-            do {
-                let value: string;
-
-                if (row[0] === '"' || row[0] === "'") {
-                    value = readQuoteValue(row);
-
-                    row = row.slice(value.length + 3);
-                } else {
-                    const index = row.indexOf(separator);
-
-                    if (index > -1) {
-                        value = row.slice(0, index);
-                        row = row.slice(index + 1);
-                    } else {
-                        value = row;
-                        row = '';
-                    }
-                }
-                list.push(toJSValue(value.trim()));
-            } while (row);
-
-            return list;
-        });
-
-    return !header
-        ? data
-        : data.slice(1).map(
-              row =>
-                  row.reduce((object, item, index) => {
-                      object[data[0][index]] = item;
-
-                      return object;
-                  }, {}) as T
-          );
-}
-
 function parseRow(row: string, separator = ',') {
     const list = [];
 
@@ -114,6 +67,28 @@ function parseRow(row: string, separator = ',') {
     return list;
 }
 
+export function parseTextTable<T = {}>(
+    raw: string,
+    header?: boolean,
+    separator = ','
+) {
+    const data = raw
+        .trim()
+        .split(/[\r\n]+/)
+        .map(row => parseRow(row, separator));
+
+    return !header
+        ? data
+        : data.slice(1).map(
+              row =>
+                  row.reduce((object, item, index) => {
+                      object[data[0][index]] = item;
+
+                      return object;
+                  }, {}) as T
+          );
+}
+
 function isQuoteIncomplete(buffer: string): boolean {
     // Check if buffer contains an unmatched opening quote
     let inQuote = false;
@@ -133,7 +108,7 @@ function isQuoteIncomplete(buffer: string): boolean {
     return inQuote;
 }
 
-export async function* parseTextTableStream<T = {}>(
+export async function* readTextTable<T = {}>(
     chunks: AsyncIterable<string>,
     header?: boolean,
     separator = ','
@@ -144,73 +119,81 @@ export async function* parseTextTableStream<T = {}>(
 
     for await (const chunk of chunks) {
         buffer += chunk;
-        const lines = buffer.split(/[\r\n]+/);
 
-        // Keep the last line in buffer as it might be incomplete
-        // Also check if it contains incomplete quotes
-        let lastLine = lines.pop() || '';
+        // Process buffer character by character to find complete rows
+        let rowStart = 0;
+        let inQuote = false;
+        let quoteChar = '';
 
-        for (const line of lines) {
-            const trimmedLine = line.trim();
-            if (!trimmedLine) continue;
+        for (let i = 0; i < buffer.length; i++) {
+            const char = buffer[i];
 
-            try {
-                const parsedRow = parseRow(trimmedLine, separator);
+            // Handle quote state
+            if ((char === '"' || char === "'") && !inQuote) {
+                inQuote = true;
+                quoteChar = char;
+            } else if (char === quoteChar && inQuote) {
+                inQuote = false;
+                quoteChar = '';
+            }
 
-                if (header && isFirstRow) {
-                    headerRow = parsedRow;
-                    isFirstRow = false;
-                    continue;
+            // Check for row ending (newline) when not in quotes
+            if (!inQuote && (char === '\n' || char === '\r')) {
+                const rowData = buffer.slice(rowStart, i).trim();
+                if (rowData) {
+                    const parsedRow = parseRow(rowData, separator);
+
+                    if (header && isFirstRow) {
+                        headerRow = parsedRow;
+                        isFirstRow = false;
+                    } else {
+                        if (header && headerRow) {
+                            const rowObject = parsedRow.reduce(
+                                (object, item, index) => {
+                                    object[headerRow![index]] = item;
+                                    return object;
+                                },
+                                {} as any
+                            );
+                            yield rowObject as T extends {} ? T : any[];
+                        } else {
+                            yield parsedRow as T extends {} ? T : any[];
+                        }
+                    }
                 }
 
-                if (header && headerRow) {
-                    const rowObject = parsedRow.reduce(
-                        (object, item, index) => {
-                            object[headerRow![index]] = item;
-                            return object;
-                        },
-                        {} as any
-                    );
-                    yield rowObject as T extends {} ? T : any[];
-                } else {
-                    yield parsedRow as T extends {} ? T : any[];
+                // Skip additional newline characters
+                while (
+                    i + 1 < buffer.length &&
+                    (buffer[i + 1] === '\n' || buffer[i + 1] === '\r')
+                ) {
+                    i++;
                 }
-                isFirstRow = false;
-            } catch (error) {
-                // If parsing fails and this might be a partial quoted value,
-                // put the line back in buffer
-                if (isQuoteIncomplete(line)) {
-                    lastLine = line + '\n' + lastLine;
-                }
-                // Otherwise, skip malformed rows
-                continue;
+                rowStart = i + 1;
             }
         }
 
-        buffer = lastLine;
+        // Keep unprocessed portion in buffer
+        buffer = buffer.slice(rowStart);
     }
 
     // Process any remaining data in buffer
     if (buffer.trim()) {
-        try {
-            const parsedRow = parseRow(buffer.trim(), separator);
+        const parsedRow = parseRow(buffer.trim(), separator);
 
-            if (header && isFirstRow) {
-                // Only header row was provided
-                return;
-            }
+        if (header && isFirstRow) {
+            // Only header row was provided
+            return;
+        }
 
-            if (header && headerRow) {
-                const rowObject = parsedRow.reduce((object, item, index) => {
-                    object[headerRow![index]] = item;
-                    return object;
-                }, {} as any);
-                yield rowObject as T extends {} ? T : any[];
-            } else {
-                yield parsedRow as T extends {} ? T : any[];
-            }
-        } catch (error) {
-            // Skip malformed final row
+        if (header && headerRow) {
+            const rowObject = parsedRow.reduce((object, item, index) => {
+                object[headerRow![index]] = item;
+                return object;
+            }, {} as any);
+            yield rowObject as T extends {} ? T : any[];
+        } else {
+            yield parsedRow as T extends {} ? T : any[];
         }
     }
 }
