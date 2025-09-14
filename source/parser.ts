@@ -89,23 +89,77 @@ export function parseTextTable<T = {}>(
           );
 }
 
-function isQuoteIncomplete(buffer: string): boolean {
-    // Check if buffer contains an unmatched opening quote
-    let inQuote = false;
-    let quote = '';
+// 字符流生成器：将字符串块打散为单一字符流
+async function* characterStream(
+    chunks: AsyncIterable<string>
+): AsyncGenerator<string, void, unknown> {
+    for await (const chunk of chunks) {
+        yield* chunk;
+    }
+}
 
-    for (let i = 0; i < buffer.length; i++) {
-        const char = buffer[i];
-        if ((char === '"' || char === "'") && !inQuote) {
+// 单元格和行解析生成器：处理字符流以识别完整的单元格和行
+async function* parseCharacterStream(
+    chars: AsyncGenerator<string>,
+    separator = ','
+): AsyncGenerator<string[], void, unknown> {
+    let cellBuffer = '';
+    let currentRow: string[] = [];
+    let inQuote = false;
+    let quoteChar = '';
+
+    for await (const char of chars) {
+        // 处理引号状态
+        if (
+            (char === '"' || char === "'") &&
+            !inQuote &&
+            cellBuffer.trim() === ''
+        ) {
+            // 进入引号模式：遇到第一个引号且单元格为空
             inQuote = true;
-            quote = char;
-        } else if (char === quote && inQuote) {
+            quoteChar = char;
+        } else if (char === quoteChar && inQuote) {
+            // 退出引号模式：遇到配对引号
             inQuote = false;
-            quote = '';
+            quoteChar = '';
+        } else if (inQuote) {
+            // 在引号模式中：所有字符都是单元格内容
+            cellBuffer += char;
+        } else if (char === separator) {
+            // 遇到分隔符：完成当前单元格
+            currentRow.push(toJSValue(cellBuffer.trim()));
+            cellBuffer = '';
+        } else if (char === '\n' || char === '\r') {
+            // 遇到换行符：完成当前单元格并输出行
+            currentRow.push(toJSValue(cellBuffer.trim()));
+
+            // 只输出非空行
+            if (
+                currentRow.length > 0 &&
+                !(currentRow.length === 1 && currentRow[0] === '')
+            ) {
+                yield currentRow;
+            }
+
+            // 重置状态
+            currentRow = [];
+            cellBuffer = '';
+        } else if (char !== '\r') {
+            // 普通字符（忽略\r字符）
+            cellBuffer += char;
         }
     }
 
-    return inQuote;
+    // 处理最后一行（如果有内容）
+    if (cellBuffer || currentRow.length > 0) {
+        currentRow.push(toJSValue(cellBuffer.trim()));
+        if (
+            currentRow.length > 0 &&
+            !(currentRow.length === 1 && currentRow[0] === '')
+        ) {
+            yield currentRow;
+        }
+    }
 }
 
 export async function* readTextTable<T = {}>(
@@ -113,7 +167,6 @@ export async function* readTextTable<T = {}>(
     header?: boolean,
     separator = ','
 ): AsyncGenerator<T extends {} ? T : any[], void, unknown> {
-    let buffer = '';
     let headerRow: any[] | undefined;
     let isFirstRow = true;
 
@@ -123,57 +176,18 @@ export async function* readTextTable<T = {}>(
             return object;
         }, {} as T);
 
-    for await (const chunk of chunks) {
-        buffer += chunk;
-    }
+    // 创建字符流并解析
+    const chars = characterStream(chunks);
 
-    // Add newline at the end to ensure unified processing
-    // 在数据末尾添加换行符，确保所有数据都通过统一的处理逻辑处理，避免特殊处理
-    if (!buffer.endsWith('\n') && !buffer.endsWith('\r')) {
-        buffer += '\n';
-    }
-
-    // Process buffer character by character to find complete rows
-    let rowStart = 0;
-    let inQuote = false;
-    let quoteChar = '';
-
-    for (let i = 0; i < buffer.length; i++) {
-        const char = buffer[i];
-
-        // Handle quote state
-        if ((char === '"' || char === "'") && !inQuote) {
-            inQuote = true;
-            quoteChar = char;
-        } else if (char === quoteChar && inQuote) {
-            inQuote = false;
-            quoteChar = '';
-        }
-
-        // Check for row ending (newline) when not in quotes
-        if (!inQuote && (char === '\n' || char === '\r')) {
-            const rowData = buffer.slice(rowStart, i).trim();
-            if (rowData) {
-                const parsedRow = parseRow(rowData, separator);
-
-                if (header && isFirstRow) {
-                    headerRow = parsedRow;
-                    isFirstRow = false;
-                } else {
-                    yield header && headerRow
-                        ? (makeObject(parsedRow) as T extends {} ? T : any[])
-                        : (parsedRow as T extends {} ? T : any[]);
-                }
-            }
-
-            // Skip additional newline characters
-            while (
-                i + 1 < buffer.length &&
-                (buffer[i + 1] === '\n' || buffer[i + 1] === '\r')
-            ) {
-                i++;
-            }
-            rowStart = i + 1;
+    // 处理每一行
+    for await (const row of parseCharacterStream(chars, separator)) {
+        if (header && isFirstRow) {
+            headerRow = row;
+            isFirstRow = false;
+        } else {
+            yield header && headerRow
+                ? (makeObject(row) as T extends {} ? T : any[])
+                : (row as T extends {} ? T : any[]);
         }
     }
 }
