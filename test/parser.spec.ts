@@ -1,5 +1,5 @@
 import 'core-js/actual/array/from-async';
-import { ReadableStream } from 'node:stream/web';
+import { ReadableStream } from 'stream/web';
 
 import {
     parseJSON,

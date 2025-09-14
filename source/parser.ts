@@ -68,7 +68,8 @@ function parseRow(row: string, separator = ',') {
 }
 
 /**
- * @deprecated Use parseTextTableAsync or readTextTable for better performance with large tables to avoid high memory usage
+ * @deprecated Since 4.6.0, please use {@link parseTextTableAsync} or {@link readTextTable}
+ *             for better performance with large tables to avoid high memory usage
  */
 export function parseTextTable<T = {}>(
     raw: string,
@@ -88,112 +89,79 @@ export function parseTextTable<T = {}>(
 export const parseTextTableAsync = async <T extends object>(raw: string) =>
     Array.fromAsync(readTextTable<T>(raw[Symbol.iterator]()));
 
-// 字符流生成器：将字符串块打散为单一字符流
 async function* characterStream(
     chunks: Iterable<string> | AsyncIterable<string>
-): AsyncGenerator<string, void, unknown> {
-    if (Symbol.asyncIterator in chunks) {
-        // AsyncIterable
-        for await (const chunk of chunks as AsyncIterable<string>) {
-            yield* chunk;
-        }
-    } else {
-        // Iterable (synchronous)
-        for (const chunk of chunks as Iterable<string>) {
-            yield* chunk;
-        }
-    }
+) {
+    for await (const chunk of chunks) yield* chunk;
 }
 
-// 单元格和行解析生成器：处理字符流以识别完整的单元格和行
 async function* parseCharacterStream(
     chars: AsyncGenerator<string>,
     separator = ','
-): AsyncGenerator<string[], void, unknown> {
-    let cellBuffer = '';
-    let currentRow: string[] = [];
+) {
     let inQuote = false;
     let quoteChar = '';
     let prevChar = '';
+    let cellBuffer = '';
+    let currentRow: any[] = [];
 
-    // 完成单元格的逻辑
     const completeCell = () => {
         currentRow.push(toJSValue(cellBuffer.trim()));
         cellBuffer = '';
     };
 
     for await (const char of chars) {
-        // 处理换行符（跨平台支持）
         if (char === '\n' || char === '\r') {
-            // 避免 \r\n 被处理两次：如果当前是 \n 且前一个是 \r，跳过此次处理
             if (char === '\n' && prevChar === '\r') {
                 prevChar = char;
                 continue;
             }
-
-            // 遇到换行符：完成当前单元格
             completeCell();
 
-            // 只输出非空行
             if (currentRow.length > 1 || currentRow[0]) yield currentRow;
 
-            // 重置状态
             currentRow = [];
-        }
-        // 处理引号状态
-        else if (
+        } else if (
             (char === '"' || char === "'") &&
             !inQuote &&
             cellBuffer.trim() === ''
         ) {
-            // 进入引号模式：遇到第一个引号且单元格为空
             inQuote = true;
             quoteChar = char;
         } else if (char === quoteChar && inQuote) {
-            // 退出引号模式：遇到配对引号
             inQuote = false;
             quoteChar = '';
         } else if (inQuote) {
-            // 在引号模式中：所有字符都是单元格内容
             cellBuffer += char;
         } else if (char === separator) {
-            // 遇到分隔符：完成当前单元格
             completeCell();
         } else {
-            // 普通字符
             cellBuffer += char;
         }
-
         prevChar = char;
     }
 
-    // 处理最后一行（如果有内容）
     if (cellBuffer || currentRow.length > 0) {
         completeCell();
+
         if (currentRow.length > 1 || currentRow[0]) yield currentRow;
     }
 }
 
-export async function* readTextTable<T = {}>(
+export async function* readTextTable<T extends Record<string, any> = {}>(
     chunks: Iterable<string> | AsyncIterable<string>,
     header?: boolean,
     separator = ','
-): AsyncGenerator<T extends {} ? T : any[], void, unknown> {
-    let headerRow: any[] | undefined;
+) {
+    let headerRow: string[] | undefined;
     let isFirstRow = true;
 
-    // 创建字符流并解析
     const chars = characterStream(chunks);
 
-    // 处理每一行
-    for await (const row of parseCharacterStream(chars, separator)) {
+    for await (const row of parseCharacterStream(chars, separator))
         if (header && isFirstRow) {
             headerRow = row;
             isFirstRow = false;
-        } else {
-            yield header && headerRow
-                ? (objectFrom(row, headerRow) as T extends {} ? T : any[])
-                : (row as T extends {} ? T : any[]);
-        }
-    }
+        } else
+            yield header && headerRow ? (objectFrom(row, headerRow) as T) : row;
 }

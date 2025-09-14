@@ -11,7 +11,7 @@
         "types": ["node", "jest"],
         "outDir": "dist/"
     },
-    "include": ["source/*.ts"],
+    "include": ["source/*.ts", "test/*.ts"],
     "typedocOptions": {
         "name": "Web utility",
         "excludeExternals": true,
