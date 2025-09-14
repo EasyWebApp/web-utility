@@ -4,6 +4,7 @@ import {
     parseTextTable,
     readTextTable
 } from '../source/parser';
+import 'core-js/actual/array/from-async';
 
 describe('Data String Parser', () => {
     describe('JSON Parser', () => {
@@ -71,11 +72,7 @@ describe('Data String Parser', () => {
 
         it('should parse Simple CSV stream', async () => {
             const chunks = createAsyncIterable(['1,2,3\n', '4,5,6']);
-            const results = [];
-
-            for await (const row of readTextTable(chunks)) {
-                results.push(row);
-            }
+            const results = await Array.fromAsync(readTextTable(chunks));
 
             expect(results).toEqual([
                 [1, 2, 3],
@@ -85,46 +82,30 @@ describe('Data String Parser', () => {
 
         it('should parse Quoted CSV stream', async () => {
             const chunks = createAsyncIterable(['"a,1","b,2",', '"c,3"']);
-            const results = [];
-
-            for await (const row of readTextTable(chunks)) {
-                results.push(row);
-            }
+            const results = await Array.fromAsync(readTextTable(chunks));
 
             expect(results).toEqual([['a,1', 'b,2', 'c,3']]);
         });
 
         it('should parse Mixed CSV stream', async () => {
             const chunks = createAsyncIterable(['"a,1",2,', "'c,3'"]);
-            const results = [];
-
-            for await (const row of readTextTable(chunks)) {
-                results.push(row);
-            }
+            const results = await Array.fromAsync(readTextTable(chunks));
 
             expect(results).toEqual([['a,1', 2, 'c,3']]);
         });
 
         it('should parse Table Headers in stream', async () => {
             const chunks = createAsyncIterable(['a,b,c\n', '1,2,3']);
-            const results = [];
-
-            for await (const row of readTextTable<
-                Record<'a' | 'b' | 'c', number>
-            >(chunks, true)) {
-                results.push(row);
-            }
+            const results = await Array.fromAsync(
+                readTextTable<Record<'a' | 'b' | 'c', number>>(chunks, true)
+            );
 
             expect(results).toEqual([{ a: 1, b: 2, c: 3 }]);
         });
 
         it('should handle chunk boundaries that split rows', async () => {
             const chunks = createAsyncIterable(['1,2', ',3\n4,5', ',6\n7,8,9']);
-            const results = [];
-
-            for await (const row of readTextTable(chunks)) {
-                results.push(row);
-            }
+            const results = await Array.fromAsync(readTextTable(chunks));
 
             expect(results).toEqual([
                 [1, 2, 3],
@@ -135,11 +116,7 @@ describe('Data String Parser', () => {
 
         it('should handle multiple rows in single chunk', async () => {
             const chunks = createAsyncIterable(['1,2,3\n4,5,6\n7,8,9']);
-            const results = [];
-
-            for await (const row of readTextTable(chunks)) {
-                results.push(row);
-            }
+            const results = await Array.fromAsync(readTextTable(chunks));
 
             expect(results).toEqual([
                 [1, 2, 3],
@@ -155,11 +132,7 @@ describe('Data String Parser', () => {
                 '\n4,5,6\n',
                 '\n'
             ]);
-            const results = [];
-
-            for await (const row of readTextTable(chunks)) {
-                results.push(row);
-            }
+            const results = await Array.fromAsync(readTextTable(chunks));
 
             expect(results).toEqual([
                 [1, 2, 3],
@@ -169,11 +142,9 @@ describe('Data String Parser', () => {
 
         it('should handle different separators', async () => {
             const chunks = createAsyncIterable(['1;2;3\n', '4;5;6']);
-            const results = [];
-
-            for await (const row of readTextTable(chunks, false, ';')) {
-                results.push(row);
-            }
+            const results = await Array.fromAsync(
+                readTextTable(chunks, false, ';')
+            );
 
             expect(results).toEqual([
                 [1, 2, 3],
@@ -183,11 +154,7 @@ describe('Data String Parser', () => {
 
         it('should handle quoted values with complex separators', async () => {
             const chunks = createAsyncIterable(['"a,bc",2,', '3\n"d,ef",4,5']);
-            const results = [];
-
-            for await (const row of readTextTable(chunks)) {
-                results.push(row);
-            }
+            const results = await Array.fromAsync(readTextTable(chunks));
 
             expect(results).toEqual([
                 ['a,bc', 2, 3],
@@ -197,11 +164,7 @@ describe('Data String Parser', () => {
 
         it('should handle different newline formats (Windows CRLF)', async () => {
             const chunks = createAsyncIterable(['1,2,3\r\n', '4,5,6\r\n']);
-            const results = [];
-
-            for await (const row of readTextTable(chunks)) {
-                results.push(row);
-            }
+            const results = await Array.fromAsync(readTextTable(chunks));
 
             expect(results).toEqual([
                 [1, 2, 3],
@@ -214,11 +177,7 @@ describe('Data String Parser', () => {
                 '1,2,3\r\n4,5,6\n',
                 '7,8,9\r\n'
             ]);
-            const results = [];
-
-            for await (const row of readTextTable(chunks)) {
-                results.push(row);
-            }
+            const results = await Array.fromAsync(readTextTable(chunks));
 
             expect(results).toEqual([
                 [1, 2, 3],
@@ -229,11 +188,7 @@ describe('Data String Parser', () => {
 
         it('should handle old Mac newline formats (\\r only)', async () => {
             const chunks = createAsyncIterable(['1,2,3\r', '4,5,6\r']);
-            const results = [];
-
-            for await (const row of readTextTable(chunks)) {
-                results.push(row);
-            }
+            const results = await Array.fromAsync(readTextTable(chunks));
 
             expect(results).toEqual([
                 [1, 2, 3],

@@ -102,6 +102,12 @@ async function* parseCharacterStream(
     let quoteChar = '';
     let prevChar = '';
 
+    // 完成单元格的逻辑
+    const completeCell = () => {
+        currentRow.push(toJSValue(cellBuffer.trim()));
+        cellBuffer = '';
+    };
+
     for await (const char of chars) {
         // 处理换行符（跨平台支持）
         if (char === '\n' || char === '\r') {
@@ -112,7 +118,7 @@ async function* parseCharacterStream(
             }
 
             // 遇到换行符：完成当前单元格并输出行
-            currentRow.push(toJSValue(cellBuffer.trim()));
+            completeCell();
 
             // 只输出非空行
             if (currentRow.length > 1 || currentRow[0]) yield currentRow;
@@ -139,8 +145,7 @@ async function* parseCharacterStream(
             cellBuffer += char;
         } else if (char === separator) {
             // 遇到分隔符：完成当前单元格
-            currentRow.push(toJSValue(cellBuffer.trim()));
-            cellBuffer = '';
+            completeCell();
         } else {
             // 普通字符
             cellBuffer += char;
@@ -151,7 +156,7 @@ async function* parseCharacterStream(
 
     // 处理最后一行（如果有内容）
     if (cellBuffer || currentRow.length > 0) {
-        currentRow.push(toJSValue(cellBuffer.trim()));
+        completeCell();
         if (currentRow.length > 1 || currentRow[0]) yield currentRow;
     }
 }
