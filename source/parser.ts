@@ -1,4 +1,4 @@
-import { isUnsafeNumeric } from './data';
+import { isUnsafeNumeric, objectFrom } from './data';
 
 export function parseJSON(raw: string) {
     function parseItem(value: any) {
@@ -79,14 +79,7 @@ export function parseTextTable<T = {}>(
 
     return !header
         ? data
-        : data.slice(1).map(
-              row =>
-                  row.reduce((object, item, index) => {
-                      object[data[0][index]] = item;
-
-                      return object;
-                  }, {}) as T
-          );
+        : data.slice(1).map(row => objectFrom(row, data[0]) as T);
 }
 
 // 字符流生成器：将字符串块打散为单一字符流
@@ -129,17 +122,12 @@ async function* parseCharacterStream(
             // 遇到分隔符：完成当前单元格
             currentRow.push(toJSValue(cellBuffer.trim()));
             cellBuffer = '';
-        } else if (char === '\n' || char === '\r') {
+        } else if (char === '\n') {
             // 遇到换行符：完成当前单元格并输出行
             currentRow.push(toJSValue(cellBuffer.trim()));
 
             // 只输出非空行
-            if (
-                currentRow.length > 0 &&
-                !(currentRow.length === 1 && currentRow[0] === '')
-            ) {
-                yield currentRow;
-            }
+            if (currentRow.length > 1 || currentRow[0]) yield currentRow;
 
             // 重置状态
             currentRow = [];
@@ -153,12 +141,7 @@ async function* parseCharacterStream(
     // 处理最后一行（如果有内容）
     if (cellBuffer || currentRow.length > 0) {
         currentRow.push(toJSValue(cellBuffer.trim()));
-        if (
-            currentRow.length > 0 &&
-            !(currentRow.length === 1 && currentRow[0] === '')
-        ) {
-            yield currentRow;
-        }
+        if (currentRow.length > 1 || currentRow[0]) yield currentRow;
     }
 }
 
@@ -170,12 +153,6 @@ export async function* readTextTable<T = {}>(
     let headerRow: any[] | undefined;
     let isFirstRow = true;
 
-    const makeObject = (parsedRow: string[]) =>
-        parsedRow.reduce((object, item, index) => {
-            object[headerRow![index]] = item;
-            return object;
-        }, {} as T);
-
     // 创建字符流并解析
     const chars = characterStream(chunks);
 
@@ -186,7 +163,7 @@ export async function* readTextTable<T = {}>(
             isFirstRow = false;
         } else {
             yield header && headerRow
-                ? (makeObject(row) as T extends {} ? T : any[])
+                ? (objectFrom(row, headerRow) as T extends {} ? T : any[])
                 : (row as T extends {} ? T : any[]);
         }
     }
