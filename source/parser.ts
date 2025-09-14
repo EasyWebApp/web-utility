@@ -71,7 +71,7 @@ function parseRow(row: string, separator = ',') {
  * @deprecated Since 4.6.0, please use {@link parseTextTableAsync} or {@link readTextTable}
  *             for better performance with large tables to avoid high memory usage
  */
-export function parseTextTable<T = {}>(
+export function parseTextTable<T extends Record<string, any> = {}>(
     raw: string,
     header?: boolean,
     separator = ','
@@ -86,8 +86,9 @@ export function parseTextTable<T = {}>(
         : data.slice(1).map(row => objectFrom(row, data[0]) as T);
 }
 
-export const parseTextTableAsync = async <T extends object>(raw: string) =>
-    Array.fromAsync(readTextTable<T>(raw[Symbol.iterator]()));
+export const parseTextTableAsync = async <T extends Record<string, any> = {}>(
+    raw: string
+) => Array.fromAsync(readTextTable<T>(raw[Symbol.iterator]()));
 
 async function* characterStream(
     chunks: Iterable<string> | AsyncIterable<string>
