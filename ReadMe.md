@@ -19,6 +19,7 @@ npm install web-utility
 
 ```html
 <head>
+    <script src="https://polyfill.web-cell.dev/feature/ECMAScript.js"></script>
     <script src="https://polyfill.web-cell.dev/feature/Regenerator.js"></script>
     <script src="https://polyfill.web-cell.dev/feature/TextEncoder.js"></script>
     <script src="https://polyfill.web-cell.dev/feature/URL.js"></script>
@@ -194,6 +195,30 @@ describe('My module', async () => {
         expect(app.name === 'test');
     });
 });
+```
+
+### CSV/TSV Parser
+
+```typescript
+import { FileHandle, open } from 'fs/promises';
+import { readTextTable } from 'web-utility';
+
+interface Article {
+    id: number;
+    title: string;
+}
+let fileHandle: FileHandle | undefined;
+
+try {
+    fileHandle = await open('path/to/your-article.csv');
+
+    for await (const row of readTextTable<Article>(
+        fileHandle.createReadStream()
+    ))
+        console.table(row);
+} finally {
+    await fileHandle?.close();
+}
 ```
 
 [1]: https://www.typescriptlang.org/

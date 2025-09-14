@@ -1,4 +1,4 @@
-import { isUnsafeNumeric } from './data';
+import { isUnsafeNumeric, objectFrom } from './data';
 
 export function parseJSON(raw: string) {
     function parseItem(value: any) {
@@ -40,7 +40,38 @@ function readQuoteValue(raw: string) {
     return raw.slice(1, index);
 }
 
-export function parseTextTable<T = {}>(
+function parseRow(row: string, separator = ',') {
+    const list = [];
+
+    do {
+        let value: string;
+
+        if (row[0] === '"' || row[0] === "'") {
+            value = readQuoteValue(row);
+
+            row = row.slice(value.length + 3);
+        } else {
+            const index = row.indexOf(separator);
+
+            if (index > -1) {
+                value = row.slice(0, index);
+                row = row.slice(index + 1);
+            } else {
+                value = row;
+                row = '';
+            }
+        }
+        list.push(toJSValue(value.trim()));
+    } while (row);
+
+    return list;
+}
+
+/**
+ * @deprecated Since 4.6.0, please use {@link parseTextTableAsync} or {@link readTextTable}
+ *             for better performance with large tables to avoid high memory usage
+ */
+export function parseTextTable<T extends Record<string, any> = {}>(
     raw: string,
     header?: boolean,
     separator = ','
@@ -48,41 +79,90 @@ export function parseTextTable<T = {}>(
     const data = raw
         .trim()
         .split(/[\r\n]+/)
-        .map(row => {
-            const list = [];
-
-            do {
-                let value: string;
-
-                if (row[0] === '"' || row[0] === "'") {
-                    value = readQuoteValue(row);
-
-                    row = row.slice(value.length + 3);
-                } else {
-                    const index = row.indexOf(separator);
-
-                    if (index > -1) {
-                        value = row.slice(0, index);
-                        row = row.slice(index + 1);
-                    } else {
-                        value = row;
-                        row = '';
-                    }
-                }
-                list.push(toJSValue(value.trim()));
-            } while (row);
-
-            return list;
-        });
+        .map(row => parseRow(row, separator));
 
     return !header
         ? data
-        : data.slice(1).map(
-              row =>
-                  row.reduce((object, item, index) => {
-                      object[data[0][index]] = item;
+        : data.slice(1).map(row => objectFrom(row, data[0]) as T);
+}
 
-                      return object;
-                  }, {}) as T
-          );
+export const parseTextTableAsync = async <T extends Record<string, any> = {}>(
+    raw: string
+) => Array.fromAsync(readTextTable<T>(raw[Symbol.iterator]()));
+
+async function* characterStream(
+    chunks: Iterable<string> | AsyncIterable<string>
+) {
+    for await (const chunk of chunks) yield* chunk;
+}
+
+async function* parseCharacterStream(
+    chars: AsyncGenerator<string>,
+    separator = ','
+) {
+    let inQuote = false;
+    let quoteChar = '';
+    let prevChar = '';
+    let cellBuffer = '';
+    let currentRow: any[] = [];
+
+    const completeCell = () => {
+        currentRow.push(toJSValue(cellBuffer.trim()));
+        cellBuffer = '';
+    };
+
+    for await (const char of chars) {
+        if (char === '\n' || char === '\r') {
+            if (char === '\n' && prevChar === '\r') {
+                prevChar = char;
+                continue;
+            }
+            completeCell();
+
+            if (currentRow.length > 1 || currentRow[0]) yield currentRow;
+
+            currentRow = [];
+        } else if (
+            (char === '"' || char === "'") &&
+            !inQuote &&
+            cellBuffer.trim() === ''
+        ) {
+            inQuote = true;
+            quoteChar = char;
+        } else if (char === quoteChar && inQuote) {
+            inQuote = false;
+            quoteChar = '';
+        } else if (inQuote) {
+            cellBuffer += char;
+        } else if (char === separator) {
+            completeCell();
+        } else {
+            cellBuffer += char;
+        }
+        prevChar = char;
+    }
+
+    if (cellBuffer || currentRow.length > 0) {
+        completeCell();
+
+        if (currentRow.length > 1 || currentRow[0]) yield currentRow;
+    }
+}
+
+export async function* readTextTable<T extends Record<string, any> = {}>(
+    chunks: Iterable<string> | AsyncIterable<string>,
+    header?: boolean,
+    separator = ','
+) {
+    let headerRow: string[] | undefined;
+    let isFirstRow = true;
+
+    const chars = characterStream(chunks);
+
+    for await (const row of parseCharacterStream(chars, separator))
+        if (header && isFirstRow) {
+            headerRow = row;
+            isFirstRow = false;
+        } else
+            yield header && headerRow ? (objectFrom(row, headerRow) as T) : row;
 }
