@@ -56,10 +56,7 @@ export function formatDate(
     time: TimeData = new Date(),
     template = 'YYYY-MM-DD HH:mm:ss'
 ) {
-    time = time instanceof Date ? time : new Date(time);
-    time = new Date(+time - time.getTimezoneOffset() * Minute);
-
-    const [year, month, day, hour, minute, second, millisecond] = time
+    const [year, month, day, hour, minute, second, millisecond] = new Date(time)
         .toJSON()
         .split(/\D/);
 
@@ -73,16 +70,49 @@ export function formatDate(
         .replace(/s+/g, fitUnit(second));
 }
 
+export function changeYear(date: TimeData, delta: number) {
+    date = new Date(date);
+
+    date.setFullYear(date.getFullYear() + delta);
+
+    return date;
+}
+
 export function changeMonth(date: TimeData, delta: number) {
     date = new Date(date);
 
     const month = date.getMonth() + delta;
 
-    date.setFullYear(date.getFullYear() + Math.floor(month / 12));
+    date = changeYear(date, Math.floor(month / 12));
 
     delta = month % 12;
 
     date.setMonth(delta < 0 ? 12 + delta : delta);
 
     return date;
+}
+
+export const changeDate = (date: TimeData, unit: number, delta: number) =>
+    unit === Year
+        ? changeYear(date, delta)
+        : unit === Month
+          ? changeMonth(date, delta)
+          : new Date(+new Date(date) + delta * unit);
+
+const DateLength2Unit = {
+    4: Year,
+    7: Month,
+    10: Day,
+    13: Hour,
+    16: Minute,
+    19: Second
+};
+
+export function makeDateRange(value: string) {
+    const defaultValue = `2025-01-01T00:00:00.000Z`;
+
+    const startedAt = new Date(value + defaultValue.slice(value.length));
+    const endedAt = changeDate(startedAt, DateLength2Unit[value.length], 1);
+
+    return [startedAt, endedAt];
 }
