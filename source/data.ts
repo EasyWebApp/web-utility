@@ -249,6 +249,14 @@ export function findDeep<T>(
     return [];
 }
 
+export function clone<T>(data: T): T {
+    try {
+        return globalThis.structuredClone(data);
+    } catch {
+        return JSON.parse(JSON.stringify(data));
+    }
+}
+
 export type TreeNode<
     IK extends string,
     PK extends string,
@@ -272,8 +280,7 @@ export function treeFrom<
     parentIdKey = 'parentId' as PK,
     childrenKey = 'children' as CK
 ) {
-    list =
-        globalThis.structuredClone?.(list) || JSON.parse(JSON.stringify(list));
+    list = clone(list);
 
     const map: Record<string, N> = {};
     const roots: N[] = [];
