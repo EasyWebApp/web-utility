@@ -112,6 +112,12 @@ export function* walkDOM<T extends Node = Node>(
     for (const node of children) yield* walkDOM(node, type);
 }
 
+export function inViewport(element: Element) {
+    const { left, top } = element.getBoundingClientRect();
+
+    return document.elementFromPoint(left, top) === element;
+}
+
 export function getVisibleText(root: Element) {
     var text = '';
 
