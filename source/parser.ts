@@ -31,6 +31,16 @@ export function toJSValue(raw: string) {
     return Number.isNaN(number) || number + '' !== parsed ? parsed : number;
 }
 
+export const stringifyTextTable = (data: object[], separator = ',') =>
+    [
+        Object.keys(data[0]).join(separator),
+        ...data.map(item =>
+            Object.values(item)
+                .map(value => JSON.stringify(value))
+                .join(separator)
+        )
+    ].join('\n');
+
 function readQuoteValue(raw: string) {
     const quote = raw[0];
     const index = raw.indexOf(quote, 1);

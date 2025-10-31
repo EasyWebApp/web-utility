@@ -1,13 +1,13 @@
 # Web utility
 
-**Web front-end** toolkit based on [TypeScript][1]
+Web & [JavaScript runtimes][1] toolkit based on [TypeScript][2]
 
-[![NPM Dependency](https://img.shields.io/librariesio/github/EasyWebApp/web-utility.svg)][2]
-[![CI & CD](https://github.com/EasyWebApp/web-utility/actions/workflows/main.yml/badge.svg)][3]
+[![NPM Dependency](https://img.shields.io/librariesio/github/EasyWebApp/web-utility.svg)][3]
+[![CI & CD](https://github.com/EasyWebApp/web-utility/actions/workflows/main.yml/badge.svg)][4]
 
-[![Open in Visual Studio Code](https://open.vscode.dev/badges/open-in-vscode.svg)][4]
+[![Open in Visual Studio Code](https://open.vscode.dev/badges/open-in-vscode.svg)][5]
 
-[![NPM](https://nodei.co/npm/web-utility.png?downloads=true&downloadRank=true&stars=true)][5]
+[![NPM](https://nodei.co/npm/web-utility.png?downloads=true&downloadRank=true&stars=true)][6]
 
 ## Installation
 
@@ -159,14 +159,14 @@ serviceWorker?.addEventListener('controllerchange', () =>
 
 ### Internationalization
 
-Migrate to [MobX i18n][9] since v4.
+Migrate to [MobX i18n][7] since v4.
 
 ### Test scripts
 
-If you are looking for a simple alternative of [Mocha][6] or [Jest][7], just use these **Test Utility** methods with [`ts-node`][8]:
+If you are looking for a simple alternative of [Mocha][8] or [Jest][9], just use these **Test Utility** methods with [`tsx`][10]:
 
 ```shell
-npx ts-node index.spec.ts
+npx tsx index.spec.ts
 ```
 
 #### `index.spec.ts`
@@ -221,12 +221,13 @@ try {
 }
 ```
 
-[1]: https://www.typescriptlang.org/
-[2]: https://libraries.io/npm/web-utility
-[3]: https://github.com/EasyWebApp/web-utility/actions/workflows/main.yml
-[4]: https://open.vscode.dev/EasyWebApp/web-utility
-[5]: https://nodei.co/npm/web-utility/
-[6]: https://mochajs.org/
-[7]: https://jestjs.io/
-[8]: https://typestrong.org/ts-node/
-[9]: https://github.com/idea2app/MobX-i18n
+[1]: https://min-common-api.proposal.wintertc.org/
+[2]: https://www.typescriptlang.org/
+[3]: https://libraries.io/npm/web-utility
+[4]: https://github.com/EasyWebApp/web-utility/actions/workflows/main.yml
+[5]: https://open.vscode.dev/EasyWebApp/web-utility
+[6]: https://www.npmjs.com/package/web-utility
+[7]: https://github.com/idea2app/MobX-i18n
+[8]: https://mochajs.org/
+[9]: https://jestjs.io/
+[10]: https://tsx.is

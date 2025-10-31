@@ -90,7 +90,9 @@ export const toCamelCase = (raw: string, large = false) =>
             ? (match[1] || match[0]).toUpperCase()
             : match.toLowerCase()
     );
-
+/**
+ * generate a Number with 36 radix
+ */
 export const uniqueID = () =>
     (Date.now() + parseInt((Math.random() + '').slice(2))).toString(36);
 

@@ -5,7 +5,8 @@ import {
     parseJSON,
     toJSValue,
     parseTextTable,
-    readTextTable
+    readTextTable,
+    stringifyTextTable
 } from '../source/parser';
 
 describe('Data String Parser', () => {
@@ -36,6 +37,16 @@ describe('Data String Parser', () => {
     });
 
     describe('Text Table parser', () => {
+        it('should stringify Text Table', () => {
+            const data = [
+                { a: 1, b: 'text', c: true },
+                { a: 2, b: 'more text', c: false }
+            ];
+            expect(stringifyTextTable(data)).toBe(
+                'a,b,c\n1,"text",true\n2,"more text",false'
+            );
+        });
+
         it('should parse Simple CSV', () => {
             expect(parseTextTable('1,2,3\n4,5,6')).toEqual([
                 [1, 2, 3],
