@@ -19,7 +19,7 @@ export type DataKeys<T> = Exclude<keyof T, TypeKeys<T, Function>>;
 export const likeNull = (value?: any) =>
     !(value != null) || Number.isNaN(value);
 
-export const isEmpty = (value?: any) =>
+export const isEmpty = (value?: any): value is null | undefined =>
     likeNull(value) ||
     (typeof value === 'object' ? !Object.keys(value).length : value === '');
 
