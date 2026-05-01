@@ -1,6 +1,6 @@
 {
     "name": "web-utility",
-    "version": "4.6.5",
+    "version": "4.6.6",
     "license": "LGPL-3.0",
     "author": "shiy2008@gmail.com",
     "description": "Web front-end toolkit based on TypeScript",
@@ -34,7 +34,7 @@
     "devDependencies": {
         "@parcel/packager-ts": "~2.16.4",
         "@parcel/transformer-typescript-types": "~2.16.4",
-        "@peculiar/webcrypto": "^1.5.0",
+        "@peculiar/webcrypto": "^1.7.0",
         "@types/jest": "^29.5.14",
         "@types/node": "^24.12.2",
         "@webcomponents/webcomponentsjs": "^2.8.0",
@@ -46,9 +46,9 @@
         "lint-staged": "^16.4.0",
         "open-cli": "^9.0.0",
         "parcel": "~2.16.4",
-        "prettier": "^3.8.1",
+        "prettier": "^3.8.3",
         "ts-jest": "^29.4.9",
-        "typedoc": "^0.28.18",
+        "typedoc": "^0.28.19",
         "typedoc-plugin-mdn-links": "^5.1.1",
         "typescript": "~5.9.3"
     },
