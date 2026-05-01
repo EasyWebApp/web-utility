@@ -56,7 +56,9 @@ export function formatDate(
     time: TimeData = new Date(),
     template = 'YYYY-MM-DD HH:mm:ss'
 ) {
-    const [year, month, day, hour, minute, second, millisecond] = new Date(time)
+    const date = new Date(time);
+    const localDate = new Date(+date - date.getTimezoneOffset() * 60000);
+    const [year, month, day, hour, minute, second, millisecond] = localDate
         .toJSON()
         .split(/\D/);
 

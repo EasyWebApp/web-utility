@@ -47,10 +47,8 @@ describe('Date', () => {
     });
 
     it('should format Date according to a Template', () => {
-        expect(formatDate(date, 'YY/MM/DD')).toBe('89/06/04');
-        expect(
-            formatDate(new Date('2020-01-23T00:00:00.000Z'), 'YYYY/M/D')
-        ).toBe('2020/1/23');
+        expect(formatDate(new Date(1989, 5, 4), 'YY/MM/DD')).toBe('89/06/04');
+        expect(formatDate(new Date(2020, 0, 23), 'YYYY/M/D')).toBe('2020/1/23');
     });
 
     describe('change Date', () => {
