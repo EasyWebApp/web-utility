@@ -50,7 +50,7 @@ export function buildURLData(map: string[][] | Record<string, any>) {
         .map(([key, value]) => !isEmpty(value) && [key, stringify(value)])
         .filter(Boolean);
 
-    return new URLSearchParams(list);
+    return new URLSearchParams(list as string[][]);
 }
 
 export const blobOf = async (URI: string | URL) =>
@@ -65,9 +65,5 @@ const DataURI = /^data:(.+?\/(.+?))?(;base64)?,([\s\S]+)/;
 export function blobFrom(URI: string) {
     var [_, type, __, base64, data] = DataURI.exec(URI) || [];
 
-    data = base64 ? atob(data) : data;
-
-    const aBuffer = Uint8Array.from(data, char => char.charCodeAt(0));
-
-    return new Blob([aBuffer], { type });
+    return new Blob([base64 ? Uint8Array.fromBase64(data) : data], { type });
 }

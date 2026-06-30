@@ -11,7 +11,7 @@ describe('Timer', () => {
 
     it('should call a function for each unit seconds', async () => {
         const start = Date.now(),
-            list = [];
+            list: number[] = [];
 
         await new Promise<void>(resolve => {
             var stop = asyncLoop(() => {

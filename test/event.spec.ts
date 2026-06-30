@@ -8,9 +8,17 @@ describe('Event', () => {
         const result = new Promise<[Element, Event, Element, string]>(resolve =>
             document.body.addEventListener(
                 'test',
-                delegate('a', function (event, target, detail: string) {
-                    resolve([this, event, target, detail]);
-                })
+                delegate(
+                    'a',
+                    function (
+                        this: Element,
+                        event,
+                        target,
+                        detail: string = ''
+                    ) {
+                        resolve([this, event, target, detail]);
+                    }
+                )
             )
         );
         const customEvent = new CustomEvent('test', {
@@ -19,7 +27,7 @@ describe('Event', () => {
             }),
             link = document.querySelector('a');
 
-        link.dispatchEvent(customEvent);
+        link!.dispatchEvent(customEvent);
 
         const [thisNode, event, target, detail] = await result;
 

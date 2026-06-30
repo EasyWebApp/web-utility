@@ -103,7 +103,15 @@ export const uniqueID = () =>
  * @returns Base64 encoded string
  */
 export const encodeBase64 = (input: string) =>
-    btoa(String.fromCharCode(...new TextEncoder().encode(input)));
+    new TextEncoder().encode(input).toBase64();
+
+export async function toBase64(input: string | Blob | ArrayBuffer) {
+    if (typeof input === 'string') return encodeBase64(input);
+
+    if (input instanceof Blob) input = await input.arrayBuffer();
+
+    return new Uint8Array(input).toBase64();
+}
 
 /**
  * Decode Base64 string with Unicode support
@@ -112,9 +120,7 @@ export const encodeBase64 = (input: string) =>
  * @returns Decoded Unicode string
  */
 export const decodeBase64 = (input: string) =>
-    new TextDecoder().decode(
-        Uint8Array.from(atob(input), char => char.charCodeAt(0))
-    );
+    new TextDecoder().decode(Uint8Array.fromBase64(input));
 
 export const objectFrom = <V, K extends string>(values: V[], keys: K[]) =>
     Object.fromEntries(
@@ -178,7 +184,7 @@ export const isTypedArray = (data: any): data is TypedArray =>
 export function makeArray<T>(data?: T) {
     if (data instanceof Array) return data as unknown as ResultArray<T>;
 
-    if (likeNull(data)) return [] as ResultArray<T>;
+    if (likeNull(data)) return Array() as ResultArray<T>;
 
     if (likeArray(data)) return Array.from(data) as ResultArray<T>;
 
@@ -195,8 +201,7 @@ export const splitArray = <T>(array: T[], unitLength: number) =>
 export type IndexKey = number | string | symbol;
 export type GroupKey<T extends Record<IndexKey, any>> = keyof T | IndexKey;
 export type Iteratee<T extends Record<IndexKey, any>> =
-    | keyof T
-    | ((item: T) => GroupKey<T> | GroupKey<T>[]);
+    keyof T | ((item: T) => GroupKey<T> | GroupKey<T>[]);
 
 export function groupBy<T extends Record<IndexKey, any>>(
     list: T[],
@@ -307,9 +312,9 @@ export function cache<I, O>(
     executor: (cleaner: () => void, ...data: I[]) => O,
     title: string
 ) {
-    var cacheData: O;
+    var cacheData: O | undefined;
 
-    return function (...data: I[]) {
+    return function (this: any, ...data: I[]) {
         if (cacheData != null) return cacheData;
 
         console.trace(`[Cache] execute: ${title}`);

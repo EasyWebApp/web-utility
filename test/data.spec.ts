@@ -77,7 +77,7 @@ describe('Data', () => {
 
         const proxyElement = new ProxyElement();
 
-        proxyElement['test'] = 'example';
+        Reflect.set(proxyElement, 'test', 'example');
 
         expect(proxyElement.toJSON()).toEqual({ test: 'example' });
 

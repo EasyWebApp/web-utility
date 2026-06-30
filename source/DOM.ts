@@ -124,11 +124,12 @@ export function getVisibleText(root: Element) {
     for (const { nodeType, parentElement, nodeValue } of walkDOM(root))
         if (
             nodeType === Node.TEXT_NODE &&
-            parentElement.getAttribute('aria-hidden') !== 'true'
+            parentElement?.getAttribute('aria-hidden') !== 'true'
         ) {
-            const { width, height } = parentElement.getBoundingClientRect();
+            const { width, height } =
+                parentElement?.getBoundingClientRect() ?? {};
 
-            if (width && height) text += nodeValue.trim().replace(/\s+/g, ' ');
+            if (width && height) text += nodeValue?.trim().replace(/\s+/g, ' ');
         }
 
     return text;
@@ -165,11 +166,10 @@ export function splitPages(
     }, [] as Element[][]);
 }
 
-export interface CSSOptions
-    extends Pick<
-        HTMLLinkElement,
-        'title' | 'media' | 'crossOrigin' | 'integrity'
-    > {
+export interface CSSOptions extends Pick<
+    HTMLLinkElement,
+    'title' | 'media' | 'crossOrigin' | 'integrity'
+> {
     alternate?: boolean;
 }
 
@@ -184,7 +184,7 @@ export function importCSS(
     const link = document.createElement('link');
 
     return new Promise<CSSStyleSheet>((resolve, reject) => {
-        link.onload = () => resolve(link.sheet);
+        link.onload = () => resolve(link.sheet!);
         link.onerror = (_1, _2, _3, _4, error) => reject(error);
 
         Object.assign(link, options);
@@ -365,10 +365,11 @@ export function formToJSON<T extends object = URLData<File>>(
             case 'select-one':
                 parsedValue = toJSValue(value);
         }
+        const record = data as Record<string, any>;
 
-        if (name in data) data[name] = [].concat(data[name], parsedValue);
+        if (name in data) record[name] = [].concat(record[name], parsedValue);
         else
-            data[name] =
+            record[name] =
                 !(parsedValue instanceof Array) || !isEmpty(parsedValue[1])
                     ? parsedValue
                     : parsedValue[0];

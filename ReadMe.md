@@ -226,7 +226,7 @@ try {
 [3]: https://libraries.io/npm/web-utility
 [4]: https://github.com/EasyWebApp/web-utility/actions/workflows/main.yml
 [5]: https://open.vscode.dev/EasyWebApp/web-utility
-[6]: https://www.npmjs.com/package/web-utility
+[6]: https://npm.im/web-utility
 [7]: https://github.com/idea2app/MobX-i18n
 [8]: https://mochajs.org/
 [9]: https://jestjs.io/

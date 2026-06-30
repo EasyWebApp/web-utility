@@ -102,7 +102,7 @@ export const changeDate = (date: TimeData, unit: number, delta: number) =>
           ? changeMonth(date, delta)
           : new Date(+new Date(date) + delta * unit);
 
-const DateLength2Unit = {
+const DateLength2Unit: Record<number, number> = {
     4: Year,
     7: Month,
     10: Day,

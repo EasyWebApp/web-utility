@@ -11,7 +11,7 @@ export function delegate<T>(
     handler: DelegateEventHandler<T>
 ) {
     return function (this: Node, event: Event) {
-        var node: EventTarget,
+        var node: EventTarget | undefined,
             path = event.composedPath();
 
         while ((node = path.shift()) && node !== event.currentTarget)
@@ -47,19 +47,21 @@ export const documentReady =
 export function promisify<T extends Event>(scope: string, element: Element) {
     return new Promise<T>((resolve, reject) => {
         function end(event: T) {
-            resolve(event), clean();
+            (resolve(event), clean());
         }
         function cancel(event: T) {
-            reject(event), clean();
+            (reject(event), clean());
         }
 
         function clean() {
-            element.removeEventListener(scope + 'end', end);
-            element.removeEventListener(scope + 'cancel', cancel);
+            element.removeEventListener(scope + 'end', end as EventListener);
+            element.removeEventListener(
+                scope + 'cancel',
+                cancel as EventListener
+            );
         }
-
-        element.addEventListener(scope + 'end', end);
-        element.addEventListener(scope + 'cancel', cancel);
+        element.addEventListener(scope + 'end', end as EventListener);
+        element.addEventListener(scope + 'cancel', cancel as EventListener);
     });
 }
 

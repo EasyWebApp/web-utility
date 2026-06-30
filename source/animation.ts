@@ -21,7 +21,7 @@ export class PageVector {
         return Math.sqrt(
             Math.pow(to.x - from.x, 2) +
                 Math.pow(to.y - from.y, 2) +
-                (to.z != null ? Math.pow(to.z - from.z, 2) : 0)
+                (to.z != null ? Math.pow(to.z - (from.z ?? 0), 2) : 0)
         );
     }
 
@@ -29,7 +29,7 @@ export class PageVector {
         const { from, to } = this;
         const XD = to.x - from.x,
             YD = to.y - from.y,
-            ZD = to.z - from.z;
+            ZD = (to.z ?? 0) - (from.z ?? 0);
         const XL = Math.abs(XD),
             YL = Math.abs(YD),
             ZL = Math.abs(ZD);

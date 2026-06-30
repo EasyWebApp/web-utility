@@ -24,21 +24,21 @@ export function makeCRC32(raw: string) {
 
 if (typeof self === 'object') {
     if ('msCrypto' in globalThis) {
-        // @ts-ignore
+        // @ts-expect-error — msCrypto is a non-standard API
         const { subtle } = (globalThis.crypto = globalThis.msCrypto as Crypto);
 
         for (const key in subtle) {
-            const origin = subtle[key];
+            const origin = (subtle as Record<string, any>)[key];
 
             if (origin instanceof Function)
-                subtle[key] = function () {
+                (subtle as Record<string, any>)[key] = function () {
                     const observer = origin.apply(this, arguments);
 
                     return new Promise((resolve, reject) => {
                         observer.oncomplete = ({
                             target
-                        }: Parameters<FileReader['onload']>[0]) =>
-                            resolve(target.result);
+                        }: ProgressEvent<FileReader>) =>
+                            resolve(target!.result);
 
                         observer.onabort = observer.onerror = reject;
                     });
@@ -46,9 +46,9 @@ if (typeof self === 'object') {
         }
     }
     const { crypto } = globalThis;
-
+    // @ts-expect-error — webkitSubtle is a non-standard API
     if (!crypto?.subtle && crypto?.['webkitSubtle'])
-        // @ts-ignore
+        // @ts-expect-error — webkitSubtle is a non-standard API
         crypto.subtle = crypto['webkitSubtle'];
 }
 
@@ -62,7 +62,5 @@ export async function makeSHA(raw: string, algorithm: SHAAlgorithm = 'SHA-1') {
         algorithm,
         new TextEncoder().encode(raw)
     );
-    return Array.from(new Uint8Array(buffer), byte =>
-        byte.toString(16).padStart(2, '0')
-    ).join('');
+    return new Uint8Array(buffer).toHex();
 }
