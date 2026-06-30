@@ -134,12 +134,10 @@ export enum DiffStatus {
 }
 
 const getSetDifference = <T>(leftSet: Set<T>, rightSet: Set<T>) =>
-    leftSet.difference?.(rightSet) ||
-    new Set(Array.from(leftSet).filter(key => !rightSet.has(key)));
+    leftSet.difference(rightSet);
 
 const getSetIntersection = <T>(leftSet: Set<T>, rightSet: Set<T>) =>
-    leftSet.intersection?.(rightSet) ||
-    new Set(Array.from(leftSet).filter(key => rightSet.has(key)));
+    leftSet.intersection(rightSet);
 
 export function diffKeys<T extends IndexKey>(oldList: T[], newList: T[]) {
     const oldSet = new Set(oldList),
