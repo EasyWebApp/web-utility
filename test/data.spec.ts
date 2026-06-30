@@ -153,6 +153,17 @@ describe('Data', () => {
         });
     });
 
+    it('should ignore duplicate keys when comparing key arrays', () => {
+        expect(diffKeys(['a', 'a', 'b'], ['b', 'b', 'c', 'c'])).toEqual({
+            map: { a: DiffStatus.Old, b: DiffStatus.Same, c: DiffStatus.New },
+            group: {
+                [DiffStatus.Old]: [['a', DiffStatus.Old]],
+                [DiffStatus.Same]: [['b', DiffStatus.Same]],
+                [DiffStatus.New]: [['c', DiffStatus.New]]
+            }
+        });
+    });
+
     it('should detect an Object whether is Array-like or not', () => {
         expect(likeArray(NaN)).toBe(false);
         expect(likeArray('a')).toBe(true);
