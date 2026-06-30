@@ -137,18 +137,18 @@ export function diffKeys<T extends IndexKey>(oldList: T[], newList: T[]) {
     const oldSet = new Set(oldList),
         newSet = new Set(newList);
     const map = {} as Record<T, DiffStatus>;
-    const getDifference = (leftSet: Set<T>, rightSet: Set<T>) =>
+    const getSetDifference = (leftSet: Set<T>, rightSet: Set<T>) =>
         leftSet.difference?.(rightSet) ||
         new Set(Array.from(leftSet).filter(key => !rightSet.has(key)));
-    const getIntersection = (leftSet: Set<T>, rightSet: Set<T>) =>
+    const getSetIntersection = (leftSet: Set<T>, rightSet: Set<T>) =>
         leftSet.intersection?.(rightSet) ||
         new Set(Array.from(leftSet).filter(key => rightSet.has(key)));
 
-    for (const item of getDifference(oldSet, newSet))
+    for (const item of getSetDifference(oldSet, newSet))
         map[item] = DiffStatus.Old;
-    for (const item of getIntersection(oldSet, newSet))
+    for (const item of getSetIntersection(oldSet, newSet))
         map[item] = DiffStatus.Same;
-    for (const item of getDifference(newSet, oldSet))
+    for (const item of getSetDifference(newSet, oldSet))
         map[item] = DiffStatus.New;
 
     return {
