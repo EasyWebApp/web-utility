@@ -133,16 +133,18 @@ export enum DiffStatus {
     New = 1
 }
 
+const getSetDifference = <T>(leftSet: Set<T>, rightSet: Set<T>) =>
+    leftSet.difference?.(rightSet) ||
+    new Set(Array.from(leftSet).filter(key => !rightSet.has(key)));
+
+const getSetIntersection = <T>(leftSet: Set<T>, rightSet: Set<T>) =>
+    leftSet.intersection?.(rightSet) ||
+    new Set(Array.from(leftSet).filter(key => rightSet.has(key)));
+
 export function diffKeys<T extends IndexKey>(oldList: T[], newList: T[]) {
     const oldSet = new Set(oldList),
         newSet = new Set(newList);
     const map = {} as Record<T, DiffStatus>;
-    const getSetDifference = (leftSet: Set<T>, rightSet: Set<T>) =>
-        leftSet.difference?.(rightSet) ||
-        new Set(Array.from(leftSet).filter(key => !rightSet.has(key)));
-    const getSetIntersection = (leftSet: Set<T>, rightSet: Set<T>) =>
-        leftSet.intersection?.(rightSet) ||
-        new Set(Array.from(leftSet).filter(key => rightSet.has(key)));
 
     for (const item of getSetDifference(oldSet, newSet))
         map[item] = DiffStatus.Old;
