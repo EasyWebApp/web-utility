@@ -1,4 +1,5 @@
-import './polyfill';
+import './JSDOM';
+import { describe, expect, it } from './API';
 import { CSSStyles } from '../source/DOM-type';
 import {
     templateOf,

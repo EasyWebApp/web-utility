@@ -1,3 +1,4 @@
+import { describe, expect, it } from './API';
 import packageJSON from '../package.json';
 
 describe('Package exports', () => {

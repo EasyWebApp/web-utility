@@ -7,7 +7,7 @@
         "declaration": true,
         "skipLibCheck": true,
         "lib": ["ESNext", "DOM", "DOM.Iterable"],
-        "types": ["node", "jest"],
+        "types": ["node"],
         "outDir": "dist/"
     },
     "include": ["source/*.ts", "test/*.ts"],

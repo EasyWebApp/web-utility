@@ -1,4 +1,4 @@
-import './polyfill';
+import { describe, expect, it } from './API';
 import { makeCRC32, makeSHA } from '../source/crypto';
 
 describe('Crypto function', () => {

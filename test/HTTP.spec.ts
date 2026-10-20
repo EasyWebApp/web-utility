@@ -1,3 +1,5 @@
+import './JSDOM';
+import { describe, expect, it } from './API';
 import { parseCookie, setCookie } from '../source/HTTP';
 
 describe('HTTP', () => {

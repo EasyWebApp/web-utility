@@ -1,9 +1,35 @@
-import './polyfill';
-import { isXDomain, parseURLData, buildURLData, blobFrom } from '../source/URL';
+import './JSDOM';
+import { describe, expect, it } from './API';
+import {
+    isXDomain,
+    fileNameOf,
+    parseURLData,
+    buildURLData,
+    blobFrom
+} from '../source/URL';
 
 describe('URL', () => {
     it('should return "true" while an URL is cross domain in current page', () => {
         expect(isXDomain('https://www.google.com/')).toBe(true);
+    });
+
+    describe('File name', () => {
+        it('should extract and decode the file name from a URL', () => {
+            expect(fileNameOf('https://example.com/path/my%20file.txt')).toBe(
+                'my file.txt'
+            );
+        });
+
+        it('should ignore query and hash parts', () => {
+            expect(fileNameOf('/path/file.txt?download=1')).toBe('file.txt');
+            expect(fileNameOf('/path/file.txt#preview')).toBe('file.txt');
+        });
+
+        it('should return an empty string for paths without a file name', () => {
+            expect(fileNameOf('/path/')).toBe('');
+            expect(fileNameOf(undefined)).toBe('');
+            expect(fileNameOf(null)).toBe('');
+        });
     });
 
     describe('Parse URL data', () => {
