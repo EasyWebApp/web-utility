@@ -1,3 +1,4 @@
+import { describe, expect, it } from './API';
 import { asyncLoop, sleep } from '../source/timer';
 
 describe('Timer', () => {

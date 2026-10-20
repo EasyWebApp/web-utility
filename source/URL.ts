@@ -4,6 +4,9 @@ import { parseJSON } from './parser';
 export const isXDomain = (URI: string) =>
     new URL(URI, document.baseURI).origin !== location.origin;
 
+export const fileNameOf = (URI: unknown) =>
+    decodeURIComponent(URI?.toString().split(/[?#]/)[0].split('/').pop() || '');
+
 export type JSONValue = number | boolean | string | null;
 export interface URLData<E = unknown> {
     [key: string]: JSONValue | JSONValue[] | URLData | URLData[] | E;

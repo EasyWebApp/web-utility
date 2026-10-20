@@ -1,5 +1,5 @@
-import './polyfill';
-import 'core-js/proposals/promise-with-resolvers';
+import './JSDOM';
+import { describe, expect, fn, it } from './API';
 import {
     likeNull,
     isEmpty,
@@ -59,7 +59,7 @@ describe('Data', () => {
     });
 
     it('should proxy the Prototype object of a Class', () => {
-        const setter = jest.fn();
+        const setter = fn();
 
         class ProxyElement extends HTMLElement {
             #props = {};
@@ -300,13 +300,13 @@ describe('Data', () => {
         });
 
         it('should cache result of an Async Function', async () => {
-            const origin = jest.fn(() => Promise.resolve(1));
+            const origin = fn(() => Promise.resolve(1));
             const asyncFunc = cache(origin, 'async');
 
             expect(asyncFunc()).toBeInstanceOf(Promise);
             expect(asyncFunc()).toBe(asyncFunc());
             expect(await asyncFunc()).toBe(1);
-            expect(origin).toBeCalledTimes(1);
+            expect(origin).toHaveBeenCalledTimes(1);
         });
 
         it('should renew Cache data manually', async () => {
@@ -325,7 +325,7 @@ describe('Data', () => {
     });
 
     it('should wrap some Async Data into an Async Generator', async () => {
-        const disposer = jest.fn();
+        const disposer = fn();
 
         const stream = createAsyncIterator<number>(({ next, complete }) => {
             setTimeout(() => next(1));

@@ -1,6 +1,6 @@
-import 'core-js/actual/array/from-async';
 import { ReadableStream } from 'stream/web';
 
+import { describe, expect, it } from './API';
 import {
     parseJSON,
     toJSValue,

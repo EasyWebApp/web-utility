@@ -1,4 +1,5 @@
-import './polyfill';
+import './JSDOM';
+import { describe, expect, it } from './API';
 import { PageVector, durationOf } from '../source/animation';
 
 describe('Animation', () => {
