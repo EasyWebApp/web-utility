@@ -11,6 +11,9 @@ importers:
       '@swc/helpers':
         specifier: ^0.5.23
         version: 0.5.23
+      mime:
+        specifier: ^4.1.1
+        version: 4.1.1
       regenerator-runtime:
         specifier: ^0.14.1
         version: 0.14.1
@@ -1338,6 +1341,11 @@ packages:
   meow@14.1.0:
     resolution: {integrity: sha512-EDYo6VlmtnumlcBCbh1gLJ//9jvM/ndXHfVXIFrZVr6fGcwTUyCTFNTLCKuY3ffbK8L/+3Mzqnd58RojiZqHVw==}
     engines: {node: '>=20'}
+
+  mime@4.1.1:
+    resolution: {integrity: sha512-YAApRsTpM2+gnUFHhRNGfkX8NK0V5xj1nyQLufGlwEI+eX4xRsTcel2IXDuMEGSGjBvzykNW4VuoEACgwYe7BQ==}
+    engines: {node: '>=16'}
+    hasBin: true
 
   minimatch@10.2.6:
     resolution: {integrity: sha512-vpLQEs+VLCr1nU0BXS07maYoFwlDAH0gngQuuttxIwutDFEMHq2blX+8vpgxDdK3J1PwjCJiep77OitTZ4Ll1A==}
@@ -3053,6 +3061,8 @@ snapshots:
   mdurl@2.1.0: {}
 
   meow@14.1.0: {}
+
+  mime@4.1.1: {}
 
   minimatch@10.2.6:
     dependencies:

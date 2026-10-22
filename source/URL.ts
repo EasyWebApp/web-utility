@@ -1,3 +1,5 @@
+import MIME from 'mime';
+
 import { isEmpty, likeArray, makeArray } from './data';
 import { parseJSON } from './parser';
 
@@ -6,6 +8,37 @@ export const isXDomain = (URI: string) =>
 
 export const fileNameOf = (URI: unknown) =>
     decodeURIComponent(URI?.toString().split(/[?#]/)[0].split('/').pop() || '');
+
+export function fileMetaOf(fileOrURI: string | Blob | MediaProvider) {
+    if (fileOrURI instanceof MediaStream)
+        return { name: '', type: 'stream', category: 'stream', extension: '' };
+
+    const path =
+        typeof fileOrURI === 'string'
+            ? fileOrURI
+            : URL.createObjectURL(fileOrURI);
+    const { protocol, pathname } = new URL(path || '', 'http://localhost');
+    const name =
+        fileOrURI instanceof File
+            ? fileOrURI.name
+            : path && !['data:', 'blob:'].includes(protocol)
+              ? fileNameOf(pathname)
+              : '';
+    const type =
+        fileOrURI instanceof Blob
+            ? fileOrURI.type
+            : (protocol === 'data:'
+                  ? pathname.split(',')[0]
+                  : name && MIME.getType(name)) || '';
+    const [category] = type?.split(/\W+/) || [];
+    const extension = name?.includes('.')
+        ? name.split('.').at(-1)
+        : type && MIME.getExtension(type);
+
+    if (typeof fileOrURI !== 'string') URL.revokeObjectURL(path);
+
+    return { name, type, category, extension };
+}
 
 export type JSONValue = number | boolean | string | null;
 export interface URLData<E = unknown> {
