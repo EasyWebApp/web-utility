@@ -3,14 +3,76 @@ import { describe, expect, it } from './API';
 import {
     isXDomain,
     fileNameOf,
+    fileMetaOf,
     parseURLData,
     buildURLData,
     blobFrom
 } from '../source/URL';
 
+if (!('MediaStream' in globalThis))
+    Object.defineProperty(globalThis, 'MediaStream', {
+        configurable: true,
+        value: class {}
+    });
+
 describe('URL', () => {
     it('should return "true" while an URL is cross domain in current page', () => {
         expect(isXDomain('https://www.google.com/')).toBe(true);
+    });
+
+    describe('File metadata', () => {
+        it('should infer metadata from a file URL', () => {
+            expect(
+                fileMetaOf('https://example.com/archive.tar.gz?download=1')
+            ).toEqual({
+                name: 'archive.tar.gz',
+                type: 'application/gzip',
+                category: 'application',
+                extension: 'gz'
+            });
+        });
+
+        it('should read metadata from a data URI', () => {
+            expect(fileMetaOf('data:text/plain,hello')).toEqual({
+                name: '',
+                type: 'text/plain',
+                category: 'text',
+                extension: 'txt'
+            });
+        });
+
+        it('should read MIME metadata from a Blob', () => {
+            expect(
+                fileMetaOf(new Blob(['hello'], { type: 'text/plain' }))
+            ).toEqual({
+                name: '',
+                type: 'text/plain',
+                category: 'text',
+                extension: 'txt'
+            });
+        });
+
+        it('should use the name and MIME type of a File', () => {
+            expect(
+                fileMetaOf(
+                    new File(['hello'], 'hello.txt', { type: 'text/plain' })
+                )
+            ).toEqual({
+                name: 'hello.txt',
+                type: 'text/plain',
+                category: 'text',
+                extension: 'txt'
+            });
+        });
+
+        it('should identify a MediaStream', () => {
+            expect(fileMetaOf(new MediaStream())).toEqual({
+                name: '',
+                type: 'stream',
+                category: 'stream',
+                extension: ''
+            });
+        });
     });
 
     describe('File name', () => {

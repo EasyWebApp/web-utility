@@ -1,6 +1,6 @@
 {
     "name": "web-utility",
-    "version": "4.7.3",
+    "version": "4.8.0",
     "license": "LGPL-3.0",
     "author": "shiy2008@gmail.com",
     "description": "Web front-end toolkit based on TypeScript",
@@ -34,6 +34,7 @@
     },
     "dependencies": {
         "@swc/helpers": "^0.5.23",
+        "mime": "^4.1.1",
         "regenerator-runtime": "^0.14.1"
     },
     "peerDependencies": {
