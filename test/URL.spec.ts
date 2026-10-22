@@ -9,12 +9,6 @@ import {
     blobFrom
 } from '../source/URL';
 
-if (!('MediaStream' in globalThis))
-    Object.defineProperty(globalThis, 'MediaStream', {
-        configurable: true,
-        value: class {}
-    });
-
 describe('URL', () => {
     it('should return "true" while an URL is cross domain in current page', () => {
         expect(isXDomain('https://www.google.com/')).toBe(true);
@@ -62,15 +56,6 @@ describe('URL', () => {
                 type: 'text/plain',
                 category: 'text',
                 extension: 'txt'
-            });
-        });
-
-        it('should identify a MediaStream', () => {
-            expect(fileMetaOf(new MediaStream())).toEqual({
-                name: '',
-                type: 'stream',
-                category: 'stream',
-                extension: ''
             });
         });
     });

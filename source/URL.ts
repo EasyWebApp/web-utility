@@ -9,10 +9,7 @@ export const isXDomain = (URI: string) =>
 export const fileNameOf = (URI: unknown) =>
     decodeURIComponent(URI?.toString().split(/[?#]/)[0].split('/').pop() || '');
 
-export function fileMetaOf(fileOrURI: string | Blob | MediaProvider) {
-    if (fileOrURI instanceof MediaStream)
-        return { name: '', type: 'stream', category: 'stream', extension: '' };
-
+export function fileMetaOf(fileOrURI: string | Blob) {
     const path =
         typeof fileOrURI === 'string'
             ? fileOrURI
