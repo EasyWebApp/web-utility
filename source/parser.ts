@@ -7,18 +7,16 @@ export function parseJSON(raw: string) {
 
             if (!Number.isNaN(+date)) return date;
         }
-        return value;
+
+        if (typeof value !== 'string' || isUnsafeNumeric(value)) return value;
+
+        try {
+            return JSON.parse(value, (_, item) => parseItem(item));
+        } catch {
+            return value;
+        }
     }
-
-    const value = parseItem(raw);
-
-    if (typeof value !== 'string' || isUnsafeNumeric(value)) return value;
-
-    try {
-        return JSON.parse(raw, (key, value) => parseItem(value));
-    } catch {
-        return raw;
-    }
+    return parseItem(raw);
 }
 
 export function toJSValue(raw: string) {

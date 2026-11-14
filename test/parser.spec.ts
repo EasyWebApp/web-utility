@@ -28,6 +28,27 @@ describe('Data String Parser', () => {
             expect(time).toBeInstanceOf(Date);
             expect((time as Date).toJSON()).toBe('2020-01-23T00:00:00.000Z');
         });
+
+        it('should recursively parse JSON strings in nested fields', () => {
+            const raw = JSON.stringify({
+                payload: JSON.stringify({
+                    count: '42',
+                    enabled: 'true',
+                    empty: 'null',
+                    created: '2020-01-23T00:00:00.000Z',
+                    nested: JSON.stringify({ values: '[1,2,3]' })
+                })
+            });
+            expect(parseJSON(raw)).toEqual({
+                payload: {
+                    count: 42,
+                    enabled: true,
+                    empty: null,
+                    created: new Date('2020-01-23T00:00:00.000Z'),
+                    nested: { values: [1, 2, 3] }
+                }
+            });
+        });
     });
 
     it('should parse a String to a Primitive value or JS object', () => {

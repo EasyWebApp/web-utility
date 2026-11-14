@@ -14,6 +14,25 @@ describe('URL', () => {
         expect(isXDomain('https://www.google.com/')).toBe(true);
     });
 
+    describe('File name', () => {
+        it('should extract and decode the file name from a URL', () => {
+            expect(fileNameOf('https://example.com/path/my%20file.txt')).toBe(
+                'my file.txt'
+            );
+        });
+
+        it('should ignore query and hash parts', () => {
+            expect(fileNameOf('/path/file.txt?download=1')).toBe('file.txt');
+            expect(fileNameOf('/path/file.txt#preview')).toBe('file.txt');
+        });
+
+        it('should return an empty string for paths without a file name', () => {
+            expect(fileNameOf('/path/')).toBe('');
+            expect(fileNameOf(undefined)).toBe('');
+            expect(fileNameOf(null)).toBe('');
+        });
+    });
+
     describe('File metadata', () => {
         it('should infer metadata from a file URL', () => {
             expect(
@@ -57,25 +76,6 @@ describe('URL', () => {
                 category: 'text',
                 extension: 'txt'
             });
-        });
-    });
-
-    describe('File name', () => {
-        it('should extract and decode the file name from a URL', () => {
-            expect(fileNameOf('https://example.com/path/my%20file.txt')).toBe(
-                'my file.txt'
-            );
-        });
-
-        it('should ignore query and hash parts', () => {
-            expect(fileNameOf('/path/file.txt?download=1')).toBe('file.txt');
-            expect(fileNameOf('/path/file.txt#preview')).toBe('file.txt');
-        });
-
-        it('should return an empty string for paths without a file name', () => {
-            expect(fileNameOf('/path/')).toBe('');
-            expect(fileNameOf(undefined)).toBe('');
-            expect(fileNameOf(null)).toBe('');
         });
     });
 
