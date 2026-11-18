@@ -1,6 +1,6 @@
 {
     "name": "web-utility",
-    "version": "4.8.2",
+    "version": "4.8.3",
     "license": "LGPL-3.0",
     "author": "shiy2008@gmail.com",
     "description": "Web front-end toolkit based on TypeScript",
@@ -53,10 +53,11 @@
         "intersection-observer": "^0.12.2",
         "jest-mock": "^30.5.2",
         "jsdom": "^31.0.1",
-        "lint-staged": "^17.6.0",
+        "lint-staged": "^17.6.1",
         "open-cli": "^9.0.0",
         "parcel": "~2.16.4",
         "prettier": "^3.10.1",
+        "rimraf": "^6.1.4",
         "tsx": "^4.23.15",
         "typedoc": "^0.28.20",
         "typedoc-plugin-mdn-links": "^5.1.1",
@@ -71,16 +72,25 @@
     "lint-staged": {
         "*.{md,json,yml,ts}": "prettier --write"
     },
-    "browserslist": "> 0.5%, last 2 versions, not dead, IE 11",
+    "browserslist": "> 0.5%, last 2 versions, not dead",
     "targets": {
         "main": {
+            "includeNodeModules": [
+                "mime"
+            ],
+            "optimize": true
+        },
+        "module": {
+            "includeNodeModules": [
+                "mime"
+            ],
             "optimize": true
         }
     },
     "scripts": {
         "prepare": "husky",
         "test": "lint-staged  &&  tsx --test \"test/*.spec.ts\"",
-        "build": "rm -rf dist/ docs/  &&  typedoc source/  &&  parcel build",
+        "build": "rimraf dist/ docs/  &&  typedoc source/  &&  parcel build",
         "start": "typedoc source/  &&  open-cli docs/index.html",
         "prepublishOnly": "npm test  &&  npm run build"
     }
